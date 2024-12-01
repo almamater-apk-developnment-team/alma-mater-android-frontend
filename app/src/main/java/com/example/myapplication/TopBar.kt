@@ -39,7 +39,7 @@ fun TopBar() {
     Column(
         verticalArrangement = Arrangement.Top
     ) {
-        Spacer(modifier = Modifier.padding(top = 40.dp))
+        Spacer(modifier = Modifier.padding(top = 30.dp))
         Column(
             modifier = Modifier
                 .fillMaxWidth()
