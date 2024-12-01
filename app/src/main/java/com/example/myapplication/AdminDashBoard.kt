@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.sp
 fun AdminDashBoard(modifier: Modifier=Modifier){
     val scrollState = rememberScrollState()
     Column(modifier=Modifier.fillMaxSize()){
+        TopBar()
         Box(modifier=Modifier.fillMaxWidth()
             .height(50.dp),
             contentAlignment = Alignment.Center){
@@ -63,7 +65,7 @@ fun AdminDashBoard(modifier: Modifier=Modifier){
                     ) {
                         Text(
                             text = "DEADLINE",
-                            fontSize = 18.sp,
+                            fontSize = 17.sp,
                             fontFamily = FontFamily(Font(R.font.poppins)),
                             fontWeight = FontWeight(600)
                         )
@@ -82,7 +84,7 @@ fun AdminDashBoard(modifier: Modifier=Modifier){
                     ) {
                         Text(
                             text = "ANNOUNCEMENT",
-                            fontSize = 18.sp,
+                            fontSize = 16.sp,
                             fontFamily = FontFamily(Font(R.font.poppins)),
                             fontWeight = FontWeight(600)
                         )
@@ -93,10 +95,14 @@ fun AdminDashBoard(modifier: Modifier=Modifier){
             contentAlignment = Alignment.TopCenter
             ){
             Column(
-                modifier=Modifier.height(500.dp).
-                verticalScroll(scrollState),
-                verticalArrangement = Arrangement.SpaceEvenly) {
+                modifier=Modifier.height(800.dp).
+                verticalScroll(scrollState)) {
                 AdminCard()
+                AdminCard()
+                AdminCard()
+                AdminCard()
+                AdminCard()
+
             }
 
         }
