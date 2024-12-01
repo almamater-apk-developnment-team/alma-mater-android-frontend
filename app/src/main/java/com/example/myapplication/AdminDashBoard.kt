@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-
 fun AdminDashBoard(innerPaddingValues: PaddingValues){
     val scrollState = rememberScrollState()
     Column(modifier=Modifier.fillMaxSize().padding(innerPaddingValues)){
