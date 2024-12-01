@@ -1,7 +1,5 @@
 package com.example.myapplication
 
-
-
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,9 +32,9 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 
-fun AdminDashBoard(modifier: Modifier=Modifier){
+fun AdminDashBoard(innerPaddingValues: PaddingValues){
     val scrollState = rememberScrollState()
-    Column(modifier=Modifier.fillMaxSize()){
+    Column(modifier=Modifier.fillMaxSize().padding(innerPaddingValues)){
         TopBar()
         Box(modifier=Modifier.fillMaxWidth()
             .height(50.dp),
