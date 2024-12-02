@@ -118,7 +118,7 @@ fun LandingPage(innerPadding: PaddingValues , navController: NavController) {
                     IconButton(
                         modifier = Modifier.padding(end = 10.dp, top = 10.dp),
                         onClick = {
-                            navController.navigate(Screens.SplashPage.route)
+                            navController.popBackStack()
                         }
                     ) {
                         Image(

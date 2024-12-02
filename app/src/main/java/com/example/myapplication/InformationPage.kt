@@ -59,7 +59,7 @@ fun AdminInfo(paddingValues: PaddingValues , navController: NavController){
     }
     val scrollState=rememberScrollState()
     Column(modifier = Modifier.fillMaxSize()) {
-        Box(modifier = Modifier.fillMaxWidth().height(160.dp)) {
+        Box(modifier = Modifier.fillMaxWidth().height(190.dp).padding(top=30.dp)) {
             TopBar(navController)
         }
         Column(
@@ -134,8 +134,10 @@ fun AdminInfo(paddingValues: PaddingValues , navController: NavController){
                 ) {
                     Card(
                         modifier = Modifier.size(height = 50.dp, width = 110.dp)
-                            .padding()
-                            .shadow(shape = RoundedCornerShape(10.dp), elevation = 2.dp),
+                            .clickable {
+                                navController.navigate(Screens.DeadlinePage.route)
+                            }
+                            .shadow(shape = RoundedCornerShape(10.dp), elevation = 10.dp),
                         colors = CardDefaults.cardColors(containerColor = Color(163, 127, 219)),
                         shape = RoundedCornerShape(10.dp)
                     ) {
@@ -152,14 +154,14 @@ fun AdminInfo(paddingValues: PaddingValues , navController: NavController){
                             )
                             Image(
                                 modifier = Modifier.size(height = 35.dp, width = 35.dp)
-                                    .clickable {},
+                                    ,
                                 painter = painterResource(R.drawable.edit),
                                 contentDescription = "edit"
                             )
                         }
                     }
                 }
-            Spacer(modifier=Modifier.height(20.dp))
+            Spacer(modifier=Modifier.height(10.dp))
             Row(
                 modifier = Modifier
                     .width(400.dp)
