@@ -19,6 +19,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -37,6 +38,7 @@ val landingPageButtonTexts = listOf(
     Pair("POST A DEADLINE" , Screens.DeadlinePage.route),
     Pair("POST ANNOUNCEMENT" , Screens.AnnouncementPage.route)
 )
+val mode = mutableStateOf(0)
 
 @Composable
 fun SplashPage(innerPadding: PaddingValues , navController: NavController) {
@@ -169,6 +171,8 @@ fun LandingPage(innerPadding: PaddingValues , navController: NavController) {
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp)
                         .clickable {
+                            if (i.first == "POST A DEADLINE") mode.value = 0
+                            else if(i.first == "POST ANNOUNCEMENT") mode.value = 1
                             navController.navigate(i.second)
                         }
                         .border(
