@@ -65,7 +65,7 @@ fun PostPage(
                 modifier = Modifier
                     .size(37.dp)
                     .clickable {
-                        // Handle click (e.g., navigate back)
+                        navController.popBackStack()
                     }
             )
 
@@ -93,7 +93,7 @@ fun PostPage(
             // Subtitle Text
             Text(
                 modifier = Modifier.padding(start = 25.dp),
-                text = "CREATE AN ANNOUNCEMENT",
+                text = if(mode.value == 1) "CREATE AN ANNOUNCEMENT" else "CREATE A DEADLINE",
                 fontFamily = font,
                 color = Color(0xff656565),
                 fontSize = 24.sp,
@@ -104,7 +104,7 @@ fun PostPage(
 
             // Title Input Label
             Text(
-                text = "Title of your Announcement",
+                text = if (mode.value == 1) "Title of your Announcement" else "Title of your Deadline",
                 fontFamily = font,
                 color = Color.Black,
                 fontSize = 20.sp,
@@ -296,16 +296,24 @@ fun PostPage(
                     .height(53.dp)
                     .fillMaxWidth()
             )
+            Spacer(modifier = Modifier.height(20.dp))
             Button(
                 onClick = {},
                 modifier = Modifier
-                    .padding(start = 50.dp),
+                    .padding(start = 100.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xffa37fdb),
                     contentColor = Color.White,
                 ),
                 shape = RoundedCornerShape(12.dp)
-            ) { }
+            ) {
+                Text(
+                    text = "Upload",
+                    fontFamily = font,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
+            }
         }
     }
 }
