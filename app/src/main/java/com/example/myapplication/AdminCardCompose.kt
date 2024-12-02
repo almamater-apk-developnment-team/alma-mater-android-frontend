@@ -33,8 +33,7 @@ import androidx.navigation.NavController
 
 @Composable
 fun AdminCard(navController: NavController) {
-    val bookMark= painterResource(id=R.drawable.bookmark)
-    val calendar=painterResource(id=R.drawable.calendar)
+
     Card(
         shape = RoundedCornerShape(10.dp),
         modifier = Modifier.size(height = 150.dp, width = 380.dp)
@@ -74,12 +73,7 @@ fun AdminCard(navController: NavController) {
                         fontWeight = FontWeight(800),
                         fontFamily = FontFamily(Font(R.font.poppins))
                     )
-                    Image(
-                        painter = bookMark,
-                        contentDescription = "bookmark",
-                        modifier = Modifier.size(30.dp)
-                            .clickable {}
-                    )
+
                 }
             }
             Column(
@@ -94,12 +88,7 @@ fun AdminCard(navController: NavController) {
                     fontFamily = FontFamily(Font(R.font.poppins)),
                     fontWeight = FontWeight(400)
                 )
-                Image(
-                    painter = calendar,
-                    contentDescription = "Calendar",
-                    modifier = Modifier.size(width=85.dp,height=150.dp)
-                        .clickable {}
-                )
+
             }
         }
     }
