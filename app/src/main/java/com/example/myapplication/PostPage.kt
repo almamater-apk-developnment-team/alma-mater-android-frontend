@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,15 +37,21 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostPage() {
+fun PostPage(
+    innerPaddingValues: PaddingValues,
+    navController: NavController
+) {
     val scrollState = rememberScrollState() // Keep track of the scroll position
     val font = FontFamily(Font(R.font.poppins))
 
-    Column(modifier = Modifier.fillMaxSize()){
-        Spacer(modifier = Modifier.height(15.dp))
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(innerPaddingValues)){
+        Spacer(modifier = Modifier.height(10.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()

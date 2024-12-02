@@ -29,12 +29,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @Composable
-fun AdminDashBoard(innerPaddingValues: PaddingValues){
+fun AdminDashBoard(innerPaddingValues: PaddingValues , navController: NavController){
     val scrollState = rememberScrollState()
     Column(modifier=Modifier.fillMaxSize().padding(innerPaddingValues)){
-        TopBar()
+        TopBar(navController)
         Box(modifier=Modifier.fillMaxWidth()
             .height(50.dp),
             contentAlignment = Alignment.Center){
@@ -94,11 +95,11 @@ fun AdminDashBoard(innerPaddingValues: PaddingValues){
             Column(
                 modifier=Modifier.height(800.dp).
                 verticalScroll(scrollState)) {
-                AdminCard()
-                AdminCard()
-                AdminCard()
-                AdminCard()
-                AdminCard()
+                AdminCard(navController)
+                AdminCard(navController)
+                AdminCard(navController)
+                AdminCard(navController)
+                AdminCard(navController)
 
             }
 

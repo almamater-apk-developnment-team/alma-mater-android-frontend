@@ -29,12 +29,17 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 val poppins = FontFamily(Font(R.font.poppins))
-val landingPageButtonTexts = listOf("ADMIN DASHBOARD", "POST A DEADLINE", "POST ANNOUNCEMENT")
+val landingPageButtonTexts = listOf(
+    Pair("ADMIN DASHBOARD", Screens.AdminPage.route),
+    Pair("POST A DEADLINE" , Screens.DeadlinePage.route),
+    Pair("POST ANNOUNCEMENT" , Screens.AnnouncementPage.route)
+)
 
 @Composable
-fun SplashPage(innerPadding: PaddingValues) {
+fun SplashPage(innerPadding: PaddingValues , navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -43,7 +48,7 @@ fun SplashPage(innerPadding: PaddingValues) {
             modifier = Modifier
                 .fillMaxSize()
                 .clickable {
-
+                    navController.navigate(Screens.LandingPage.route)
                 },
             colors = CardDefaults.cardColors(Color(163, 127, 219))
         ) {
@@ -77,7 +82,7 @@ fun SplashPage(innerPadding: PaddingValues) {
 }
 
 @Composable
-fun LandingPage(innerPadding: PaddingValues) {
+fun LandingPage(innerPadding: PaddingValues , navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -113,7 +118,7 @@ fun LandingPage(innerPadding: PaddingValues) {
                     IconButton(
                         modifier = Modifier.padding(end = 10.dp, top = 10.dp),
                         onClick = {
-
+                            navController.navigate(Screens.SplashPage.route)
                         }
                     ) {
                         Image(
@@ -163,6 +168,9 @@ fun LandingPage(innerPadding: PaddingValues) {
                         .height(70.dp)
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp)
+                        .clickable {
+                            navController.navigate(i.second)
+                        }
                         .border(
                             width = 2.dp,
                             color = Color.Companion.Black,
@@ -176,7 +184,7 @@ fun LandingPage(innerPadding: PaddingValues) {
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = i,
+                            text = i.first,
                             fontFamily = poppins,
                             fontSize = 20.sp,
                             color = Color.Companion.Black,
