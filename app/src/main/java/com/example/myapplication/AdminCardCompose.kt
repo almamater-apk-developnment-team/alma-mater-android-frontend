@@ -29,15 +29,19 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @Composable
-fun AdminCard() {
+fun AdminCard(navController: NavController) {
     val bookMark= painterResource(id=R.drawable.bookmark)
     val calendar=painterResource(id=R.drawable.calendar)
     Card(
         shape = RoundedCornerShape(10.dp),
         modifier = Modifier.size(height = 150.dp, width = 380.dp)
-            .shadow(shape = RoundedCornerShape(10.dp), elevation = 5.dp),
+            .shadow(shape = RoundedCornerShape(10.dp), elevation = 5.dp)
+            .clickable {
+                navController.navigate(Screens.InfoPage.route)
+            },
         colors = CardDefaults.cardColors(containerColor = Color(208, 196, 255))
     ) {
         Row(modifier = Modifier.fillMaxSize()) {

@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,6 +32,9 @@ fun FeeLink(){
         modifier= Modifier
             .width(360.dp)
             .height(60.dp)
+            .clickable {
+
+            }
             .shadow(10.dp, RoundedCornerShape(20.dp)),
         shape= RoundedCornerShape(20.dp),
         colors= CardDefaults.cardColors(containerColor = Color(123,44,191))

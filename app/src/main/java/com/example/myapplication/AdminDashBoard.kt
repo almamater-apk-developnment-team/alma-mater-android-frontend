@@ -95,11 +95,11 @@ fun AdminDashBoard(innerPaddingValues: PaddingValues , navController: NavControl
             Column(
                 modifier=Modifier.height(800.dp).
                 verticalScroll(scrollState)) {
-                AdminCard()
-                AdminCard()
-                AdminCard()
-                AdminCard()
-                AdminCard()
+                AdminCard(navController)
+                AdminCard(navController)
+                AdminCard(navController)
+                AdminCard(navController)
+                AdminCard(navController)
 
             }
 

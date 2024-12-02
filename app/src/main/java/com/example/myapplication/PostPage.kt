@@ -39,7 +39,9 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostPage() {
+fun PostPage(
+
+) {
     val scrollState = rememberScrollState() // Keep track of the scroll position
     val font = FontFamily(Font(R.font.poppins))
 

@@ -38,13 +38,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
 
-fun AdminInfo(paddingValues: PaddingValues){
+fun AdminInfo(paddingValues: PaddingValues , navController: NavController){
     val formatter =
         DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.ENGLISH)
     var readMore by remember{
