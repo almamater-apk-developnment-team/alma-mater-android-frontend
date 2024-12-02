@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyApplicationTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                   AdminInfo(innerPadding)
+                   MyApp(innerPadding)
                 }
             }
         }

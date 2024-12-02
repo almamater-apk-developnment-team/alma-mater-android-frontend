@@ -29,9 +29,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @Composable
-fun AdminDashBoard(innerPaddingValues: PaddingValues){
+fun AdminDashBoard(innerPaddingValues: PaddingValues , navController: NavController){
     val scrollState = rememberScrollState()
     Column(modifier=Modifier.fillMaxSize().padding(innerPaddingValues)){
         TopBar()
