@@ -65,7 +65,7 @@ fun PostPage(
                 modifier = Modifier
                     .size(37.dp)
                     .clickable {
-                        // Handle click (e.g., navigate back)
+                        navController.popBackStack()
                     }
             )
 
