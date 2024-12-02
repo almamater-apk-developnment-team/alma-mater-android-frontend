@@ -43,7 +43,7 @@ fun MyApp(innerPaddingValues: PaddingValues) {
 //            AnnouncementPage(innerPaddingValues , navController)
         }
         composable(route = Screens.InfoPage.route) {
-//            InfoPage(innerPaddingValues , navController)
+            AdminInfo(innerPaddingValues , navController)
         }
 
     }
