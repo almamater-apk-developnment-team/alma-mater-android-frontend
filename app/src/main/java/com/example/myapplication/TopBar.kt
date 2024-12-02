@@ -32,9 +32,10 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @Composable
-fun TopBar() {
+fun TopBar(navController: NavController) {
     Column(
         verticalArrangement = Arrangement.Top
     ) {
@@ -50,7 +51,11 @@ fun TopBar() {
                     .height(50.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(
+                    onClick = {
+                        navController.popBackStack()
+                    }
+                ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "User",

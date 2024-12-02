@@ -35,7 +35,7 @@ import androidx.navigation.NavController
 fun AdminDashBoard(innerPaddingValues: PaddingValues , navController: NavController){
     val scrollState = rememberScrollState()
     Column(modifier=Modifier.fillMaxSize().padding(innerPaddingValues)){
-        TopBar()
+        TopBar(navController)
         Box(modifier=Modifier.fillMaxWidth()
             .height(50.dp),
             contentAlignment = Alignment.Center){

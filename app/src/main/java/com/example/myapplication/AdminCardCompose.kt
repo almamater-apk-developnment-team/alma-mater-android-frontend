@@ -33,7 +33,6 @@ import androidx.navigation.NavController
 
 @Composable
 fun AdminCard(navController: NavController) {
-
     Card(
         shape = RoundedCornerShape(10.dp),
         modifier = Modifier.size(height = 150.dp, width = 380.dp)
