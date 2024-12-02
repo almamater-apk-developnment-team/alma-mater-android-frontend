@@ -1,6 +1,8 @@
 package com.example.myapplication
 
 import android.graphics.Color.rgb
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -62,7 +65,7 @@ fun AdminInfo(paddingValues: PaddingValues , navController: NavController){
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(650.dp)
+                .height(750.dp)
                 .verticalScroll(scrollState)
         ) {
             Row(
@@ -122,6 +125,41 @@ fun AdminInfo(paddingValues: PaddingValues , navController: NavController){
                     }
                 }
             }
+            Spacer(modifier=Modifier.height(20.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                        .height(50.dp)
+                        .padding(end=30.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Card(
+                        modifier = Modifier.size(height = 50.dp, width = 110.dp)
+                            .padding()
+                            .shadow(shape = RoundedCornerShape(10.dp), elevation = 2.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(163, 127, 219)),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                        ) {
+                            Text(
+                                text = "Edit",
+                                fontFamily = FontFamily(Font(R.font.poppins)),
+                                color = Color.White,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight(600)
+                            )
+                            Image(
+                                modifier = Modifier.size(height = 35.dp, width = 35.dp)
+                                    .clickable {},
+                                painter = painterResource(R.drawable.edit),
+                                contentDescription = "edit"
+                            )
+                        }
+                    }
+                }
+            Spacer(modifier=Modifier.height(20.dp))
             Row(
                 modifier = Modifier
                     .width(400.dp)
