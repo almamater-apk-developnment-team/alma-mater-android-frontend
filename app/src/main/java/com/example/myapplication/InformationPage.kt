@@ -180,9 +180,6 @@ fun AdminInfo(paddingValues: PaddingValues , navController: NavController){
                 FeeLink()
             }
         }
-        Box(modifier = Modifier.fillMaxWidth().height(100.dp)){
-            BottomBar(innerPadding = paddingValues)
-        }
     }
 }
 
