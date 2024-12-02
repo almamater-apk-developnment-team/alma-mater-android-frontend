@@ -37,7 +37,7 @@ fun MyApp(innerPaddingValues: PaddingValues) {
             AdminDashBoard(innerPaddingValues , navController)
         }
         composable(route = Screens.DeadlinePage.route) {
-//            DeadlinePage(innerPaddingValues , navController)
+            PostPage(innerPaddingValues , navController)
         }
         composable(route = Screens.AnnouncementPage.route) {
 //            AnnouncementPage(innerPaddingValues , navController)
