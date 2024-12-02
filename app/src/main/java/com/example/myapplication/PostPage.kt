@@ -48,7 +48,9 @@ fun PostPage(
     val scrollState = rememberScrollState() // Keep track of the scroll position
     val font = FontFamily(Font(R.font.poppins))
 
-    Column(modifier = Modifier.fillMaxSize().padding(innerPaddingValues)){
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(innerPaddingValues)){
         Spacer(modifier = Modifier.height(10.dp))
         Row(
             modifier = Modifier
