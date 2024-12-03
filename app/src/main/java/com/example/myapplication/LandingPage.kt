@@ -50,7 +50,7 @@ fun SplashPage(innerPadding: PaddingValues , navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .clickable {
-                    navController.navigate(Screens.LandingPage.route)
+                    navController.navigate(Screens.LoginPage.route)
                 },
             colors = CardDefaults.cardColors(Color(163, 127, 219))
         ) {
