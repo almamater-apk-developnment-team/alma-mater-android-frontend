@@ -20,7 +20,7 @@ fun MyApp(innerPaddingValues: PaddingValues) {
         composable(
             route = Screens.SplashPage.route,
             exitTransition = {
-                fadeOut(animationSpec = tween(durationMillis = 500 , easing = EaseOut))
+                fadeOut(animationSpec = tween(durationMillis = 200 , easing = EaseOut))
             }
         ) {
             SplashPage(innerPaddingValues , navController)
@@ -28,7 +28,7 @@ fun MyApp(innerPaddingValues: PaddingValues) {
         composable(
             route = Screens.LoginPage.route,
             enterTransition = {
-                fadeIn(animationSpec = tween(durationMillis = 1500 , easing = EaseIn))
+                fadeIn(animationSpec = tween(durationMillis = 200 , easing = EaseIn))
             },
         ) {
             LoginPage(innerPaddingValues , navController)
