@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 sealed class Screens(val route : String) {
+    object LoginPage : Screens("loginPage")
     object SplashPage : Screens("splashPage")
     object LandingPage : Screens("landingPage")
     object AdminPage : Screens("adminPage")

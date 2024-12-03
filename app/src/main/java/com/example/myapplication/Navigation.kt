@@ -26,10 +26,15 @@ fun MyApp(innerPaddingValues: PaddingValues) {
             SplashPage(innerPaddingValues , navController)
         }
         composable(
-            route = Screens.LandingPage.route,
+            route = Screens.LoginPage.route,
             enterTransition = {
                 fadeIn(animationSpec = tween(durationMillis = 1500 , easing = EaseIn))
             },
+        ) {
+            LoginPage(innerPaddingValues , navController)
+        }
+        composable(
+            route = Screens.LandingPage.route,
         ) {
             LandingPage(innerPaddingValues , navController)
         }
