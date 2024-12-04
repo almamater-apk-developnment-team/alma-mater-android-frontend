@@ -48,18 +48,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
 val font = FontFamily(Font(R.font.poppins))
-
+var Uri = mutableStateOf<Uri?>(null)
+var ContentResolver1 = mutableStateOf<ContentResolver?>(null)
 @OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun PostPage(
     innerPaddingValues: PaddingValues,
     navController: NavController
 ) {
     val scrollState = rememberScrollState() // Keep track of the scroll position
-
+    val viewModel: FileUploadViewModel = viewModel()
+    val context=LocalContext.current
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(innerPaddingValues)){
@@ -285,16 +289,28 @@ fun PostPage(
                     .fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(20.dp))
-            Button(
-                onClick = {},
-                modifier = Modifier
-                    .padding(start = 100.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xffa37fdb),
-                    contentColor = Color.White,
-                ),
-                shape = RoundedCornerShape(12.dp)
-            ) {
+                Button(
+                    onClick = {
+                        var uri = Uri.value
+                        var contentResolver=ContentResolver1.value
+                        viewModel.uploadFile(uri, contentResolver)
+                        if (viewModel.uploadStatus.value == "success") {
+                            Toast.makeText(context, "File Uploaded Successfully", Toast.LENGTH_SHORT).show()
+                            navController.popBackStack()
+                        } else if (viewModel.uploadStatus.value == "failure") {
+                            Toast.makeText(context, "File Upload Failed", Toast.LENGTH_SHORT).show()
+                            navController.popBackStack()
+                        }
+
+                    },
+                    modifier = Modifier
+                        .padding(start = 100.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xffa37fdb),
+                        contentColor = Color.White,
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
                 Text(
                     text = "Upload",
                     fontFamily = font,
@@ -310,6 +326,7 @@ val theFileName = mutableStateOf("Attach circular")
 val fileUploadMode = mutableStateOf(0)
 @Composable
 fun CustomFileUploadButton(onFileSelected: (FileData?) -> Unit) {
+
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
@@ -317,11 +334,14 @@ fun CustomFileUploadButton(onFileSelected: (FileData?) -> Unit) {
         if (uri != null) {
             val contentResolver = context.contentResolver
             val mimeType = contentResolver.getType(uri)
+            Uri.value = uri
+            ContentResolver1.value = contentResolver
             fileUploadMode.value = 1
 
             if (mimeType in listOf("image/png", "image/jpeg", "image/jpg", "application/pdf")) {
                 val fileName = getFileName(contentResolver, uri)
                 val fileContent = readFileContent(contentResolver, uri)
+
                 onFileSelected(
                     FileData(
                         name = fileName,
@@ -420,4 +440,3 @@ fun readFileContent(contentResolver: ContentResolver, uri: Uri): ByteArray {
         inputStream.readBytes()
     } ?: ByteArray(0)
 }
-
