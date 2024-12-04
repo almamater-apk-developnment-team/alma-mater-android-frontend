@@ -2,14 +2,15 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.example.myapplication"
+    namespace = "com.example.journalia_admin_cms"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.myapplication"
+        applicationId = "com.example.journalia_admin_cms"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -72,5 +73,9 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.documentfile:documentfile:1.0.1")
+
+    //firebase BoM
+    implementation("com.google.firebase:firebase-bom:32.1.0")
+
 
 }

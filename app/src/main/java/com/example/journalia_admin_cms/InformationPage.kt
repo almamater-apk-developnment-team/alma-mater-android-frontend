@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.journalia_admin_cms
 
 import android.graphics.Color.rgb
 import androidx.compose.foundation.Image
@@ -33,7 +33,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font

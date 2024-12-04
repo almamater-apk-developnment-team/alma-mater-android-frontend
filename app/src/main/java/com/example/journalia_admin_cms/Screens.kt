@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.journalia_admin_cms
 
 sealed class Screens(val route : String) {
     object LoginPage : Screens("loginPage")
