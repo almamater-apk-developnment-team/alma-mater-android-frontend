@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.journalia_admin_cms
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

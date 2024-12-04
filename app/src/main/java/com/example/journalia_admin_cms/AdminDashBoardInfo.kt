@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.journalia_admin_cms
 
 data class adminDashBoardInfo(
     val info:String="Hostel Fee Payment",

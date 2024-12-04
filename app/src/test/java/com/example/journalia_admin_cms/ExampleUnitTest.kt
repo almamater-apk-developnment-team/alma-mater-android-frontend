@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.journalia_admin_cms
 
 import org.junit.Test
 
