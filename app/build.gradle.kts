@@ -77,5 +77,8 @@ dependencies {
     //firebase BoM
     implementation("com.google.firebase:firebase-bom:32.1.0")
 
-
+    //storage dependency
+    implementation(platform(libs.firebase.bom)) // Use Firebase BOM
+    implementation(libs.firebase.firestore)    // Add Firestore
+    implementation(libs.firebase.storage)
 }
