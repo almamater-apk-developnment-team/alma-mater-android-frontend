@@ -1,5 +1,11 @@
 package com.example.myapplication
 
+import android.content.ContentResolver
+import android.net.Uri
+import android.provider.OpenableColumns
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,6 +26,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,13 +40,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.time.delay
+
+val font = FontFamily(Font(R.font.poppins))
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,7 +61,6 @@ fun PostPage(
     navController: NavController
 ) {
     val scrollState = rememberScrollState() // Keep track of the scroll position
-    val font = FontFamily(Font(R.font.poppins))
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -164,40 +178,16 @@ fun PostPage(
             Box(
                 modifier = Modifier
             ) {
-                Button(
-                    onClick = {},
-                    modifier = Modifier
-                        .height(57.dp)
-                        .width(360.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        contentColor = Color.White,
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = 15.dp,
-                        pressedElevation = 10.dp
-                    )
-                ) {
+                CustomFileUploadButton { fileData ->
+                    if (fileData != null) {
+                        theFileName.value = fileData.name
+                        println("MIME Type: ${fileData.mimeType}")
+                        println("File Content Size: ${fileData.content.size} bytes")
+                    } else {
+                        println("No file selected")
+                    }
                 }
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .padding(start = 30.dp),
-                    text = "Attach Circular",
-                    fontFamily = font,
-                    fontSize = 20.sp,
-                    color = Color.Black,
-                    fontWeight = FontWeight.ExtraBold
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.upload),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(30.dp)
-                        .align(Alignment.CenterEnd)
-                        .offset(x = (-30).dp)
-                )
+
             }
 
 
@@ -318,4 +308,118 @@ fun PostPage(
     }
 }
 
+val theFileName = mutableStateOf("Attach circular")
+val fileUploadMode = mutableStateOf(0)
+@Composable
+fun CustomFileUploadButton(onFileSelected: (FileData?) -> Unit) {
+    val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            val contentResolver = context.contentResolver
+            val mimeType = contentResolver.getType(uri)
+            fileUploadMode.value = 1
+
+            if (mimeType in listOf("image/png", "image/jpeg", "image/jpg", "application/pdf")) {
+                val fileName = getFileName(contentResolver, uri)
+                val fileContent = readFileContent(contentResolver, uri)
+                onFileSelected(
+                    FileData(
+                        name = fileName,
+                        mimeType = mimeType ?: "application/octet-stream",
+                        content = fileContent
+                    )
+                )
+            } else {
+                Toast.makeText(context, "Invalid file type selected", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            onFileSelected(null)
+        }
+    }
+
+    Box(
+        modifier = Modifier
+    ) {
+        Button(
+            onClick = {
+                if(fileUploadMode.value == 0) {
+                    launcher.launch(
+                        arrayOf(
+                            "image/png",
+                            "image/jpeg",
+                            "image/jpg",
+                            "application/pdf"
+                        )
+                    )
+                }
+                else fileUploadMode.value = 0; theFileName.value = "Attach circular"
+            },
+            modifier = Modifier
+                .height(57.dp)
+                .width(360.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.White,
+                contentColor = Color.White,
+            ),
+            shape = RoundedCornerShape(12.dp),
+            elevation = ButtonDefaults.buttonElevation(
+                defaultElevation = 15.dp,
+                pressedElevation = 10.dp
+            )
+        ) {}
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(start = 30.dp)
+                .fillMaxHeight()
+                .fillMaxWidth(0.7f)
+        ){
+            Text(
+                modifier = Modifier,
+                text = theFileName.value,
+                fontFamily = font,
+                fontSize = 20.sp,
+                color = Color.Black,
+                fontWeight = FontWeight.ExtraBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        Image(
+            painter = if(fileUploadMode.value == 0) painterResource(id = R.drawable.upload) else rememberVectorPainter(Icons.Default.Clear),
+            contentDescription = null,
+            modifier = Modifier
+                .size(30.dp)
+                .align(Alignment.CenterEnd)
+                .offset(x = (-30).dp)
+        )
+    }
+}
+
+data class FileData(
+    val name: String,
+    val mimeType: String,
+    val content: ByteArray
+)
+
+fun getFileName(contentResolver: ContentResolver, uri: Uri): String {
+    var fileName = "unknown_file"
+    val cursor = contentResolver.query(uri, null, null, null, null)
+    cursor?.use {
+        val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+        if (nameIndex >= 0 && it.moveToFirst()) {
+            fileName = it.getString(nameIndex)
+        }
+    }
+    return fileName
+}
+
+fun readFileContent(contentResolver: ContentResolver, uri: Uri): ByteArray {
+    return contentResolver.openInputStream(uri)?.use { inputStream ->
+        inputStream.readBytes()
+    } ?: ByteArray(0)
+}
 

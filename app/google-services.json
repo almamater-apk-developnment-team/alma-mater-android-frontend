@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "235730696490",
+    "project_id": "journalia-admin-cms",
+    "storage_bucket": "journalia-admin-cms.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:235730696490:android:d31fe89d27a9c3402c0653",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBzTz6TVZNoxLVxQYBdzUVpKJDYUc70xo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
