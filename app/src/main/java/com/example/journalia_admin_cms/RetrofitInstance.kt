@@ -17,6 +17,9 @@ interface fileUpload{
     @Multipart
     @POST("/upload/")
     suspend fun uploadFile(@Part file: MultipartBody.Part): Response<UploadResponse>
+    @POST("/details/")
+    suspend fun detailsUpload(@Body details:adminDashBoardInfo)
+
 }
 
 interface Login {
