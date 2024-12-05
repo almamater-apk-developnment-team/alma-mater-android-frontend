@@ -37,7 +37,7 @@ class FileUploadViewModel : ViewModel() {
                 val response = Client.uploadFile(multipartBody).body()
 
                 if (response != null) {
-                    Log.d("FileUpload", "Upload successful: ${response.toString()}")
+                    Log.d("FileUpload", "Upload successful: $response")
                 } else {
                     Log.e("FileUpload", "Upload failed: Response body is null")
                 }
@@ -48,6 +48,17 @@ class FileUploadViewModel : ViewModel() {
             } catch (e: Exception) {
                 uploadStatus.value = "failure"
                 Log.e("FileUpload", "Error uploading file", e)
+            }
+        }
+    }
+    fun uploadDetailsDeadline(details: adminDashBoardInfo){
+        viewModelScope.launch{
+            try{
+                val response=Client.detailsUpload(details)
+                Log.d("FileUploadDetails", "Upload successful: $response")
+            }
+            catch (e:Exception){
+                Log.e("FileUploadDetails", "Error uploading file", e)
             }
         }
     }

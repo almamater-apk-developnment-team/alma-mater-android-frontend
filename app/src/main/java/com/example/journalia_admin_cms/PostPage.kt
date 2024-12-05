@@ -294,6 +294,15 @@ fun PostPage(
                         var uri = Uri.value
                         var contentResolver=ContentResolver1.value
                         viewModel.uploadFile(uri, contentResolver)
+                        viewModel.uploadDetailsDeadline(
+                            adminDashBoardInfo(
+                                1,
+                               "adminOffice",
+                                title.value,
+                                description.value,
+                                deadline.value,
+                            )
+                        )
                         if (viewModel.uploadStatus.value == "success") {
                             Toast.makeText(context, "File Uploaded Successfully", Toast.LENGTH_SHORT).show()
                             navController.popBackStack()
