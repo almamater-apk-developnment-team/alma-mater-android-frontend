@@ -7,9 +7,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 
 
 @Composable
@@ -30,7 +32,16 @@ fun MyApp(innerPaddingValues: PaddingValues) {
                 fadeIn(animationSpec = tween(durationMillis = 200 , easing = EaseIn))
             },
         ) {
-            LoginPage(innerPaddingValues)
+            LoginPage(innerPaddingValues , navController)
+        }
+        composable(
+            route = Screens.SecretPage.route,
+            arguments = listOf(
+                navArgument("email") {type = NavType.StringType}
+            )
+        ) { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email") ?: ""
+            SecretChecking(email , innerPaddingValues , navController)
         }
         composable(
             route = Screens.LandingPage.route,
