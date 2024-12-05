@@ -10,10 +10,10 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 
 private val retrofit=Retrofit.Builder().baseUrl("http://172.20.10.2:8000/").addConverterFactory(GsonConverterFactory.create()).build()
-val Client= retrofit.create(fileUpload::class.java)
+val FileUploadClient= retrofit.create(FileUpload::class.java)
 val LoginClient = retrofit.create(Login::class.java)
 val SecretClient = retrofit.create(Secret::class.java)
-interface fileUpload{
+interface FileUpload{
     @Multipart
     @POST("/upload/")
     suspend fun uploadFile(@Part file: MultipartBody.Part): Response<UploadResponse>
