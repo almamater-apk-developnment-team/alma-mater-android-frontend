@@ -54,7 +54,7 @@ class FileUploadViewModel : ViewModel() {
     fun uploadDetailsDeadline(details: adminDashBoardInfo){
         viewModelScope.launch{
             try{
-                val response=Client.detailsUpload(details)
+                val response=FileUploadClient.detailsUpload(details)
                 Log.d("FileUploadDetails", "Upload successful: $response")
             }
             catch (e:Exception){
