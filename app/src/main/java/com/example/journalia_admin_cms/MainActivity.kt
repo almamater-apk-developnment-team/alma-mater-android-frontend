@@ -16,8 +16,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyApplicationTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//                   MyApp(innerPadding)
-                     LoginPage(innerPadding)
+                   MyApp(innerPadding)
                 }
             }
         }

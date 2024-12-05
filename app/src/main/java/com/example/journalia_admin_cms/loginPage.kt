@@ -1,17 +1,16 @@
 package com.example.journalia_admin_cms
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -25,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -37,11 +37,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
-fun LoginPage(innerPaddingValues: PaddingValues){
+fun LoginPage(
+    innerPaddingValues: PaddingValues ,
+    navController: NavController
+){
+
+    val coroutineScope = rememberCoroutineScope()
+
     var emailId by remember{mutableStateOf("")}
     var passWord by remember{mutableStateOf("")}
+
     Column(modifier= Modifier
         .fillMaxSize()
         .background(Color(163, 127, 219)),
@@ -81,7 +90,7 @@ fun LoginPage(innerPaddingValues: PaddingValues){
             modifier = Modifier
                 .width(340.dp)
                 .border(
-                    width =2.dp,
+                    width = 2.dp,
                     color = Color.Black,
                     shape = RoundedCornerShape(12.dp)
                 ),
@@ -120,9 +129,21 @@ fun LoginPage(innerPaddingValues: PaddingValues){
         Button(
             modifier=Modifier.size(height=57.dp, width=140.dp),
             onClick = {
-//            navController.navigate(Screens.LandingPage.route) {
-//                popUpTo(Screens.LoginPage.route) { inclusive = true }
-//            }
+                coroutineScope.launch(Dispatchers.Main) {
+                    try {
+                        val response = LoginClient.login(LoginBody(emailId, passWord))
+                        if (response.isSuccessful) {
+                            navController.navigate(Screens.SecretPage.createRoute(emailId))
+                        } else {
+                            //handle displaying that the process failed
+                            Log.d("message", response.message)
+                            navController.navigate(Screens.LoginPage.route)
+                        }
+                    }
+                    catch (e: Exception) {
+                        Log.d("message", e.message.toString())
+                    }
+                }
             },
             shape= RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color.Black.copy(alpha = 0.8f))
@@ -139,8 +160,15 @@ fun LoginPage(innerPaddingValues: PaddingValues){
 }
 
 @Composable
-fun SecretChecking(innerPaddingValues: PaddingValues) {
+fun SecretChecking(
+    email: String,
+    innerPaddingValues: PaddingValues,
+    navController: NavController
+) {
+
+    val coroutineScope = rememberCoroutineScope()
     var secret by remember{mutableStateOf("")}
+
     Column(modifier= Modifier
         .fillMaxSize()
         .background(Color(163, 127, 219)),
@@ -161,7 +189,9 @@ fun SecretChecking(innerPaddingValues: PaddingValues) {
         )
         Spacer(modifier = Modifier.padding(top = 100.dp))
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 30.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 30.dp)
         ) {
             Text(
                 text = "Enter the Verification code sent to your Email ID",
@@ -180,7 +210,7 @@ fun SecretChecking(innerPaddingValues: PaddingValues) {
             modifier = Modifier
                 .width(340.dp)
                 .border(
-                    width =2.dp,
+                    width = 2.dp,
                     color = Color.Black,
                     shape = RoundedCornerShape(12.dp)
                 ),
@@ -189,7 +219,9 @@ fun SecretChecking(innerPaddingValues: PaddingValues) {
         )
         Spacer(modifier = Modifier.padding(top = 30.dp))
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 30.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 30.dp),
             horizontalArrangement = Arrangement.End
         ) {
             Text(
@@ -213,9 +245,22 @@ fun SecretChecking(innerPaddingValues: PaddingValues) {
         Button(
             modifier=Modifier.size(height=57.dp, width=240.dp),
             onClick = {
-//            navController.navigate(Screens.LandingPage.route) {
-//                popUpTo(Screens.LoginPage.route) { inclusive = true }
-//            }
+                coroutineScope.launch(Dispatchers.Main) {
+                    try {
+                        val response = SecretClient.secret(SecretBody(email, secret))
+                        if (response.token == null) {
+                            Log.d("message", response.message)
+                            navController.navigate(Screens.LoginPage.route)
+                        } else {
+                            //handle displaying that the process failed
+                            Log.d("token",response.token)
+                            navController.navigate(Screens.AdminPage.route)
+                        }
+                    }
+                    catch (e: Exception) {
+                        Log.d("message", e.message.toString())
+                    }
+                }
             },
             shape= RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(224, 170, 255))
