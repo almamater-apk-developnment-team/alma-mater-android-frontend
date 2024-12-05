@@ -34,7 +34,7 @@ class FileUploadViewModel : ViewModel() {
                 val requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), tempFile)
                 val multipartBody = MultipartBody.Part.createFormData("file", tempFile.name, requestBody)
 
-                val response = Client.uploadFile(multipartBody).body()
+                val response = FileUploadClient.uploadFile(multipartBody).body()
 
                 if (response != null) {
                     Log.d("FileUpload", "Upload successful: $response")

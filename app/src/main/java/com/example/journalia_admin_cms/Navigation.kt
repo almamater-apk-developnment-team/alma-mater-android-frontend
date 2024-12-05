@@ -30,7 +30,7 @@ fun MyApp(innerPaddingValues: PaddingValues) {
                 fadeIn(animationSpec = tween(durationMillis = 200 , easing = EaseIn))
             },
         ) {
-            LoginPage(innerPaddingValues , navController)
+            LoginPage(innerPaddingValues)
         }
         composable(
             route = Screens.LandingPage.route,
