@@ -140,11 +140,16 @@ fun LoginPage(
             onClick = {
                 coroutineScope.launch(Dispatchers.Main) {
                     try {
+                        isLoading = true
                         val response = LoginClient.login(LoginBody(emailId, passWord))
                         if (response.isSuccessful) {
+                            isLoading = false
+                            emailId = ""
+                            passWord = ""
                             navController.navigate(Screens.SecretPage.createRoute(emailId))
                         } else {
                             //handle displaying that the process failed
+                            isLoading = false
                             Log.d("message", response.message)
                             emailId = ""
                             passWord = ""
@@ -152,6 +157,7 @@ fun LoginPage(
                         }
                     }
                     catch (e: Exception) {
+                        isLoading = false
                         emailId = ""
                         passWord = ""
                         Log.d("message", e.message.toString())
@@ -268,19 +274,23 @@ fun SecretChecking(
             onClick = {
                 coroutineScope.launch(Dispatchers.Main) {
                     try {
+                        isLoading = true
                         val response = SecretClient.secret(SecretBody(email, secret))
                         if (response.token == null) {
+                            isLoading = false
                             secret = ""
                             Log.d("message", response.message)
                             navController.navigate(Screens.LoginPage.route)
                         } else {
                             //handle displaying that the process
+                            isLoading = false
                             secret = ""
                             Log.d("token",response.token)
                             navController.navigate(Screens.LandingPage.route)
                         }
                     }
                     catch (e: Exception) {
+                        isLoading = false
                         secret = ""
                         Log.d("message", e.message.toString())
                     }
