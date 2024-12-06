@@ -57,7 +57,7 @@ fun AdminInfo(paddingValues: PaddingValues , navController: NavController){
         mutableStateOf("Read More")
     }
     val scrollState=rememberScrollState()
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
         Box(modifier = Modifier.fillMaxWidth().height(190.dp).padding(top=30.dp)) {
             TopBar(navController)
         }

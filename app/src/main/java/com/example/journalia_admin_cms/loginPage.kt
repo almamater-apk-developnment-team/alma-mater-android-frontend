@@ -53,6 +53,7 @@ fun LoginPage(
 
     Column(modifier= Modifier
         .fillMaxSize()
+        .padding(innerPaddingValues)
         .background(Color(163, 127, 219)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -171,6 +172,7 @@ fun SecretChecking(
 
     Column(modifier= Modifier
         .fillMaxSize()
+        .padding(innerPaddingValues)
         .background(Color(163, 127, 219)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
