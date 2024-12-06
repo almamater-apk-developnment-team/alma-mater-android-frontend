@@ -37,7 +37,6 @@ fun TopBar(navController: NavController) {
     Column(
         verticalArrangement = Arrangement.Top
     ) {
-        Spacer(modifier = Modifier.padding(top = 30.dp))
         Column(
             modifier = Modifier
                 .fillMaxWidth()
