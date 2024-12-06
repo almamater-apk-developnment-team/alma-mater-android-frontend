@@ -17,7 +17,7 @@ val okHttpClient = OkHttpClient.Builder()
     .build()
 
 private val retrofit=Retrofit.Builder()
-    .baseUrl("https://brucewaynegotham007.pythonanywhere.com")
+    .baseUrl("https://journaliaadmin.vercel.app/")
     .addConverterFactory(GsonConverterFactory.create())
     .build()
 val FileUploadClient= retrofit.create(FileUpload::class.java)

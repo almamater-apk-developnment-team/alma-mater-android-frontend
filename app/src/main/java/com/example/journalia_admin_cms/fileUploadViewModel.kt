@@ -12,10 +12,15 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
 import java.io.InputStream
+import androidx.compose.runtime.State
 
 class FileUploadViewModel : ViewModel() {
     val uploadStatus = mutableStateOf("")
     val cloudinaryUrl = mutableStateOf("")
+    private val _isLoaded = mutableStateOf(false)
+    val isLoaded: State<Boolean>  = _isLoaded
+
+
     fun uploadFile(fileUri: Uri?, contentResolver: ContentResolver?) {
         viewModelScope.launch {
             try {
@@ -46,7 +51,7 @@ class FileUploadViewModel : ViewModel() {
 
                 uploadStatus.value = "success"
                 tempFile.delete()
-
+                _isLoaded.value=true
             } catch (e: Exception) {
                 uploadStatus.value = "failure"
                 Log.e("FileUpload", "Error uploading file", e)

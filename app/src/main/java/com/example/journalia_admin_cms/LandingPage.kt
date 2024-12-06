@@ -45,6 +45,7 @@ fun SplashPage(innerPadding: PaddingValues , navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .padding(innerPadding)
     ) {
         Card(
             modifier = Modifier

@@ -30,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -65,6 +66,7 @@ fun PostPage(
     val scrollState = rememberScrollState() // Keep track of the scroll position
     val viewModel: FileUploadViewModel = viewModel()
     val context=LocalContext.current
+    var isLoaded=viewModel.isLoaded.value
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(innerPaddingValues)){
@@ -289,27 +291,35 @@ fun PostPage(
                     .height(53.dp)
                     .fillMaxWidth()
             )
+            Box(contentAlignment = Alignment.Center) {
+                if (isLoaded) {
+                    CircularProgressIndicator()
+                    Spacer(modifier = Modifier.padding(top = 30.dp))
+                }
+            }
             Spacer(modifier = Modifier.height(20.dp))
                 Button(
                     onClick = {
+                        isLoaded=true
                         var uri = Uri.value
                         var contentResolver=ContentResolver1.value
-                        viewModel.uploadFile(uri, contentResolver)
-                        if (viewModel.uploadStatus.value == "success") {
-                            viewModel.uploadDetailsDeadline(
-                                adminDashBoardInfo(
-                                    id=1,
-                                    author="adminOffice",
-                                    title =title.value,
-                                    description= description.value,
-                                    deadline=deadline.value,
-                                    file_url =getFileName(contentResolver, uri)
-                                )
+                        viewModel.uploadDetailsDeadline(
+                            adminDashBoardInfo(
+                                id=1,
+                                author="adminOffice",
+                                title =title.value,
+                                description= description.value,
+                                deadline=deadline.value,
+                                file_url =getFileName(contentResolver, uri)
                             )
-                            Toast.makeText(context, "File Uploaded Successfully", Toast.LENGTH_SHORT).show()
+                        )
+                        viewModel.uploadFile(uri, contentResolver)
+                        isLoaded=false
+                        Toast.makeText(context, "File Uploaded Successfully", Toast.LENGTH_LONG).show()
+                        if (viewModel.uploadStatus.value == "success") {
                             navController.popBackStack()
                         } else if (viewModel.uploadStatus.value == "failure") {
-                            Toast.makeText(context, "File Upload Failed", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "File Upload Failed", Toast.LENGTH_LONG).show()
                             navController.popBackStack()
                         }
 
