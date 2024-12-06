@@ -17,7 +17,7 @@ val okHttpClient = OkHttpClient.Builder()
     .build()
 
 private val retrofit=Retrofit.Builder()
-    .baseUrl("http://127.0.0.1:8000")
+    .baseUrl("https://brucewaynegotham007.pythonanywhere.com")
     .client(okHttpClient)
     .addConverterFactory(GsonConverterFactory.create())
     .build()
