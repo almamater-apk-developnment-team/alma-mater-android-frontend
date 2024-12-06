@@ -3,6 +3,7 @@ package com.example.journalia_admin_cms
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.OpenableColumns
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -294,16 +295,17 @@ fun PostPage(
                         var uri = Uri.value
                         var contentResolver=ContentResolver1.value
                         viewModel.uploadFile(uri, contentResolver)
-                        viewModel.uploadDetailsDeadline(
-                            adminDashBoardInfo(
-                                1,
-                               "adminOffice",
-                                title.value,
-                                description.value,
-                                deadline.value,
-                            )
-                        )
                         if (viewModel.uploadStatus.value == "success") {
+                            viewModel.uploadDetailsDeadline(
+                                adminDashBoardInfo(
+                                    id=1,
+                                    author="adminOffice",
+                                    title =title.value,
+                                    description= description.value,
+                                    deadline=deadline.value,
+                                    file_url =getFileName(contentResolver, uri)
+                                )
+                            )
                             Toast.makeText(context, "File Uploaded Successfully", Toast.LENGTH_SHORT).show()
                             navController.popBackStack()
                         } else if (viewModel.uploadStatus.value == "failure") {
@@ -350,7 +352,7 @@ fun CustomFileUploadButton(onFileSelected: (FileData?) -> Unit) {
             if (mimeType in listOf("image/png", "image/jpeg", "image/jpg", "application/pdf")) {
                 val fileName = getFileName(contentResolver, uri)
                 val fileContent = readFileContent(contentResolver, uri)
-
+                Log.d("FileName", "File Name: $fileName")
                 onFileSelected(
                     FileData(
                         name = fileName,
@@ -432,9 +434,9 @@ data class FileData(
     val content: ByteArray
 )
 
-fun getFileName(contentResolver: ContentResolver, uri: Uri): String {
+fun getFileName(contentResolver: ContentResolver?, uri: Uri?): String {
     var fileName = "unknown_file"
-    val cursor = contentResolver.query(uri, null, null, null, null)
+    val cursor = uri?.let { contentResolver?.query(it, null, null, null, null) }
     cursor?.use {
         val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
         if (nameIndex >= 0 && it.moveToFirst()) {

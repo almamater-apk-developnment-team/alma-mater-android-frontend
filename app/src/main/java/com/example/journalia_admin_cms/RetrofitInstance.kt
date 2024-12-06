@@ -17,8 +17,7 @@ val okHttpClient = OkHttpClient.Builder()
     .build()
 
 private val retrofit=Retrofit.Builder()
-    .baseUrl("https://brucewaynegotham007.pythonanywhere.com")
-    .client(okHttpClient)
+    .baseUrl("http://127.0.0.1:8000/")
     .addConverterFactory(GsonConverterFactory.create())
     .build()
 val FileUploadClient= retrofit.create(FileUpload::class.java)
@@ -29,7 +28,7 @@ interface FileUpload{
     @Multipart
     @POST("/upload/")
     suspend fun uploadFile(@Part file: MultipartBody.Part): Response<UploadResponse>
-    @POST("/details/")
+    @POST("/detailsUpload/")
     suspend fun detailsUpload(@Body details:adminDashBoardInfo)
 
 }

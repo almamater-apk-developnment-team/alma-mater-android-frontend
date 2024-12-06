@@ -15,6 +15,7 @@ import java.io.InputStream
 
 class FileUploadViewModel : ViewModel() {
     val uploadStatus = mutableStateOf("")
+    val cloudinaryUrl = mutableStateOf("")
     fun uploadFile(fileUri: Uri?, contentResolver: ContentResolver?) {
         viewModelScope.launch {
             try {
@@ -37,6 +38,7 @@ class FileUploadViewModel : ViewModel() {
                 val response = FileUploadClient.uploadFile(multipartBody).body()
 
                 if (response != null) {
+                     cloudinaryUrl.value=response.url
                     Log.d("FileUpload", "Upload successful: $response")
                 } else {
                     Log.e("FileUpload", "Upload failed: Response body is null")
