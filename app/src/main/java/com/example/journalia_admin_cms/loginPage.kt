@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,6 +51,7 @@ fun LoginPage(
 
     var emailId by remember{mutableStateOf("")}
     var passWord by remember{mutableStateOf("")}
+    var isLoading by remember{mutableStateOf(false)}
 
     Column(modifier= Modifier
         .fillMaxSize()
@@ -127,6 +129,12 @@ fun LoginPage(
             singleLine = false
         )
         Spacer(modifier = Modifier.padding(top = 120.dp))
+
+        if(isLoading) {
+            CircularProgressIndicator()
+            Spacer(modifier = Modifier.padding(top = 30.dp))
+        }
+
         Button(
             modifier=Modifier.size(height=57.dp, width=140.dp),
             onClick = {
@@ -138,10 +146,14 @@ fun LoginPage(
                         } else {
                             //handle displaying that the process failed
                             Log.d("message", response.message)
+                            emailId = ""
+                            passWord = ""
                             navController.navigate(Screens.LoginPage.route)
                         }
                     }
                     catch (e: Exception) {
+                        emailId = ""
+                        passWord = ""
                         Log.d("message", e.message.toString())
                     }
                 }
@@ -169,6 +181,7 @@ fun SecretChecking(
 
     val coroutineScope = rememberCoroutineScope()
     var secret by remember{mutableStateOf("")}
+    var isLoading by remember{mutableStateOf(false)}
 
     Column(modifier= Modifier
         .fillMaxSize()
@@ -244,6 +257,12 @@ fun SecretChecking(
             )
         }
         Spacer(modifier = Modifier.padding(top = 120.dp))
+
+        if(isLoading) {
+            CircularProgressIndicator()
+            Spacer(modifier = Modifier.padding(top = 30.dp))
+        }
+
         Button(
             modifier=Modifier.size(height=57.dp, width=240.dp),
             onClick = {
@@ -251,15 +270,18 @@ fun SecretChecking(
                     try {
                         val response = SecretClient.secret(SecretBody(email, secret))
                         if (response.token == null) {
+                            secret = ""
                             Log.d("message", response.message)
                             navController.navigate(Screens.LoginPage.route)
                         } else {
-                            //handle displaying that the process failed
+                            //handle displaying that the process
+                            secret = ""
                             Log.d("token",response.token)
-                            navController.navigate(Screens.AdminPage.route)
+                            navController.navigate(Screens.LandingPage.route)
                         }
                     }
                     catch (e: Exception) {
+                        secret = ""
                         Log.d("message", e.message.toString())
                     }
                 }
