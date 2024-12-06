@@ -144,21 +144,18 @@ fun LoginPage(
                         val response = LoginClient.login(LoginBody(emailId, passWord))
                         if (response.isSuccessful) {
                             isLoading = false
-                            emailId = ""
                             passWord = ""
                             navController.navigate(Screens.SecretPage.createRoute(emailId))
                         } else {
                             //handle displaying that the process failed
                             isLoading = false
                             Log.d("message", response.message)
-                            emailId = ""
                             passWord = ""
                             navController.navigate(Screens.LoginPage.route)
                         }
                     }
                     catch (e: Exception) {
                         isLoading = false
-                        emailId = ""
                         passWord = ""
                         Log.d("message", e.message.toString())
                     }
