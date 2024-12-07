@@ -36,8 +36,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,6 +54,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 val font = FontFamily(Font(R.font.poppins))
 var Uri = mutableStateOf<Uri?>(null)
@@ -67,6 +72,8 @@ fun PostPage(
     val viewModel: FileUploadViewModel = viewModel()
     val context=LocalContext.current
     var isLoaded=viewModel.isLoaded.value
+    val uploadVal=viewModel.uploadStatus.value
+    val coroutineScope = rememberCoroutineScope()
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(innerPaddingValues)){
@@ -291,38 +298,48 @@ fun PostPage(
                     .height(53.dp)
                     .fillMaxWidth()
             )
-            Box(contentAlignment = Alignment.Center) {
-                if (isLoaded) {
-                    CircularProgressIndicator()
-                    Spacer(modifier = Modifier.padding(top = 30.dp))
+            LaunchedEffect(viewModel.uploadStatus.value) {
+                when (uploadVal) {
+                    "success" -> {
+                        isLoaded = false
+                        Toast.makeText(context, "File Uploaded Successfully", Toast.LENGTH_SHORT).show()
+                        navController.popBackStack()
+                    }
+                    "failure" -> {
+                        isLoaded = false
+                        Toast.makeText(context, "File Upload Failed", Toast.LENGTH_SHORT).show()
+                        navController.popBackStack()
+                    }
                 }
+            }
+            Box(modifier=Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center) {
+                if(isLoaded)
+                        CircularProgressIndicator()
             }
             Spacer(modifier = Modifier.height(20.dp))
                 Button(
                     onClick = {
-                        isLoaded=true
-                        var uri = Uri.value
-                        var contentResolver=ContentResolver1.value
-                        viewModel.uploadDetailsDeadline(
-                            adminDashBoardInfo(
-                                id=1,
-                                author="adminOffice",
-                                title =title.value,
-                                description= description.value,
-                                deadline=deadline.value,
-                                file_url =getFileName(contentResolver, uri)
-                            )
-                        )
-                        viewModel.uploadFile(uri, contentResolver)
-                        isLoaded=false
-                        Toast.makeText(context, "File Uploaded Successfully", Toast.LENGTH_LONG).show()
-                        if (viewModel.uploadStatus.value == "success") {
-                            navController.popBackStack()
-                        } else if (viewModel.uploadStatus.value == "failure") {
-                            Toast.makeText(context, "File Upload Failed", Toast.LENGTH_LONG).show()
-                            navController.popBackStack()
-                        }
+                        isLoaded = true
+                        val uri = Uri.value
+                        val contentResolver = ContentResolver1.value
 
+                        // Upload details and file
+                        coroutineScope.launch(Dispatchers.IO) {
+                            viewModel.uploadDetailsDeadline(
+                                adminDashBoardInfo(
+                                    id = 1,
+                                    author = "adminOffice",
+                                    title = title.value,
+                                    description = description.value,
+                                    deadline = deadline.value,
+                                    file_url = getFileName(contentResolver, uri)
+                                )
+                            )
+                            viewModel.uploadFile(uri, contentResolver)
+                        }
+                        fileUploadMode.value = 0
+                        theFileName.value = "Attach circular"
                     },
                     modifier = Modifier
                         .padding(start = 100.dp),
