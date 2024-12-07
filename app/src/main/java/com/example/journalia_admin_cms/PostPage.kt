@@ -61,6 +61,7 @@ import kotlinx.coroutines.launch
 val font = FontFamily(Font(R.font.poppins))
 var Uri = mutableStateOf<Uri?>(null)
 var ContentResolver1 = mutableStateOf<ContentResolver?>(null)
+val userToken=mutableStateOf("")
 @OptIn(ExperimentalMaterial3Api::class)
 
 @Composable
@@ -327,8 +328,8 @@ fun PostPage(
                         // Upload details and file
                         coroutineScope.launch(Dispatchers.IO) {
                             viewModel.uploadDetailsDeadline(
-                                adminDashBoardInfo(
-                                    id = 1,
+                                AdminDashBoardInfo(
+                                    token=userToken.value,
                                     author = "adminOffice",
                                     title = title.value,
                                     description = description.value,
