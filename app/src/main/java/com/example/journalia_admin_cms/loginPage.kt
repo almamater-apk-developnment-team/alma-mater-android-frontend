@@ -145,11 +145,12 @@ fun LoginPage(
                         if (response.isSuccessful) {
                             isLoading = false
                             passWord = ""
+                            Log.d("messageLogin", "success")
                             navController.navigate(Screens.SecretPage.createRoute(emailId))
                         } else {
                             //handle displaying that the process failed
                             isLoading = false
-                            Log.d("message", response.message)
+                            Log.d("messageLogin", response.message)
                             passWord = ""
                             navController.navigate(Screens.LoginPage.route)
                         }

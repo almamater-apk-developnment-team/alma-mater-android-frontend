@@ -34,12 +34,12 @@ interface FileUpload{
 }
 
 interface Login {
-    @POST("/login")
+    @POST("/login/")
     suspend fun login(@Body request: LoginBody): LoginResponse
 }
 
 interface Secret {
-    @POST("/check-secret")
+    @POST("/check-secret/")
     suspend fun secret(@Body request: SecretBody): SecretResponse
 }
 data class UploadResponse(
