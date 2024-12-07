@@ -61,14 +61,15 @@ import kotlinx.coroutines.launch
 val font = FontFamily(Font(R.font.poppins))
 var Uri = mutableStateOf<Uri?>(null)
 var ContentResolver1 = mutableStateOf<ContentResolver?>(null)
-val userToken=mutableStateOf("")
 @OptIn(ExperimentalMaterial3Api::class)
 
 @Composable
 fun PostPage(
+    token:String,
     innerPaddingValues: PaddingValues,
     navController: NavController
 ) {
+    Log.d("tokenFromBackStack",token)
     val scrollState = rememberScrollState() // Keep track of the scroll position
     val viewModel: FileUploadViewModel = viewModel()
     val context=LocalContext.current
@@ -329,7 +330,7 @@ fun PostPage(
                         coroutineScope.launch(Dispatchers.IO) {
                             viewModel.uploadDetailsDeadline(
                                 AdminDashBoardInfo(
-                                    token=userToken.value,
+                                    token=token,
                                     author = "adminOffice",
                                     title = title.value,
                                     description = description.value,

@@ -282,10 +282,9 @@ fun SecretChecking(
                         } else {
                             //handle displaying that the process
                             isLoading = false
-                            userToken.value = response.token
                             secret = ""
                             Log.d("token",response.token)
-                            navController.navigate(Screens.LandingPage.route)
+                            navController.navigate(Screens.LandingPage.createRoute(response.token))
                         }
                     }
                     catch (e: Exception) {
