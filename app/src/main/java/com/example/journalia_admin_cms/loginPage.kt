@@ -284,7 +284,7 @@ fun SecretChecking(
                             isLoading = false
                             secret = ""
                             Log.d("token",response.token)
-                            navController.navigate(Screens.LandingPage.route)
+                            navController.navigate(Screens.LandingPage.createRoute(response.token))
                         }
                     }
                     catch (e: Exception) {

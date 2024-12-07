@@ -65,9 +65,11 @@ var ContentResolver1 = mutableStateOf<ContentResolver?>(null)
 
 @Composable
 fun PostPage(
+    token:String,
     innerPaddingValues: PaddingValues,
     navController: NavController
 ) {
+    Log.d("tokenFromBackStack",token)
     val scrollState = rememberScrollState() // Keep track of the scroll position
     val viewModel: FileUploadViewModel = viewModel()
     val context=LocalContext.current
@@ -327,8 +329,8 @@ fun PostPage(
                         // Upload details and file
                         coroutineScope.launch(Dispatchers.IO) {
                             viewModel.uploadDetailsDeadline(
-                                adminDashBoardInfo(
-                                    id = 1,
+                                AdminDashBoardInfo(
+                                    token=token,
                                     author = "adminOffice",
                                     title = title.value,
                                     description = description.value,

@@ -34,9 +34,9 @@ import androidx.navigation.NavController
 
 val poppins = FontFamily(Font(R.font.poppins))
 val landingPageButtonTexts = listOf(
-    Pair("ADMIN DASHBOARD", Screens.AdminPage.route),
-    Pair("POST A DEADLINE" , Screens.DeadlinePage.route),
-    Pair("POST ANNOUNCEMENT" , Screens.AnnouncementPage.route)
+    Pair("ADMIN DASHBOARD", Screens.AdminPage),
+    Pair("POST A DEADLINE" , Screens.DeadlinePage),
+    Pair("POST ANNOUNCEMENT" , Screens.AnnouncementPage)
 )
 val mode = mutableStateOf(0)
 
@@ -85,7 +85,7 @@ fun SplashPage(innerPadding: PaddingValues , navController: NavController) {
 }
 
 @Composable
-fun LandingPage(innerPadding: PaddingValues , navController: NavController) {
+fun LandingPage(token :String ,innerPadding: PaddingValues , navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -174,7 +174,13 @@ fun LandingPage(innerPadding: PaddingValues , navController: NavController) {
                         .clickable {
                             if (i.first == "POST A DEADLINE") mode.value = 0
                             else if(i.first == "POST ANNOUNCEMENT") mode.value = 1
-                            navController.navigate(i.second)
+                            val route = when (i.second) {
+                                is Screens.AdminPage -> Screens.AdminPage.createRoute(token)
+                                is Screens.DeadlinePage -> Screens.DeadlinePage.createRoute(token)
+                                is Screens.AnnouncementPage -> Screens.AnnouncementPage.createRoute(token)
+                                else -> throw IllegalStateException("Unknown screen")
+                            }
+                            navController.navigate(route)
                         }
                         .border(
                             width = 2.dp,

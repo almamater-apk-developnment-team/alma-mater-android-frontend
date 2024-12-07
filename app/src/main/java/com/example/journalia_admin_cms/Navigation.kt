@@ -45,17 +45,40 @@ fun MyApp(innerPaddingValues: PaddingValues) {
         }
         composable(
             route = Screens.LandingPage.route,
-        ) {
-            LandingPage(innerPaddingValues , navController)
+            arguments = listOf(
+                navArgument("token") {type = NavType.StringType}
+            )
+        ) {backStackEntry ->
+            val token=backStackEntry.arguments?.getString("token") ?: ""
+            LandingPage(token ,innerPaddingValues , navController)
         }
-        composable(route = Screens.AdminPage.route) {
-            AdminDashBoard(innerPaddingValues , navController)
+        composable(
+            route = Screens.AdminPage.route,
+            arguments = listOf(
+                navArgument("token") {type = NavType.StringType}
+            )
+        ){ backStackEntry ->
+            val token=backStackEntry.arguments?.getString("token") ?: ""
+            AdminDashBoard(token , innerPaddingValues , navController)
         }
-        composable(route = Screens.DeadlinePage.route) {
-            PostPage(innerPaddingValues , navController)
+        composable(
+            route = Screens.DeadlinePage.route,
+            arguments = listOf(
+                navArgument("token") {type = NavType.StringType}
+            )
+        )
+        { backStackEntry ->
+            val token=backStackEntry.arguments?.getString("token") ?: ""
+            PostPage(token,innerPaddingValues , navController)
         }
-        composable(route = Screens.AnnouncementPage.route) {
-            PostPage(innerPaddingValues , navController)
+        composable(route = Screens.AnnouncementPage.route,
+            arguments = listOf(
+                navArgument("token") {type = NavType.StringType}
+            )
+            ) {
+                backStackEntry ->
+            val token=backStackEntry.arguments?.getString("token") ?: ""
+            PostPage(token,innerPaddingValues , navController)
         }
         composable(route = Screens.InfoPage.route) {
             AdminInfo(innerPaddingValues , navController)

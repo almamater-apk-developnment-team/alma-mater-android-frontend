@@ -47,7 +47,7 @@ fun AdminCard(navController: NavController) {
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Text(
-                    text = adminDashBoardInfo().title,
+                    text = AdminDashBoardInfo().title,
                     fontSize = 20.sp,
                     fontWeight = FontWeight(800),
                     fontFamily = FontFamily(Font(R.font.poppins))
@@ -63,7 +63,7 @@ fun AdminCard(navController: NavController) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = adminDashBoardInfo().deadline,
+                        text = AdminDashBoardInfo().deadline,
                         fontSize = 20.sp,
                         fontWeight = FontWeight(800),
                         fontFamily = FontFamily(Font(R.font.poppins))
@@ -78,7 +78,7 @@ fun AdminCard(navController: NavController) {
                 horizontalAlignment = Alignment.End
             ) {
                 Text(
-                    text = adminDashBoardInfo().author,
+                    text = AdminDashBoardInfo().author,
                     fontSize = 14.sp,
                     fontFamily = FontFamily(Font(R.font.poppins)),
                     fontWeight = FontWeight(400)

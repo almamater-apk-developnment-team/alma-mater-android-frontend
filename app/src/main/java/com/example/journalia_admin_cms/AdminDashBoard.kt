@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 @Composable
-fun AdminDashBoard(innerPaddingValues: PaddingValues , navController: NavController){
+fun AdminDashBoard(token:String ,innerPaddingValues: PaddingValues , navController: NavController){
     val scrollState = rememberScrollState()
     Column(modifier=Modifier.fillMaxSize().padding(innerPaddingValues)){
         TopBar(navController)

@@ -59,7 +59,8 @@ class FileUploadViewModel : ViewModel() {
         }
     }
 
-    fun uploadDetailsDeadline(details: adminDashBoardInfo){
+
+    fun uploadDetailsDeadline(details: AdminDashBoardInfo){
         viewModelScope.launch{
             try{
                 val response=FileUploadClient.detailsUpload(details)

@@ -29,7 +29,7 @@ interface FileUpload{
     @POST("/upload/")
     suspend fun uploadFile(@Part file: MultipartBody.Part): Response<UploadResponse>
     @POST("/detailsUpload/")
-    suspend fun detailsUpload(@Body details:adminDashBoardInfo)
+    suspend fun detailsUpload(@Body details:AdminDashBoardInfo)
 
 }
 
