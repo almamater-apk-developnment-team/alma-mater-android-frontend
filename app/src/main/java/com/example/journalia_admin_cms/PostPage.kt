@@ -56,7 +56,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 val font = FontFamily(Font(R.font.poppins))
 var Uri = mutableStateOf<Uri?>(null)
@@ -320,37 +322,47 @@ fun PostPage(
                         CircularProgressIndicator()
             }
             Spacer(modifier = Modifier.height(20.dp))
-                Button(
-                    onClick = {
-                        isLoaded = true
-                        val uri = Uri.value
-                        val contentResolver = ContentResolver1.value
+            Button(
+                onClick = {
+                    isLoaded = true
+                    val uri = Uri.value
+                    val contentResolver = ContentResolver1.value
 
-                        // Upload details and file
-                        coroutineScope.launch(Dispatchers.IO) {
+                    // Launch the coroutine for uploading the file
+                    coroutineScope.launch(Dispatchers.IO) {
+                        // Call the file upload function
+                        viewModel.uploadFile(uri, contentResolver)
+
+                        // Use a delay or a suspend function to wait for the file URL to be updated
+                        while (viewModel.fileUrl.value.isNullOrEmpty()) {
+                            delay(100) // Check every 100ms for the URL update
+                        }
+
+                        // After the file URL is available, proceed with uploading the details
+                        withContext(Dispatchers.Main) {
                             viewModel.uploadDetailsDeadline(
                                 AdminDashBoardInfo(
-                                    token=token,
+                                    token = token,
                                     author = "adminOffice",
                                     title = title.value,
                                     description = description.value,
                                     deadline = deadline.value,
-                                    file_url = getFileName(contentResolver, uri)
+                                    file_url = viewModel.fileUrl.value
                                 )
                             )
-                            viewModel.uploadFile(uri, contentResolver)
+                            fileUploadMode.value = 0
+                            theFileName.value = "Attach circular"
                         }
-                        fileUploadMode.value = 0
-                        theFileName.value = "Attach circular"
-                    },
-                    modifier = Modifier
-                        .padding(start = 100.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xffa37fdb),
-                        contentColor = Color.White,
-                    ),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
+                    }
+                },
+                modifier = Modifier
+                    .padding(start = 100.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xffa37fdb),
+                    contentColor = Color.White,
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
                 Text(
                     text = "Upload",
                     fontFamily = font,

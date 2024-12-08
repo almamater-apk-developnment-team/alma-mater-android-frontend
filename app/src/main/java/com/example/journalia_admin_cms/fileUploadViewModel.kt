@@ -16,8 +16,7 @@ class FileUploadViewModel : ViewModel() {
     val uploadStatus = mutableStateOf("")
     private val _isLoaded = mutableStateOf(false)
     val isLoaded: State<Boolean>  = _isLoaded
-
-
+    val fileUrl = mutableStateOf<String?>("")
     fun uploadFile(fileUri: Uri?, contentResolver: ContentResolver?) {
         viewModelScope.launch {
             try {
@@ -42,7 +41,7 @@ class FileUploadViewModel : ViewModel() {
 
                 val response = FileUploadClient.uploadFile(multipartBody)
                 if (response.isSuccessful && response.body() != null) {
-
+                    fileUrl.value = response.body()?.url
                     Log.d("FileUpload", "Upload successful: ${response.body()?.url}")
                     uploadStatus.value = "success"
                 } else {
