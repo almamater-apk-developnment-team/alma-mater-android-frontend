@@ -319,7 +319,7 @@ fun PostPage(
             Box(modifier=Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center) {
                 if(isLoaded)
-                        CircularProgressIndicator()
+                    CircularProgressIndicator()
             }
             Spacer(modifier = Modifier.height(20.dp))
             Button(
