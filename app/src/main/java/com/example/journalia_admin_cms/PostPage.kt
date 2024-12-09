@@ -347,7 +347,10 @@ fun PostPage(
                                     title = title.value,
                                     description = description.value,
                                     deadline = deadline.value,
-                                    file_url = viewModel.fileUrl.value
+                                    file_url = viewModel.fileUrl.value,
+                                    mode = mode.value,
+                                    link1 = link1.value,
+                                    link2 = link2.value
                                 )
                             )
                             fileUploadMode.value = 0
