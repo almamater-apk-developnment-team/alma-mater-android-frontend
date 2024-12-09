@@ -16,6 +16,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -27,13 +28,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
+val infoPasser = mutableStateOf(infoPageDetails())
 @Composable
 fun AdminCard(
     navController: NavController,
     title: String = "",
     description: String = "",
     author: String = "",
-    deadline: String = ""
+    deadline: String = "",
+    pdfUrl: String = "",
+    link1: String = "",
+    link2: String = ""
 ) {
     Card(
         shape = RoundedCornerShape(10.dp),
@@ -41,6 +46,7 @@ fun AdminCard(
             .size(height = 140.dp, width = 378.dp)
             .shadow(shape = RoundedCornerShape(10.dp), elevation = 5.dp)
             .clickable {
+                infoPasser.value = infoPageDetails(title, deadline, author, description, pdfUrl, link1, link2)
                 navController.navigate(Screens.InfoPage.route)
             },
         colors = CardDefaults.cardColors(containerColor = Color(0xFFA37FDB)) // #A37FDB

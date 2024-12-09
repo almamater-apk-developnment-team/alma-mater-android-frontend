@@ -74,7 +74,7 @@ fun AdminDashBoard(token:String ,innerPaddingValues: PaddingValues , navControll
             Text(
                 modifier = Modifier
                     .offset(x=(-10).dp),
-                text=detailsList.size.toString(),
+                text="ADMIN DASHBOARD",
                 fontSize = 24.sp    ,
                 fontWeight = FontWeight.ExtraBold,
                 fontFamily = FontFamily(Font(R.font.poppins))

@@ -1,11 +1,15 @@
 package com.example.journalia_admin_cms
 
+import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,56 +23,76 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 
 @Composable
 
-fun FeeLink(){
+fun FeeLink(link: String) {
+    val context = LocalContext.current  // Access context from LocalContext.current
+
     Card(
-        modifier= Modifier
+        modifier = Modifier
             .width(360.dp)
             .height(60.dp)
             .clickable {
-
+                // Handle click if needed
             }
             .shadow(10.dp, RoundedCornerShape(20.dp)),
-        shape= RoundedCornerShape(20.dp),
-        colors= CardDefaults.cardColors(containerColor = Color(123,44,191))
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xffA37FDB))
     ) {
-        Row(modifier= Modifier
-            .fillMaxSize(),
+        Row(
+            modifier = Modifier
+                .fillMaxSize(),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
-        ){
-            Text(
-                text="SBI COLLECT LINK",
-                fontSize=20.sp,
-                fontFamily= FontFamily(Font(R.font.poppins)),
-                fontWeight=FontWeight(600),
-                color=Color.White,
-                modifier= Modifier
-            )
-            Button(
-                modifier= Modifier
-                    .size(
-                        height=50.dp,
-                        width=60.dp
-                    ),
-                onClick = {},
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White))
-            {
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ){
+                Button(
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(end = 10.dp)
+                        .size(
+                            height = 50.dp,
+                            width = 60.dp
+                        ),
+                    onClick = {
+                        // Open the URL link using Intent
+                        val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse(link))
+                        startActivity(context, intent, null)
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+                ) {
+                    Text(
+                        text = ">",
+                        fontSize = 20.sp,
+                        fontFamily = FontFamily(Font(R.font.poppins)),
+                        fontWeight = FontWeight(600),
+                        color = Color.Black
+                    )
+                }
                 Text(
-                    text=">",
-                    fontSize=20.sp,
-                    fontFamily= FontFamily(Font(R.font.poppins)),
-                    fontWeight=FontWeight(600),
-                    color=Color.Black
+                    text = link,
+                    maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                    fontSize = 20.sp,
+                    fontFamily = FontFamily(Font(R.font.poppins)),
+                    fontWeight = FontWeight(600),
+                    color = Color.White,
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .fillMaxWidth(0.75f)
+                        .padding(start = 4.dp)
                 )
-
             }
         }
     }
