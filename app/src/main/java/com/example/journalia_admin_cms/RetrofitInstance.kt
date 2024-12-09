@@ -6,6 +6,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
@@ -30,7 +31,8 @@ interface FileUpload{
     suspend fun uploadFile(@Part file: MultipartBody.Part): Response<UploadResponse>
     @POST("/detailsUpload/")
     suspend fun detailsUpload(@Body details:AdminDashBoardInfo)
-
+    @GET("/fetch-details/")
+    suspend fun fetchAdminDetails(): Response<fetchResponse>
 }
 
 interface Login {
@@ -42,7 +44,30 @@ interface Secret {
     @POST("/check-secret/")
     suspend fun secret(@Body request: SecretBody): SecretResponse
 }
+
 data class UploadResponse(
     val message: String,
     val url: String
+)
+
+data class fetchResponse(
+    val message: String,
+    val data: List<forEachUser>
+)
+
+data class forEachUser(
+    val id: String,
+    val details: List<announcement>
+)
+
+
+data class announcement(
+    val author:String="SW Office",
+    val title:String="Hostel Fee Payment",
+    val description:String="",
+    val deadline:String="7 Aug 2025",
+    val file_url:String?="",
+    val mode: Int=0,
+    val link1: String="",
+    val link2: String=""
 )

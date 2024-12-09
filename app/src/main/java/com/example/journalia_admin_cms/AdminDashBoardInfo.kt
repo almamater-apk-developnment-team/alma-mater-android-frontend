@@ -10,4 +10,4 @@ data class AdminDashBoardInfo(
     val mode: Int=0,
     val link1: String="",
     val link2: String=""
-    )
+)

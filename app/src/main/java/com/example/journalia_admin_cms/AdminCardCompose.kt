@@ -28,62 +28,58 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 @Composable
-fun AdminCard(navController: NavController) {
+fun AdminCard(
+    navController: NavController,
+    title: String = "",
+    description: String = "",
+    author: String = "",
+    deadline: String = ""
+) {
     Card(
         shape = RoundedCornerShape(10.dp),
-        modifier = Modifier.size(height = 150.dp, width = 380.dp)
+        modifier = Modifier
+            .size(height = 140.dp, width = 378.dp)
             .shadow(shape = RoundedCornerShape(10.dp), elevation = 5.dp)
             .clickable {
                 navController.navigate(Screens.InfoPage.route)
             },
-        colors = CardDefaults.cardColors(containerColor = Color(208, 196, 255))
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFA37FDB)) // #A37FDB
     ) {
-        Row(modifier = Modifier.fillMaxSize()) {
+        Row(modifier = Modifier.fillMaxSize().padding(10.dp)) {
             Column(
-                modifier = Modifier.fillMaxHeight()
-                    .width(250.dp)
-                    .padding(start=20.dp),
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1f), // Ensures proper alignment and space allocation
                 horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.SpaceEvenly
+                verticalArrangement = Arrangement.SpaceBetween // Spaces items evenly
             ) {
                 Text(
-                    text = AdminDashBoardInfo().title,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight(800),
-                    fontFamily = FontFamily(Font(R.font.poppins))
-                )
-                Text(
-                    text = "Deadline",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight(400),
-                    fontFamily = FontFamily(Font(R.font.poppins))
-                )
-                Row(
-                    modifier = Modifier.width(200.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = AdminDashBoardInfo().deadline,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight(800),
-                        fontFamily = FontFamily(Font(R.font.poppins))
-                    )
-
-                }
-            }
-            Column(
-                modifier = Modifier.height(150.dp)
-                    .width(190.dp),
-                verticalArrangement = Arrangement.SpaceEvenly,
-                horizontalAlignment = Alignment.End
-            ) {
-                Text(
-                    text = AdminDashBoardInfo().author,
-                    fontSize = 14.sp,
+                    text = title,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.ExtraBold,
                     fontFamily = FontFamily(Font(R.font.poppins)),
-                    fontWeight = FontWeight(400)
+                    color = Color.Black
                 )
-
+                Text(
+                    text = description,
+                    fontSize = 18.sp,
+                    fontFamily = FontFamily(Font(R.font.poppins)),
+                    color = Color.White
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = author,
+                    fontSize = 18.sp,
+                    fontFamily = FontFamily(Font(R.font.poppins)),
+                    color = Color.White
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Deadline: $deadline",
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.poppins)),
+                    color = Color.White
+                )
             }
         }
     }
