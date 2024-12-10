@@ -216,7 +216,10 @@ fun AdminDashBoard(token:String ,innerPaddingValues: PaddingValues , navControll
                             title = announcement.title,
                             description = announcement.description,
                             author = announcement.author,
-                            deadline = announcement.deadline
+                            deadline = announcement.deadline,
+                            pdfUrl = announcement.file_url.toString(),
+                            link1 = announcement.link1.toString(),
+                            link2 = announcement.link2.toString()
                         )
                     }
                 }

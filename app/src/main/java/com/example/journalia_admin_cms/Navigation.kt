@@ -83,6 +83,8 @@ fun MyApp(innerPaddingValues: PaddingValues) {
         composable(route = Screens.InfoPage.route) {
             AdminInfo(innerPaddingValues , navController)
         }
-
+        composable(route = Screens.PdfView.route) {
+                imageHelper(navController)
+        }
     }
 }

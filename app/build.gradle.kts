@@ -81,4 +81,8 @@ dependencies {
     implementation(platform(libs.firebase.bom)) // Use Firebase BOM
     implementation(libs.firebase.firestore)    // Add Firestore
     implementation(libs.firebase.storage)
+
+    //coil
+    implementation("io.coil-kt.coil3:coil-compose:3.0.4")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
 }
