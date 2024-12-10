@@ -1,6 +1,5 @@
 package com.example.journalia_admin_cms
 
-import coil3.compose.rememberAsyncImagePainter
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -251,8 +250,8 @@ fun AdminInfo(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 // Two FeeLinks
-                FeeLink("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-                FeeLink("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+                FeeLink(infoPasser.value.link1)
+                FeeLink(infoPasser.value.link2)
 
                 Spacer(modifier = Modifier.height(20.dp))
 
