@@ -19,4 +19,5 @@ sealed class Screens(val route : String) {
         fun createRoute(token : String) = "announcementPage/$token"
     }
     object InfoPage : Screens("infoPage")
+    object PdfView: Screens("pdfView")
 }

@@ -11,6 +11,7 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import androidx.compose.runtime.State
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 
 class FileUploadViewModel : ViewModel() {
     val uploadStatus = mutableStateOf("")
@@ -31,7 +32,7 @@ class FileUploadViewModel : ViewModel() {
                     ?: throw Exception("Unable to read file contents")
 
                 val mimeType = contentResolver.getType(fileUri) ?: "application/octet-stream"
-                val requestBody = RequestBody.create(MediaType.parse(mimeType), byteArray)
+                val requestBody = RequestBody.create(mimeType.toMediaTypeOrNull(), byteArray)
 
                 val multipartBody = MultipartBody.Part.createFormData(
                     "file",
