@@ -20,6 +20,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -104,13 +105,13 @@ fun SplashPage(innerPadding: PaddingValues , navController: NavController) {
 }
 
 @Composable
-fun LandingPage(token :String ,innerPadding: PaddingValues , navController: NavController) {
+fun LandingPage(token : MutableState<String>,innerPadding: PaddingValues , navController: NavController) {
 
     val context = LocalContext.current
 
     try {
         if(getFromSharedPreferences(context , "token") == "") {
-            saveToSharedPreferences(context,"token",token)
+            saveToSharedPreferences(context,"token",token.value)
         }
     }
     catch(e : Exception) {
@@ -152,6 +153,8 @@ fun LandingPage(token :String ,innerPadding: PaddingValues , navController: NavC
                     IconButton(
                         modifier = Modifier.padding(end = 10.dp, top = 10.dp),
                         onClick = {
+                            token.value = ""
+                            saveToSharedPreferences(context,"token",token.value)
                             navController.popBackStack()
                         }
                     ) {
@@ -206,9 +209,9 @@ fun LandingPage(token :String ,innerPadding: PaddingValues , navController: NavC
                             if (i.first == "POST A DEADLINE") mode.value = 0
                             else if(i.first == "POST ANNOUNCEMENT") mode.value = 1
                             val route = when (i.second) {
-                                is Screens.AdminPage -> Screens.AdminPage.createRoute(token)
-                                is Screens.DeadlinePage -> Screens.DeadlinePage.createRoute(token)
-                                is Screens.AnnouncementPage -> Screens.AnnouncementPage.createRoute(token)
+                                is Screens.AdminPage -> Screens.AdminPage.createRoute(token.value)
+                                is Screens.DeadlinePage -> Screens.DeadlinePage.createRoute(token.value)
+                                is Screens.AnnouncementPage -> Screens.AnnouncementPage.createRoute(token.value)
                                 else -> throw IllegalStateException("Unknown screen")
                             }
                             navController.navigate(route)

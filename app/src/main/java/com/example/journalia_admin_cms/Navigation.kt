@@ -7,6 +7,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -49,7 +51,8 @@ fun MyApp(innerPaddingValues: PaddingValues) {
                 navArgument("token") {type = NavType.StringType}
             )
         ) {backStackEntry ->
-            val token=backStackEntry.arguments?.getString("token") ?: ""
+            val temp = backStackEntry.arguments?.getString("token") ?: ""
+            val token = remember { mutableStateOf(temp) }
             LandingPage(token ,innerPaddingValues , navController)
         }
         composable(
