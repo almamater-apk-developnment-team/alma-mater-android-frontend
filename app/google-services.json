@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:296701634000:android:9a3483e1a10fda3f8885d5",
         "android_client_info": {
-          "package_name": "com.example.journalia_admin_cms"
+          "package_name": "com.journalia_nitt.journalia_admin_cms"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "296701634000-r61pgjg06c03ualvd04kkj58q9d9rveb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.journalia_admin_cms",
+            "package_name": "com.journalia_nitt.journalia_admin_cms",
             "certificate_hash": "4aab759afc651ab283dfe03f6a7b28bc046b2530"
           }
         },

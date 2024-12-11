@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.journalia_admin_cms"
+    namespace = "com.journalia_nitt.journalia_admin_cms"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.journalia_admin_cms"
+        applicationId = "com.journalia_nitt.journalia_admin_cms"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
