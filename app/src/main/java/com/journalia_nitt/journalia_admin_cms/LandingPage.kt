@@ -156,6 +156,7 @@ fun LandingPage(token : MutableState<String>,innerPadding: PaddingValues , navCo
                             token.value = ""
                             saveToSharedPreferences(context,"token",token.value)
                             navController.popBackStack()
+                            navController.popBackStack()
                         }
                     ) {
                         Image(
