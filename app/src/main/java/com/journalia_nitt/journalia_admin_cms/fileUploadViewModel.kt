@@ -22,7 +22,7 @@ class FileUploadViewModel : ViewModel() {
             try {
                 if (fileUri == null || contentResolver == null) {
                     Log.e("FileUpload", "Invalid URI or ContentResolver")
-                    uploadStatus.value = "failure"
+                    uploadStatus.value = "success1"
                     return@launch
                 }
 

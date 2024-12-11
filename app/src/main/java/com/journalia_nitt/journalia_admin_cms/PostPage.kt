@@ -313,6 +313,11 @@ fun PostPage(
                         Toast.makeText(context, "File Upload Failed", Toast.LENGTH_SHORT).show()
                         navController.popBackStack()
                     }
+                    "success1"->{
+                        isLoaded = false
+                        Toast.makeText(context, "No File Selected", Toast.LENGTH_SHORT).show()
+                        navController.popBackStack()
+                    }
                 }
             }
             Box(modifier=Modifier.fillMaxWidth(),
@@ -333,9 +338,9 @@ fun PostPage(
                         viewModel.uploadFile(uri, contentResolver)
 
                         // Use a delay or a suspend function to wait for the file URL to be updated
-                        while (viewModel.fileUrl.value.isNullOrEmpty()) {
-                            delay(100) // Check every 100ms for the URL update
-                        }
+//                        while (viewModel.fileUrl.value.isNullOrEmpty()) {
+//                            delay(100) // Check every 100ms for the URL update
+//                        }
 
                         // After the file URL is available, proceed with uploading the details
                         withContext(Dispatchers.Main) {
