@@ -1,5 +1,6 @@
 package com.example.journalia_admin_cms
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -19,11 +20,14 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -38,10 +42,14 @@ val landingPageButtonTexts = listOf(
     Pair("POST A DEADLINE" , Screens.DeadlinePage),
     Pair("POST ANNOUNCEMENT" , Screens.AnnouncementPage)
 )
-val mode = mutableStateOf(0)
+val mode = mutableIntStateOf(0)
 
 @Composable
 fun SplashPage(innerPadding: PaddingValues , navController: NavController) {
+
+    val context = LocalContext.current
+    val token = remember { mutableStateOf("") }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,7 +59,18 @@ fun SplashPage(innerPadding: PaddingValues , navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .clickable {
-                    navController.navigate(Screens.LoginPage.route)
+                    try {
+                        token.value = getFromSharedPreferences(context , "token")
+                        if(token.value == "") {
+                            navController.navigate(Screens.LoginPage.route)
+                        }
+                        else {
+                            navController.navigate(Screens.LandingPage.createRoute(token.value))
+                        }
+                    }
+                    catch(e : Exception) {
+                        Log.d("message" , e.message.toString())
+                    }
                 },
             colors = CardDefaults.cardColors(Color(163, 127, 219))
         ) {
@@ -86,6 +105,18 @@ fun SplashPage(innerPadding: PaddingValues , navController: NavController) {
 
 @Composable
 fun LandingPage(token :String ,innerPadding: PaddingValues , navController: NavController) {
+
+    val context = LocalContext.current
+
+    try {
+        if(getFromSharedPreferences(context , "token") == "") {
+            saveToSharedPreferences(context,"token",token)
+        }
+    }
+    catch(e : Exception) {
+        Log.d("message" , e.message.toString())
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
