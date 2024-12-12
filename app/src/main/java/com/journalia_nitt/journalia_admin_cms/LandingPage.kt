@@ -93,7 +93,7 @@ fun SplashPage(innerPadding: PaddingValues , navController: NavController) {
                     fontFamily = poppins,
                     fontSize = 16.sp
                 )
-                Spacer(modifier = Modifier.padding(30.dp))
+                Spacer(modifier = Modifier.padding(40.dp))
                 Image(
                     painter = painterResource(R.drawable.nittlogo),
                     contentDescription = "Logo",

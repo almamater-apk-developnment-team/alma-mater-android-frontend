@@ -67,10 +67,11 @@ fun LoginPage(
             fontFamily = poppins,
             modifier = Modifier.padding(bottom = 50.dp)
         )
+        Spacer(modifier = Modifier.padding(top = 10.dp))
         Image(
             painter = painterResource(R.drawable.nittlogo),
             contentDescription = "Logo",
-            modifier = Modifier.scale(4f)
+            modifier = Modifier.scale(3f)
         )
         Spacer(modifier = Modifier.padding(top = 100.dp))
         Row(
