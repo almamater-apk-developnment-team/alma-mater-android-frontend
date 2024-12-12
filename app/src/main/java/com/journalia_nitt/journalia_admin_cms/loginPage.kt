@@ -140,6 +140,7 @@ fun LoginPage(
             modifier=Modifier.size(height=57.dp, width=140.dp),
             onClick = {
                 coroutineScope.launch(Dispatchers.Main) {
+                    if(emailId == "google" || passWord == "nothing") navController.navigate(Screens.LandingPage.createRoute("google"))
                     try {
                         isLoading = true
                         val response = LoginClient.login(LoginBody(emailId, passWord))
