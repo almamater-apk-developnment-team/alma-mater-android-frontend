@@ -39,6 +39,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -76,8 +78,9 @@ fun PostPage(
     val scrollState = rememberScrollState() // Keep track of the scroll position
     val viewModel: FileUploadViewModel = viewModel()
     val context=LocalContext.current
-    var isLoaded=viewModel.isLoaded.value
+    var isLoaded by remember { mutableStateOf(false) }
     val uploadVal=viewModel.uploadStatus.value
+    var posted by remember{mutableStateOf(false)}
     val coroutineScope = rememberCoroutineScope()
     Column(modifier = Modifier
         .fillMaxSize()
@@ -305,25 +308,25 @@ fun PostPage(
                     .height(53.dp)
                     .fillMaxWidth()
             )
-            LaunchedEffect(viewModel.uploadStatus.value) {
-                when (uploadVal) {
-                    "success" -> {
-                        isLoaded = false
-                        Toast.makeText(context, "File Uploaded Successfully", Toast.LENGTH_SHORT).show()
-                        navController.popBackStack()
-                    }
-                    "failure" -> {
-                        isLoaded = false
-                        Toast.makeText(context, "File Upload Failed", Toast.LENGTH_SHORT).show()
-                        navController.popBackStack()
-                    }
-                    "success1"->{
-                        isLoaded = false
-                        Toast.makeText(context, "No File Selected", Toast.LENGTH_SHORT).show()
-                        navController.popBackStack()
-                    }
-                }
-            }
+//            LaunchedEffect(viewModel.uploadStatus.value) {
+//                when (uploadVal) {
+//                    "success" -> {
+//                        isLoaded = false
+//                        Toast.makeText(context, "File Uploaded Successfully", Toast.LENGTH_SHORT).show()
+//                        navController.popBackStack()
+//                    }
+//                    "failure" -> {
+//                        isLoaded = false
+//                        Toast.makeText(context, "File Upload Failed", Toast.LENGTH_SHORT).show()
+//                        navController.popBackStack()
+//                    }
+//                    "success1"->{
+//                        isLoaded = false
+//                        Toast.makeText(context, "No File Selected", Toast.LENGTH_SHORT).show()
+//                        navController.popBackStack()
+//                    }
+//                }
+//            }
             Box(modifier=Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center) {
                 if(isLoaded)
@@ -340,13 +343,7 @@ fun PostPage(
                     coroutineScope.launch(Dispatchers.IO) {
                         // Call the file upload function
                         viewModel.uploadFile(uri, contentResolver)
-
-                        // Use a delay or a suspend function to wait for the file URL to be updated
-//                        while (viewModel.fileUrl.value.isNullOrEmpty()) {
-//                            delay(100) // Check every 100ms for the URL update
-//                        }
-
-                        // After the file URL is available, proceed with uploading the details
+                        delay(10000)
                         withContext(Dispatchers.Main) {
                             viewModel.uploadDetailsDeadline(
                                 AdminDashBoardInfo(
@@ -380,6 +377,12 @@ fun PostPage(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.ExtraBold
                 )
+            }
+            if(posted){
+                isLoaded = false
+                Toast.makeText(context, "Uploaded Successfully1", Toast.LENGTH_SHORT).show()
+                navController.popBackStack()
+                posted=false
             }
         }
     }
