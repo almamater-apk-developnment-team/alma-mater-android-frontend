@@ -58,6 +58,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 
 val font = FontFamily(Font(R.font.poppins))
 var Uri = mutableStateOf<Uri?>(null)
@@ -90,7 +92,7 @@ fun PostPage(
             // Image
             Image(
                 painter = painterResource(id = R.drawable.back),
-                contentDescription = null,
+                contentDescription = "back button",
                 modifier = Modifier
                     .size(37.dp)
                     .clickable {
@@ -147,6 +149,7 @@ fun PostPage(
                 onValueChange = { title.value = it },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .semantics { contentDescription = "title field" }
                     .height(99.dp),
                 shape = RoundedCornerShape(12.dp),
                 singleLine = false,
@@ -176,6 +179,7 @@ fun PostPage(
                 onValueChange = { description.value = it },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .semantics { contentDescription = "description input field" }
                     .height(298.dp),
                 shape = RoundedCornerShape(12.dp),
                 singleLine = false,

@@ -40,6 +40,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 
 @Composable
 fun LoginPage(
@@ -93,6 +95,7 @@ fun LoginPage(
             },
             modifier = Modifier
                 .width(340.dp)
+                .semantics { contentDescription = "Email input field" }
                 .border(
                     width = 2.dp,
                     color = Color.Black,
@@ -121,6 +124,7 @@ fun LoginPage(
             },
             modifier = Modifier
                 .width(340.dp)
+                .semantics { contentDescription = "Password input field" }
                 .border(
                     width = 2.dp,
                     color = Color.Black,
