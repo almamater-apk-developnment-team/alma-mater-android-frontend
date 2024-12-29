@@ -222,7 +222,7 @@ fun PostPage(
                 )
             }
             var expanded by remember { mutableStateOf(false) }
-            val items = listOf("Option 1", "Option 2", "Option 3")
+            val items = listOf("Option 1", "Option 2", "Option 3","Option 1", "Option 2", "Option 3","Option 1", "Option 2", "Option 3","Option 1", "Option 2", "Option 3")
             var selectedItem by remember { mutableStateOf("") }
             Text(
                 text = "Applicability",
@@ -231,34 +231,38 @@ fun PostPage(
                 fontSize = 20.sp,
                 fontWeight = FontWeight.ExtraBold
             )
-            OutlinedTextField(
-                value = selectedItem,
-                onValueChange = {},
-                readOnly = true,
-                shape = RoundedCornerShape(12.dp),
-                label = { Text("Choose an option") },
-                modifier = Modifier.fillMaxWidth(),
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = "Dropdown icon",
-                        modifier = Modifier.clickable { expanded = !expanded }
-                    )
-                }
-            )
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                items.forEach { option ->
-                    DropdownMenuItem(
-                        text = { Text(option) },
-                        onClick = {
-                            selectedItem = option
-                            isFieldBlank[2] = selectedItem.isBlank()
-                            expanded = false
-                        }
-                    )
+            Column()
+            {
+                OutlinedTextField(
+                    value = selectedItem,
+                    onValueChange = {},
+                    readOnly = true,
+                    shape = RoundedCornerShape(12.dp),
+                    label = { Text("Choose an option") },
+                    modifier = Modifier.fillMaxWidth(),
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = "Dropdown icon",
+                            modifier = Modifier.clickable { expanded = !expanded }
+                        )
+                    }
+                )
+                DropdownMenu(
+                    modifier = Modifier.height(200.dp).fillMaxWidth(0.9f),
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    items.forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text(option) },
+                            onClick = {
+                                selectedItem = option
+                                isFieldBlank[2] = selectedItem.isBlank()
+                                expanded = false
+                            }
+                        )
+                    }
                 }
             }
             CustomFileUploadButton(theFileName, fileUploadMode)

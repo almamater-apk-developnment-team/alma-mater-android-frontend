@@ -430,7 +430,6 @@ fun LinkCard(item: Deadline) {
         colors = listOf(Color(150, 103, 224), Color(188, 128, 240))
     )
     val context = LocalContext.current // Obtain the context here
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -438,11 +437,10 @@ fun LinkCard(item: Deadline) {
             .height(50.dp)
             .clickable {
                 val url = item.link1.toString()
-
-                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url)
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url))
                 startActivity(context, intent, null)
             }
-    ) {
+                ){
         Row(
             modifier = Modifier
                 .fillMaxSize()

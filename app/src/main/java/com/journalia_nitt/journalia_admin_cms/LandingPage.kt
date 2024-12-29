@@ -2,6 +2,7 @@ package com.journalia_nitt.journalia_admin_cms
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,10 +11,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -28,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -36,6 +42,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.decode.SvgDecoder
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+
 val poppins = FontFamily(Font(R.font.poppins))
 val landingPageButtonTexts = listOf(
     Pair("ADMIN DASHBOARD", Screens.AdminPage),
@@ -45,60 +55,62 @@ val landingPageButtonTexts = listOf(
 val mode = mutableIntStateOf(0)
 @Composable
 fun SplashPage(innerPadding: PaddingValues , navController: NavController) {
-
     val context = LocalContext.current
     val token = remember { mutableStateOf("") }
-
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)
-    ) {
-        Card(
-            modifier = Modifier
-                .fillMaxSize()
-                .clickable {
-                    try {
-                        token.value = getFromSharedPreferences(context , "token")
-                        if(token.value == "") {
-                            navController.navigate(Screens.LoginPage.route)
-                        }
-                        else {
-                            navController.navigate(Screens.LandingPage.createRoute(token.value))
-                        }
-                    }
-                    catch(e : Exception) {
-                        Log.d("message" , e.message.toString())
-                    }
-                },
-            colors = CardDefaults.cardColors(Color(163, 127, 219))
-        ) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.Companion.CenterHorizontally
-            ) {
-                Text(
-                    text = "Alma mater",
-                    color = Color.Companion.White,
-                    fontFamily = poppins,
-                    fontSize = 35.sp
-                )
-                Spacer(modifier = Modifier.padding(0.dp))
-                Text(
-                    text = "Admin Interface",
-                    color = Color.Companion.White,
-                    fontFamily = poppins,
-                    fontSize = 16.sp
-                )
-                Spacer(modifier = Modifier.padding(40.dp))
-                Image(
-                    painter = painterResource(R.drawable.nittlogo),
-                    contentDescription = "Logo",
-                    modifier = Modifier.scale(4f)
-                )
+        modifier = Modifier.fillMaxSize().padding(WindowInsets.systemBars.asPaddingValues()).background(color = Color.White).clickable {
+            try {
+                token.value = getFromSharedPreferences(context , "token")
+                if(token.value == "") {
+                    navController.navigate(Screens.LoginPage.route)
+                }
+                else {
+                    navController.navigate(Screens.LandingPage.createRoute(token.value))
+                }
             }
+            catch(e : Exception) {
+                Log.d("message" , e.message.toString())
+            }
+        },
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.Companion.CenterHorizontally
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp,Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.CenterVertically
+        )
+        {
+            Text(
+                text = "alma",
+                fontFamily = poppins,
+                fontSize = 50.sp,
+                color = Color(0XFF9667E0),
+                fontWeight = FontWeight.ExtraBold
+            )
+            Text(
+                text = "mater",
+                fontFamily = poppins,
+                fontSize = 50.sp,
+                color = Color(0XFFBC80F0),
+                fontWeight = FontWeight.ExtraBold
+            )
         }
+        Text(
+            text = "made for NIT Trichy's Admin",
+            color = Color(0XFF9667E0),
+            fontFamily = poppins,
+            fontSize = 16.sp
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(R.raw.nitt_logo)
+                .decoderFactory(SvgDecoder.Factory())
+                .build(),
+            contentDescription = "SVG Logo",
+            modifier = Modifier.size(150.dp)
+        )
     }
 }
 @Composable

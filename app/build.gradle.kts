@@ -13,12 +13,10 @@ android {
         applicationId = "com.journalia_nitt.journalia_admin_cms"
         minSdk = 26
         targetSdk = 34
-        versionCode = 3
+        versionCode = 4
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -85,6 +83,10 @@ dependencies {
     //coil
     implementation("io.coil-kt.coil3:coil-compose:3.0.4")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
+    implementation ("io.coil-kt:coil-compose:2.4.0")
+    implementation ("io.coil-kt:coil-svg:2.4.0")
+
 
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
 }
