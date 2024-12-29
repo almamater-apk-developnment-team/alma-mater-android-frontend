@@ -1,6 +1,11 @@
 package com.journalia_nitt.journalia_admin_cms
 
+import android.content.Intent
+import android.util.Patterns
+import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,47 +13,51 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.text.toLowerCase
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import java.time.LocalDate
+import androidx.core.content.ContextCompat.startActivity
 
-import java.time.format.DateTimeFormatter
-import java.util.Locale
-
+val urbanist = FontFamily(
+    Font(R.font.urbanist)
+)
 data class infoPageDetails(
     var title: String = "",
     var deadline: String = "",
@@ -59,237 +68,413 @@ data class infoPageDetails(
     var link2: String = ""
 )
 
+data class Deadline(
+    val author: String,
+    val deadline: String,
+    val description: String?,
+    val file_url: String?,
+    val link1: String?,
+    val link2: String?,
+    val mode: Int,
+    val title: String?
+)
+
+fun getMonthInt(month : String) : Int {
+    val ans = when(month) {
+        "Jan" -> 1
+        "Feb" -> 2
+        "Mar" -> 3
+        "Apr" -> 4
+        "May" -> 5
+        "Jun" -> 6
+        "Jul" -> 7
+        "Aug" -> 8
+        "Sep" -> 9
+        "Oct" -> 10
+        "Nov" -> 11
+        "Dec" -> 12
+        else -> 0
+    }
+    return ans
+}
+
+fun getMonth(month : Int) : String {
+    val ans =  when(month) {
+        1 -> "January"
+        2 -> "February"
+        3 -> "March"
+        4 -> "April"
+        5 -> "May"
+        6 -> "June"
+        7 -> "July"
+        8 -> "August"
+        9 -> "September"
+        10 -> "October"
+        11 -> "November"
+        12 -> "December"
+        else -> "Invalid Month"
+    }
+    return ans.uppercase()
+}
+
+fun getMonthCalender(
+    year : Int ,
+    month : Int
+) : List<List<Int>> {
+
+    val specificDate = LocalDate.of(year,month,1)
+
+    val firstDayOfMonth = specificDate.dayOfWeek.value
+    val noOfDaysInTheMonth = specificDate.lengthOfMonth()
+
+    val dateInRow = mutableListOf<List<Int>>()
+    var dateInCurrentRow = mutableListOf<Int>()
+
+    var n = firstDayOfMonth
+
+    for(i in 1..noOfDaysInTheMonth) {
+        n += 1
+        dateInCurrentRow.add(i)
+        if(n%7==0) {
+            while(dateInCurrentRow.size<7) dateInCurrentRow.add(0,0)
+            dateInRow.add(dateInCurrentRow.toList())
+            dateInCurrentRow = mutableListOf()
+        }
+    }
+    if(dateInCurrentRow.isNotEmpty()) {
+        while(dateInCurrentRow.size<7) dateInCurrentRow.add(0)
+        dateInRow.add(dateInCurrentRow)
+    }
+    return dateInRow.toList()
+}
+
 @Composable
-fun AdminInfo(
-    paddingValues: PaddingValues,
-    navController: NavController,// Argument for Image URL or file path (PNG, JPG, JPEG)
+fun AdminDetailsPage(
+    item : Deadline? = Deadline(
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        1,
+        ""
+    ),
+    navController: NavController,
+    innerPaddingValues: PaddingValues
 ) {
-    var title = infoPasser.value.title
-    var deadline = infoPasser.value.deadline
-    var author = infoPasser.value.author
-    var content = infoPasser.value.content
-    var pdfUrl = infoPasser.value.pdfUrl
-    var imageUrl = infoPasser.value.link1
+    var item = infoPasser.value
 
-    val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.ENGLISH)
-    var readMore by remember { mutableStateOf(false) }
-    var showMore by remember { mutableStateOf("Read More") }
-    val scrollState = rememberScrollState()
+    val gradient = Brush.linearGradient(
+        colors = listOf(Color(150, 103, 224), Color(188, 128, 240))
+    )
+    val context= LocalContext.current
 
-    Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-        // Top Row with Back button, Circular text, and Menu Button
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = { navController.popBackStack() }) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.Black,
-                    modifier = Modifier.size(36.dp)
-                )
-            }
+    val verticalScroll = rememberScrollState()
 
+    Column(
+        modifier = Modifier.verticalScroll(verticalScroll).padding(innerPaddingValues)
+    ) {
+        Row (
+            modifier = Modifier,
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ){
+            Image(
+                painter = painterResource(id = R.drawable.back),
+                contentDescription = "back",
+                modifier = Modifier
+                    .padding(start = 10.dp, top = 10.dp)
+                    .size(20.dp)
+                    .clickable {
+                        navController.popBackStack()
+                    }
+            )
+            Spacer(Modifier.width(110.dp))
             Text(
                 text = "CIRCULAR",
-                fontSize = 27.sp,
-                fontFamily = FontFamily(Font(R.font.poppins)),
-                fontWeight = FontWeight.ExtraBold,
-                color = Color.Black
+                fontFamily = urbanist,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(start = 10.dp, top = 10.dp),
+                fontWeight = FontWeight.Bold
             )
+        }
+        Divider(
+            color = Color.LightGray,
+            thickness = (1).dp,
+            modifier = Modifier.padding(top = 20.dp)
+        )
+        Spacer(modifier = Modifier.height(40.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Spacer(modifier = Modifier.padding(start = 60.dp))
+            Text(
+                modifier = Modifier.padding(end = 20.dp),
+                text = item.title.toString(),
+                fontFamily = urbanist,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.padding(start = 80.dp))
+        }
+        Spacer(modifier = Modifier.padding(top = 10.dp))
+        val month = getMonth(item.deadline.substring(3,5).toInt())
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Spacer(modifier = Modifier.padding(start = 50.dp))
+            Text(
+                text = item.deadline.substring(0,2) + " " + month.lowercase() + " " + item.deadline.substring(6,10),
+                fontFamily = urbanist,
+                fontSize = 20.sp
+            )
+            Spacer(modifier = Modifier.padding(start = 50.dp))
+        }
+        Spacer(modifier = Modifier.padding(top = 10.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = item.author,
+                fontFamily = urbanist,
+                fontSize = 16.sp
+            )
+        }
+        Spacer(modifier = Modifier.padding(top = 20.dp))
+        Card(
+            modifier = Modifier
+                .size(95.dp, 45.dp)
+                .align(Alignment.CenterHorizontally),
+            colors = CardDefaults.cardColors(Color(163, 127, 219))
+        ) {
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Spacer(modifier = Modifier.padding(start = 10.dp))
 
-            IconButton(onClick = { /* Handle Menu Click */ }) {
-                Icon(
-                    imageVector = Icons.Default.Menu,
-                    contentDescription = "Menu",
-                    tint = Color.Black,
-                    modifier = Modifier.size(36.dp)
+                Text(
+                    text = "Edit ",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontFamily = urbanist
+                )
+                IconButton(
+                    onClick = {
+                    },
+                    modifier = Modifier.scale(2f)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.edit_button),
+                        contentDescription = "Edit button"
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.padding(top = 20.dp))
+        OutlinedTextField(
+            value = item.description.toString(),
+            enabled = false,
+            onValueChange = {
+                //do nothing
+            },
+            textStyle = TextStyle(
+                fontFamily = urbanist,
+                fontSize = 16.sp,
+                color = Color.Black
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+                .height(300.dp)
+                .border(
+                    width = 1.dp,
+                    color = Color.Black,
+                    shape = RoundedCornerShape(12.dp)
+                )
+        )
+        Spacer(modifier = Modifier.padding(top = 20.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "IMPORTANT LINKS",
+                fontFamily = urbanist,
+                fontSize = 20.sp
+            )
+        }
+        if(item.link1.toString().isEmpty() && item.link2.toString().isEmpty()) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.padding(top = 20.dp))
+                Text(
+                    text = "No Important links found",
+                    fontFamily = urbanist,
+                    fontSize = 16.sp
                 )
             }
         }
-
-        // Main content area
-        Spacer(modifier = Modifier.height(10.dp))
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(scrollState)
-        ) {
-            // Title, Deadline, and Author
-            Text(
-                text = title.ifEmpty { "Hostel Fee Payment" },
-                fontSize = 24.sp,
-                fontFamily = FontFamily(Font(R.font.poppins)),
-                fontWeight = FontWeight.ExtraBold,
-                color = Color.Black,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-
-            Text(
-                text = deadline.ifEmpty { "Deadline: 7 Aug 2023" },
-                fontSize = 20.sp,
-                fontFamily = FontFamily(Font(R.font.poppins)),
-                fontWeight = FontWeight.Bold, // Deadline bold
-                color = Color.Black,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-
-            Text(
-                text = author.ifEmpty { "Author: Admin" },
-                fontSize = 20.sp,
-                fontFamily = FontFamily(Font(R.font.poppins)),
-                fontWeight = FontWeight.Normal,
-                color = Color.Black,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Box(
+        else if(item.link1.toString().isNotEmpty()) {
+            Spacer(modifier = Modifier.padding(top = 20.dp))
+            LinkCard(item)
+        }
+        else if(item.link2.toString().isNotEmpty()) {
+            Spacer(modifier = Modifier.padding(top = 10.dp))
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = 40.dp)
                     .height(50.dp)
                     .clickable {
-                        navController.navigate(Screens.DeadlinePage.route)
+
                     }
             ) {
-                Card(
+                Column(
                     modifier = Modifier
-                        .align(Alignment.Center) // Align the card centrally
-                        .width(150.dp)
-                        .height(50.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(163, 127, 219)),
-                    shape = RoundedCornerShape(10.dp)
+                        .fillMaxSize()
+                        .background(gradient)
                 ) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 10.dp), // Padding for better spacing
-                        horizontalArrangement = Arrangement.Center, // Horizontally center the content
-                        verticalAlignment = Alignment.CenterVertically // Vertically center the content
+                        modifier = Modifier.fillMaxSize()
                     ) {
-                        Text(
-                            text = "Edit",
-                            fontFamily = FontFamily(Font(R.font.poppins)),
-                            color = Color.White,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight(600)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp)) // Space between text and icon
-                        Image(
-                            modifier = Modifier.size(24.dp), // Proper icon size
-                            painter = painterResource(R.drawable.edit),
-                            contentDescription = "edit"
-                        )
+                        Row(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(start = 30.dp),
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(start = 30.dp),
+                                    text = item.link2.toString(),
+                                    fontFamily = urbanist,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                        Column(
+                            modifier = Modifier.fillMaxHeight(),
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.link),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .padding(end = 30.dp)
+                                    .scale(2f)
+                            )
+                        }
                     }
                 }
             }
+        }
+        Spacer(modifier = Modifier.padding(top = 20.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "CIRCULAR",
+                fontFamily = urbanist,
+                fontSize = 20.sp
+            )
+        }
+        Spacer(modifier = Modifier.padding(top = 20.dp))
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 90.dp)
+                .height(50.dp)
+                .clickable {
 
-            // Content text with Read More functionality
-            Spacer(modifier = Modifier.height(10.dp))
-
-            // Content with dynamic height based on 'readMore'
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 40.dp, end = 40.dp, top = 10.dp)
-            ) {
-                Text(
-                    textAlign = TextAlign.Justify,
-                    text = content.ifEmpty {
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ac arcu sit amet purus dictum fringilla eu nec sem. Maecenas maximus elit sed lacus sollicitudin congue. Curabitur in lacus lacus. Etiam a nibh hendrerit, posuere enim non, sagittis turpis. Nulla imperdiet accumsan scelerisque. Morbi hendrerit finibus porta. Nulla lectus velit, scelerisque quis auctor ac, maximus dapibus nisi. Vestibulum ac est sed est placerat aliquam a finibus libero. Maecenas hendrerit eros et sollicitudin hendrerit. Integer ac velit nisi. Ut sodales a nunc eu."
-                    },
-                    fontFamily = FontFamily(Font(R.font.poppins)),
-                    fontWeight = FontWeight(600),
-                    fontSize = 16.sp,
-                    color = Color.Black,
-                    modifier = Modifier.heightIn(
-                        min = 200.dp,
-                        max = if (readMore) Dp.Infinity else 200.dp
-                    )
-                )
-            }
-
-            // Toggle Read More/Read Less
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(40.dp),
-                horizontalArrangement = Arrangement.End
-            ) {
-                Button(
-                    onClick = {
-                        if (!readMore) showMore = "Read Less"
-                        if (readMore) showMore = "Read More"
-                        readMore = !readMore
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
-                ) {
-                    Text(text = showMore, color = Color.Black)
                 }
-            }
-
-            // Important Links Section
-            Spacer(modifier = Modifier.height(20.dp))
+        ) {
             Column(
-                Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(gradient)
             ) {
-                Text(
-                    text = "IMPORTANT LINKS",
-                    fontSize = 32.sp,
-                    fontFamily = FontFamily(Font(R.font.poppins)),
-                    fontWeight = FontWeight(800),
-                    color = Color.Black
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-
-                // Two FeeLinks
-                FeeLink(infoPasser.value.link1)
-                FeeLink(infoPasser.value.link2)
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                // Circulars Section with Button to display PDF/Image
-                Text(
-                    text = "CIRCULARS",
-                    fontSize = 32.sp,
-                    fontFamily = FontFamily(Font(R.font.poppins)),
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Button(
-                    onClick = {
-                        // Handle button click to display PDF or image
-                        if (!pdfUrl.isNullOrEmpty()) {
-                            navController.navigate(Screens.PdfView.route)
-                        } else if (!imageUrl.isNullOrEmpty()) {
-                            navController.navigate(Screens.PdfView.route)
-                        }
-                    },
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(16.dp),  // Adjust width to 60% of the screen
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xffA37FDB))
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = "Click to view circular",
-                        fontFamily = FontFamily(Font(R.font.poppins)),
-                        color = Color.White,  // Same font color as the FeeLink card
-                        fontSize = 25.sp,
-                        fontWeight = FontWeight(600)
+                        fontFamily = urbanist,
+                        color = Color.White
                     )
                 }
+            }
+        }
+        Spacer(modifier = Modifier.padding(top = 20.dp))
+    }
 
+
+}
+
+
+@Composable
+fun LinkCard(item: Deadline) {
+    val gradient = Brush.linearGradient(
+        colors = listOf(Color(150, 103, 224), Color(188, 128, 240))
+    )
+    val context = LocalContext.current // Obtain the context here
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 40.dp)
+            .height(50.dp)
+            .clickable {
+                val url = item.link1.toString()
+
+                val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url)
+                startActivity(context, intent, null)
+            }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(gradient)
+        ) {
+            Row(
+                modifier = Modifier.weight(1f)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(start = 30.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = item.link1.toString(),
+                        fontFamily = urbanist,
+                        color = Color.White
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier.fillMaxHeight(),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.link),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(end = 30.dp)
+                        .scale(2f)
+                )
             }
         }
     }
