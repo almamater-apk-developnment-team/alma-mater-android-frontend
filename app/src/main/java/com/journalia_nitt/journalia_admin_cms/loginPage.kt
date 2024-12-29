@@ -19,6 +19,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -73,52 +74,33 @@ fun LoginPage(
         Image(
             painter = painterResource(R.drawable.nittlogo),
             contentDescription = "Logo",
-            modifier = Modifier.scale(3f)
+            modifier = Modifier.scale(4f)
         )
         Spacer(modifier = Modifier.padding(top = 100.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Spacer(modifier = Modifier.padding(start = 55.dp))
-            Text(
-                text = "Email ID",
-                fontFamily = poppins,
-                color = Color.White,
-                fontSize = 18.sp
-            )
-        }
-        Spacer(modifier = Modifier.padding(top = 10.dp))
         OutlinedTextField(
             value = emailId,
             onValueChange = {
                 emailId = it
             },
+            label ={
+                Text(text = "Email-ID", fontWeight = FontWeight.Bold)
+            },
             modifier = Modifier
-                .width(340.dp)
-                .semantics { contentDescription = "Email input field" }
-                .border(
-                    width = 2.dp,
-                    color = Color.Black,
-                    shape = RoundedCornerShape(12.dp)
-                ),
+                .width(340.dp),
             shape = RoundedCornerShape(12.dp),
+            singleLine = false,
+            colors= OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color.Black,
+                unfocusedBorderColor = Color.Black
+            ),
             singleLine = false
         )
         Spacer(modifier = Modifier.padding(top = 20.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Spacer(modifier = Modifier.padding(start = 55.dp))
-            Text(
-                text = "Password",
-                fontFamily = poppins,
-                color = Color.White,
-                fontSize = 18.sp
-            )
-        }
-        Spacer(modifier = Modifier.padding(top = 10.dp))
         OutlinedTextField(
             value = passWord,
+            label ={
+                Text(text = "Password",fontWeight = FontWeight.Bold)
+            },
             onValueChange = {
                 passWord = it
             },
@@ -131,15 +113,17 @@ fun LoginPage(
                     shape = RoundedCornerShape(12.dp)
                 ),
             shape = RoundedCornerShape(12.dp),
-            singleLine = false
+            singleLine = false,
+            colors= OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color.Black,
+                unfocusedBorderColor = Color.Black
+            )
         )
         Spacer(modifier = Modifier.padding(top = 120.dp))
-
         if(isLoading) {
             CircularProgressIndicator()
             Spacer(modifier = Modifier.padding(top = 30.dp))
         }
-
         Button(
             modifier=Modifier.size(height=57.dp, width=140.dp),
             onClick = {

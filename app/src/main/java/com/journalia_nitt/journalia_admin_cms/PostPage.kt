@@ -1,5 +1,6 @@
 package com.journalia_nitt.journalia_admin_cms
 
+import android.content.ActivityNotFoundException
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.OpenableColumns
@@ -8,6 +9,8 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +18,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,35 +27,53 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,8 +83,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
+import android.app.DatePickerDialog
+import android.content.Context
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
+import java.util.Calendar
+
 
 val font = FontFamily(Font(R.font.poppins))
 var Uri = mutableStateOf<Uri?>(null)
@@ -74,69 +104,72 @@ fun PostPage(
     innerPaddingValues: PaddingValues,
     navController: NavController
 ) {
-    Log.d("tokenFromBackStack",token)
-    val scrollState = rememberScrollState() // Keep track of the scroll position
+    Log.d("tokenFromBackStack", token)
+    val scrollState = rememberScrollState()
+    val descriptionScrollState = rememberScrollState()
     val viewModel: FileUploadViewModel = viewModel()
-    val context=LocalContext.current
-    var isLoaded by remember { mutableStateOf(false) }
-    val uploadVal=viewModel.uploadStatus.value
-    var posted by remember{mutableStateOf(false)}
+    val context = LocalContext.current
+    var isLoaded = viewModel.isLoaded.value
+    val uploadVal = viewModel.uploadStatus.value
     val coroutineScope = rememberCoroutineScope()
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(innerPaddingValues)){
-        Spacer(modifier = Modifier.height(10.dp))
+    var showDatePicker by remember { mutableStateOf(false) }
+    val isFieldBlank  = remember { mutableListOf(true,true,true) }
+    var title by remember { mutableStateOf("") }
+    var selectedDate by remember { mutableStateOf("") }
+    val theFileName = remember { mutableStateOf("Attach circular") }
+    val fileUploadMode = remember { mutableIntStateOf(0) }
+    val calendar = Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+    var description by remember { mutableStateOf("") }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(WindowInsets.systemBars.asPaddingValues())
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, top = 16.dp, end = 16.dp), // Adjust padding as needed
-            horizontalArrangement = Arrangement.Start
+                .background(color = Color.Transparent)
+                .padding(10.dp, 0.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // Image
-            Image(
+            Icon(
                 painter = painterResource(id = R.drawable.back),
-                contentDescription = "back button",
+                contentDescription = null,
                 modifier = Modifier
-                    .size(37.dp)
+                    .size(25.dp)
                     .clickable {
                         navController.popBackStack()
-                    }
+                    },
+                tint = Color.Black
             )
-
-            Spacer(modifier = Modifier.width(36.dp)) // Spacer for spacing between Image and Text
-
-            // Title Text
             Text(
-                text = "alma mater",
+                text = "CREATE",
                 fontFamily = font,
                 color = Color.Black,
                 fontSize = 32.sp,
-                modifier = Modifier.align(Alignment.CenterVertically) // Center vertically in the row
+            )
+            Icon(
+                painter = painterResource(id = R.drawable.menu),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(25.dp)
+                    .clickable {
+//                        navController.popBackStack()
+                    },
+                tint = Color.Black
             )
         }
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState) // Enable vertical scrolling
-                .padding(16.dp) // Add padding to the whole column
+                .verticalScroll(scrollState)
+                .padding(10.dp, 0.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            // Back Button Image
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            // Subtitle Text
-            Text(
-                modifier = Modifier.padding(start = 25.dp),
-                text = if(mode.value == 1) "CREATE AN ANNOUNCEMENT" else "CREATE A DEADLINE",
-                fontFamily = font,
-                color = Color(0xff656565),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.ExtraBold
-            )
-
-            Spacer(modifier = Modifier.height(30.dp))
-
-            // Title Input Label
             Text(
                 text = if (mode.value == 1) "Title of your Announcement" else "Title of your Deadline",
                 fontFamily = font,
@@ -144,16 +177,13 @@ fun PostPage(
                 fontSize = 20.sp,
                 fontWeight = FontWeight.ExtraBold
             )
-
-            // Title Input Field
-            val title = remember { mutableStateOf("") }
             OutlinedTextField(
-                value = title.value,
-                onValueChange = { title.value = it },
+                value = title,
+                onValueChange = { title = it
+                                isFieldBlank[0] = title.isBlank()},
                 modifier = Modifier
                     .fillMaxWidth()
-                    .semantics { contentDescription = "title field" }
-                    .height(99.dp),
+                    .height(100.dp),
                 shape = RoundedCornerShape(12.dp),
                 singleLine = false,
                 colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -163,10 +193,6 @@ fun PostPage(
                     unfocusedTextColor = Color.Black
                 )
             )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            // Description Label
             Text(
                 text = "Description",
                 fontFamily = font,
@@ -174,225 +200,274 @@ fun PostPage(
                 fontSize = 20.sp,
                 fontWeight = FontWeight.ExtraBold
             )
-
-            // Description Input Field
-            val description = remember { mutableStateOf("") }
-            OutlinedTextField(
-                value = description.value,
-                onValueChange = { description.value = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .semantics { contentDescription = "description input field" }
-                    .height(298.dp),
-                shape = RoundedCornerShape(12.dp),
-                singleLine = false,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    unfocusedBorderColor = Color.Black,
-                    focusedBorderColor = Color.Black,
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black
-                )
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            // Attach Circular Button
             Box(
                 modifier = Modifier
-            ) {
-                CustomFileUploadButton { fileData ->
-                    if (fileData != null) {
-                        theFileName.value = fileData.name
-                        println("MIME Type: ${fileData.mimeType}")
-                        println("File Content Size: ${fileData.content.size} bytes")
-                    } else {
-                        println("No file selected")
-                    }
-                }
-
+                    .fillMaxWidth()
+                    .height(300.dp)
+                    .border(1.dp, Color.Black, RoundedCornerShape(12.dp))
+                    .verticalScroll(descriptionScrollState)
+            )
+            {
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it
+                        isFieldBlank[1] = description.isBlank()},
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    singleLine = false,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color.Transparent,
+                        unfocusedBorderColor = Color.Transparent
+                    )
+                )
             }
-
-
-            Spacer(modifier = Modifier.height(50.dp))
-
-            // Deadline Label
+            var expanded by remember { mutableStateOf(false) }
+            val items = listOf("Option 1", "Option 2", "Option 3")
+            var selectedItem by remember { mutableStateOf("") }
             Text(
-                modifier = Modifier
-                    .padding(start = 70.dp),
-                text = "Deadline (optional)",
+                text = "Applicability",
                 fontFamily = font,
                 color = Color.Black,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.ExtraBold
             )
-            Spacer(modifier = Modifier.height(10.dp))
-            // Deadline Input Field
-            val deadline = remember { mutableStateOf("") }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.calender),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(33.dp)
-                        .align(Alignment.CenterStart)
-                        .offset(x = 12.dp)
-                )
-
-                OutlinedTextField(
-                    value = deadline.value,
-                    onValueChange = { deadline.value = it },
-                    placeholder = { Text(text = "dd/mm/yyyy", fontSize = 20.sp) },
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .offset(x = (-12).dp)
-                        .size(width = 300.dp, height = 53.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    singleLine = true,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        unfocusedBorderColor = Color.Black,
-                        focusedBorderColor = Color.Black,
-                        focusedTextColor = Color.Black,
-                        unfocusedTextColor = Color.Black
+            OutlinedTextField(
+                value = selectedItem,
+                onValueChange = {},
+                readOnly = true,
+                shape = RoundedCornerShape(12.dp),
+                label = { Text("Choose an option") },
+                modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = "Dropdown icon",
+                        modifier = Modifier.clickable { expanded = !expanded }
                     )
-                )
+                }
+            )
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                items.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            selectedItem = option
+                            isFieldBlank[2] = selectedItem.isBlank()
+                            expanded = false
+                        }
+                    )
+                }
+            }
+            CustomFileUploadButton(theFileName, fileUploadMode)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            )
+            {
                 Text(
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .offset(x = (-110).dp, y = 40.dp),
-                    text = "follow format: dd/mm/yyyy",
+                    text = "Deadline Date",
                     fontFamily = font,
                     color = Color.Black,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    fontSize = 14.sp
+                    textAlign = TextAlign.Center
+                )
+                Box(modifier = Modifier.fillMaxWidth())
+                {
+                    Icon(
+                        painter = painterResource(id = R.drawable.calender),
+                        contentDescription = "calendar_icon",
+                        modifier = Modifier
+                            .align(Alignment.CenterStart)
+                            .padding(start = 20.dp)
+                            .size(25.dp)
+                            .clickable {
+                                showDatePicker = true
+                            }
+                        ,
+                        tint = Color.Black
+                    )
+                    OutlinedTextField(
+                        value = selectedDate,
+                        onValueChange = { selectedDate = it },
+                        label = {
+                            Text(text = "Deadline (optional)")
+                        },
+                        readOnly = true,
+                        enabled = false,
+                        placeholder = { Text(text = "dd/mm/yyyy", fontSize = 20.sp) },
+                        modifier = Modifier
+                            .fillMaxWidth(0.85f)
+                            .align(Alignment.CenterEnd),
+                        shape = RoundedCornerShape(12.dp),
+                        singleLine = true,
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            unfocusedBorderColor = Color.Black,
+                            focusedBorderColor = Color.Black,
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black,
+                            disabledBorderColor =  Color.Black,
+                            disabledLabelColor = Color.Black,
+                        ),
+                    )
+                }
+                Text(
+                    text = "type in the form: dd/mm/yyyy",
+                    fontFamily = font,
+                    color = Color.Black,
+                    fontSize = 15.sp,
+                    textAlign = TextAlign.Center
                 )
             }
+            if (showDatePicker) {
+                DatePickerDialog(
+                    context,
+                    { _, selectedYear, selectedMonth, selectedDay ->
+                        selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+                        showDatePicker = false
+                    },
+                    year,
+                    month,
+                    day
+                ).apply {
+                    setOnDismissListener { showDatePicker = false }
+                }.show()
+            }
 
-            Spacer(modifier = Modifier.height(45.dp))
-
-            // Important Links Label
             Text(
                 text = "Important Links - 1",
                 fontFamily = font,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.ExtraBold
             )
-            Spacer(modifier = Modifier.height(5.dp))
-            // Important Link Input Field
-            val link1= remember { mutableStateOf("") }
+            val link1 = remember { mutableStateOf("") }
             OutlinedTextField(
                 value = link1.value,
                 onValueChange = { link1.value = it },
                 modifier = Modifier
                     .height(53.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
             )
-
-            Spacer(modifier = Modifier.height(15.dp))
-
             Text(
-                text = "Important Links - 1",
+                text = "Important Links - 2",
                 fontFamily = font,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.ExtraBold
             )
-            Spacer(modifier = Modifier.height(5.dp))
-            // Important Link Input Field
             val link2 = remember { mutableStateOf("") }
             OutlinedTextField(
                 value = link2.value,
                 onValueChange = { link2.value = it },
                 modifier = Modifier
                     .height(53.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
             )
-//            LaunchedEffect(viewModel.uploadStatus.value) {
-//                when (uploadVal) {
-//                    "success" -> {
-//                        isLoaded = false
-//                        Toast.makeText(context, "File Uploaded Successfully", Toast.LENGTH_SHORT).show()
-//                        navController.popBackStack()
-//                    }
-//                    "failure" -> {
-//                        isLoaded = false
-//                        Toast.makeText(context, "File Upload Failed", Toast.LENGTH_SHORT).show()
-//                        navController.popBackStack()
-//                    }
-//                    "success1"->{
-//                        isLoaded = false
-//                        Toast.makeText(context, "No File Selected", Toast.LENGTH_SHORT).show()
-//                        navController.popBackStack()
-//                    }
-//                }
-//            }
-            Box(modifier=Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center) {
-                if(isLoaded)
+            LaunchedEffect(viewModel.uploadStatus.value) {
+                when (uploadVal) {
+                    "success" -> {
+                        isLoaded = false
+                        Toast.makeText(context, "File Uploaded Successfully", Toast.LENGTH_SHORT)
+                            .show()
+                        navController.popBackStack()
+                    }
+                    "failure" -> {
+                        isLoaded = false
+                        Toast.makeText(context, "File Upload Failed", Toast.LENGTH_SHORT).show()
+                        navController.popBackStack()
+                    }
+                    "success1" -> {
+                        isLoaded = false
+                        Toast.makeText(context, "No File Selected", Toast.LENGTH_SHORT).show()
+                        navController.popBackStack()
+                    }
+                }
+            }
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                if (isLoaded)
                     CircularProgressIndicator()
             }
-            Spacer(modifier = Modifier.height(20.dp))
-            Button(
-                onClick = {
-                    isLoaded = true
-                    val uri = Uri.value
-                    val contentResolver = ContentResolver1.value
-
-                    // Launch the coroutine for uploading the file
-                    coroutineScope.launch(Dispatchers.IO) {
-                        // Call the file upload function
-                        viewModel.uploadFile(uri, contentResolver)
-                        delay(10000)
-                        withContext(Dispatchers.Main) {
-                            viewModel.uploadDetailsDeadline(
-                                AdminDashBoardInfo(
-                                    token = token,
-                                    author = "adminOffice",
-                                    title = title.value,
-                                    description = description.value,
-                                    deadline = deadline.value,
-                                    file_url = viewModel.fileUrl.value,
-                                    mode = mode.value,
-                                    link1 = link1.value,
-                                    link2 = link2.value
+            Card(
+                modifier = Modifier.padding(bottom = 10.dp).align(Alignment.CenterHorizontally).fillMaxWidth(0.5f).clickable{
+                    if(!isFieldBlank.contains(true) && fileUploadMode.value != 0)
+                    {
+                        isLoaded = true
+                        val uri = Uri.value
+                        val contentResolver = ContentResolver1.value
+                        coroutineScope.launch(Dispatchers.IO) {
+                            viewModel.uploadFile(uri, contentResolver)
+                            withContext(Dispatchers.Main) {
+                                viewModel.uploadDetailsDeadline(
+                                    AdminDashBoardInfo(
+                                        token = token,
+                                        author = "adminOffice",
+                                        title = title,
+                                        description = description,
+                                        deadline = selectedDate,
+                                        file_url = viewModel.fileUrl.value,
+                                        mode = mode.value,
+                                        link1 = link1.value,
+                                        link2 = link2.value
+                                    )
                                 )
-                            )
-                            fileUploadMode.value = 0
-                            theFileName.value = "Attach circular"
+                                fileUploadMode.value = 0
+                                theFileName.value = "Attach circular"
+                            }
+                        }
+                        isFieldBlank.replaceAll(
+                            { false }
+                        )
+                    }
+                    else
+                    {
+                        if(isFieldBlank[0])
+                        {
+                            Toast.makeText(context, "Please fill title", Toast.LENGTH_LONG).show()
+                            return@clickable
+                        }
+                        else if(isFieldBlank[1])
+                        {
+                            Toast.makeText(context, "Please fill description", Toast.LENGTH_LONG).show()
+                            return@clickable
+                        }
+                        else if(isFieldBlank[2])
+                        {
+                            Toast.makeText(context, "Please fill applicability", Toast.LENGTH_LONG).show()
+                            return@clickable
+                        }
+                        else
+                        {
+                            Toast.makeText(context, "Please select a file", Toast.LENGTH_LONG).show()
+                            return@clickable
                         }
                     }
                 },
-                modifier = Modifier
-                    .padding(start = 100.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xffa37fdb),
-                    contentColor = Color.White,
+                colors = CardDefaults.cardColors(
+                    containerColor = Color((0xffa37fdb))
                 ),
-                shape = RoundedCornerShape(12.dp)
+                elevation = CardDefaults.cardElevation(20.dp),
+                shape = RoundedCornerShape(16.dp)
             ) {
-                Text(
-                    text = "Upload",
-                    fontFamily = font,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.ExtraBold
-                )
-            }
-            if(posted){
-                isLoaded = false
-                Toast.makeText(context, "Uploaded Successfully1", Toast.LENGTH_SHORT).show()
-                navController.popBackStack()
-                posted=false
+                Box(modifier = Modifier.fillMaxSize().padding(vertical = 10.dp), contentAlignment = Alignment.Center)
+                {
+                    Text(
+                        text = "Upload",
+                        fontFamily = font,
+                        fontSize = 18.sp
+                    )
+                }
             }
         }
     }
 }
-
-val theFileName = mutableStateOf("Attach circular")
-val fileUploadMode = mutableStateOf(0)
 @Composable
-fun CustomFileUploadButton(onFileSelected: (FileData?) -> Unit) {
-
+fun CustomFileUploadButton(theFileName:MutableState<String>,fileUploadMode:MutableState<Int>) {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
@@ -400,88 +475,80 @@ fun CustomFileUploadButton(onFileSelected: (FileData?) -> Unit) {
         if (uri != null) {
             val contentResolver = context.contentResolver
             val mimeType = contentResolver.getType(uri)
-            Uri.value = uri
-            ContentResolver1.value = contentResolver
             fileUploadMode.value = 1
 
             if (mimeType in listOf("image/png", "image/jpeg", "image/jpg", "application/pdf")) {
                 val fileName = getFileName(contentResolver, uri)
                 val fileContent = readFileContent(contentResolver, uri)
+                theFileName.value = fileName ?: "Unknown File"
+
                 Log.d("FileName", "File Name: $fileName")
-                onFileSelected(
-                    FileData(
-                        name = fileName,
-                        mimeType = mimeType ?: "application/octet-stream",
-                        content = fileContent
-                    )
-                )
             } else {
                 Toast.makeText(context, "Invalid file type selected", Toast.LENGTH_SHORT).show()
             }
         } else {
-            onFileSelected(null)
+            Toast.makeText(context, "No file selected", Toast.LENGTH_SHORT).show()
         }
     }
-
-    Box(
+    Card(
         modifier = Modifier
-    ) {
-        Button(
-            onClick = {
-                if(fileUploadMode.value == 0) {
-                    launcher.launch(
-                        arrayOf(
-                            "image/png",
-                            "image/jpeg",
-                            "image/jpg",
-                            "application/pdf"
+            .fillMaxWidth()
+            .padding(top = 5.dp)
+            .clickable {
+                try {
+                    if (fileUploadMode.value == 0) {
+                        launcher.launch(
+                            arrayOf(
+                                "image/png",
+                                "image/jpeg",
+                                "image/jpg",
+                                "application/pdf"
+                            )
                         )
-                    )
+                    } else {
+                        fileUploadMode.value = 0
+                        theFileName.value = "Attach circular"
+                    }
+                } catch (e: ActivityNotFoundException) {
+                    Toast.makeText(context, "No app available to select files", Toast.LENGTH_SHORT).show()
                 }
-                else fileUploadMode.value = 0; theFileName.value = "Attach circular"
-            },
-            modifier = Modifier
-                .height(57.dp)
-                .width(360.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.White,
-                contentColor = Color.White,
-            ),
-            shape = RoundedCornerShape(12.dp),
-            elevation = ButtonDefaults.buttonElevation(
-                defaultElevation = 15.dp,
-                pressedElevation = 10.dp
-            )
-        ) {}
-
+        },
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        elevation = CardDefaults.cardElevation(8.dp),
+        shape = RoundedCornerShape(16.dp)
+    ) {
         Box(
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(start = 30.dp)
-                .fillMaxHeight()
-                .fillMaxWidth(0.7f)
-        ){
+            modifier = Modifier.fillMaxSize().padding(vertical = 5.dp)
+        )
+        {
             Text(
-                modifier = Modifier,
+                modifier = Modifier.align(Alignment.Center).padding(vertical = 10.dp),
                 text = theFileName.value,
                 fontFamily = font,
-                fontSize = 20.sp,
+                fontSize = 18.sp,
                 color = Color.Black,
                 fontWeight = FontWeight.ExtraBold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
+            Icon(
+                painter = if (fileUploadMode.value == 0) painterResource(id = R.drawable.attach_file) else rememberVectorPainter(Icons.Default.Clear),
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(end = 10.dp)
+                    .size(25.dp)
+                    .clickable {
+                        theFileName.value = "yoo"
+                    },
+                tint = Color.Black
+            )
         }
-        Image(
-            painter = if(fileUploadMode.value == 0) painterResource(id = R.drawable.upload) else rememberVectorPainter(Icons.Default.Clear),
-            contentDescription = null,
-            modifier = Modifier
-                .size(30.dp)
-                .align(Alignment.CenterEnd)
-                .offset(x = (-30).dp)
-        )
     }
 }
+
 
 data class FileData(
     val name: String,

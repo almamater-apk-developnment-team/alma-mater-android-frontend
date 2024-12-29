@@ -36,7 +36,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-
 val poppins = FontFamily(Font(R.font.poppins))
 val landingPageButtonTexts = listOf(
     Pair("ADMIN DASHBOARD", Screens.AdminPage),
@@ -44,7 +43,6 @@ val landingPageButtonTexts = listOf(
     Pair("POST ANNOUNCEMENT" , Screens.AnnouncementPage)
 )
 val mode = mutableIntStateOf(0)
-
 @Composable
 fun SplashPage(innerPadding: PaddingValues , navController: NavController) {
 
@@ -103,7 +101,6 @@ fun SplashPage(innerPadding: PaddingValues , navController: NavController) {
         }
     }
 }
-
 @Composable
 fun LandingPage(token : MutableState<String>,innerPadding: PaddingValues , navController: NavController) {
 
@@ -161,7 +158,7 @@ fun LandingPage(token : MutableState<String>,innerPadding: PaddingValues , navCo
                     ) {
                         Image(
                             painter = painterResource(R.drawable.signout),
-                            contentDescription = "Sign out button",
+                            contentDescription = "sign_out",
                             modifier = Modifier.scale(3f)
                         )
                     }
