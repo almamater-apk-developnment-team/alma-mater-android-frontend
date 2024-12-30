@@ -93,7 +93,7 @@ import androidx.compose.ui.platform.LocalContext
 import java.util.Calendar
 
 
-val font = FontFamily(Font(R.font.poppins))
+val font = FontFamily(Font(R.font.urbanist))
 var Uri = mutableStateOf<Uri?>(null)
 var ContentResolver1 = mutableStateOf<ContentResolver?>(null)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -128,9 +128,10 @@ fun PostPage(
             .fillMaxSize()
             .padding(WindowInsets.systemBars.asPaddingValues())
     ) {
+        Spacer(modifier = Modifier.height(10.dp))
         Row(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(0.6f)
                 .background(color = Color.Transparent)
                 .padding(10.dp, 0.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -150,19 +151,16 @@ fun PostPage(
                 text = "CREATE",
                 fontFamily = font,
                 color = Color.Black,
-                fontSize = 32.sp,
-            )
-            Icon(
-                painter = painterResource(id = R.drawable.menu),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(25.dp)
-                    .clickable {
-//                        navController.popBackStack()
-                    },
-                tint = Color.Black
+                fontSize = 16.sp,
             )
         }
+        Spacer(modifier = Modifier.height(3.dp))
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(color = Color.LightGray)
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -170,11 +168,12 @@ fun PostPage(
                 .padding(10.dp, 0.dp),
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
+            Spacer(modifier = Modifier.height(25.dp))
             Text(
                 text = if (mode.value == 1) "Title of your Announcement" else "Title of your Deadline",
                 fontFamily = font,
                 color = Color.Black,
-                fontSize = 20.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.ExtraBold
             )
             OutlinedTextField(
@@ -193,11 +192,13 @@ fun PostPage(
                     unfocusedTextColor = Color.Black
                 )
             )
+
+            Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = "Description",
                 fontFamily = font,
                 color = Color.Black,
-                fontSize = 20.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.ExtraBold
             )
             Box(
@@ -221,6 +222,9 @@ fun PostPage(
                     )
                 )
             }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
             var expanded by remember { mutableStateOf(false) }
             val items = listOf("Option 1", "Option 2", "Option 3","Option 1", "Option 2", "Option 3","Option 1", "Option 2", "Option 3","Option 1", "Option 2", "Option 3")
             var selectedItem by remember { mutableStateOf("") }
@@ -228,7 +232,7 @@ fun PostPage(
                 text = "Applicability",
                 fontFamily = font,
                 color = Color.Black,
-                fontSize = 20.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.ExtraBold
             )
             Column()
@@ -265,6 +269,9 @@ fun PostPage(
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
             CustomFileUploadButton(theFileName, fileUploadMode)
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -274,7 +281,7 @@ fun PostPage(
                     text = "Deadline Date",
                     fontFamily = font,
                     color = Color.Black,
-                    fontSize = 20.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.ExtraBold,
                     textAlign = TextAlign.Center
                 )
@@ -297,14 +304,14 @@ fun PostPage(
                         value = selectedDate,
                         onValueChange = { selectedDate = it },
                         label = {
-                            Text(text = "Deadline (optional)")
+                            Text(modifier = Modifier.clickable { showDatePicker=true }, text = if(mode.value == 1) "Deadline (optional)" else "Deadline (mandatory)", fontSize = 12.sp, color = Color.LightGray)
                         },
                         readOnly = true,
                         enabled = false,
-                        placeholder = { Text(text = "dd/mm/yyyy", fontSize = 20.sp) },
+                        placeholder = { Text(modifier = Modifier.clickable { showDatePicker=true }, text = "dd/mm/yyyy", fontSize = 16.sp) },
                         modifier = Modifier
-                            .fillMaxWidth(0.85f)
-                            .align(Alignment.CenterEnd),
+                            .fillMaxWidth(0.7f)
+                            .align(Alignment.Center),
                         shape = RoundedCornerShape(12.dp),
                         singleLine = true,
                         colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -317,14 +324,10 @@ fun PostPage(
                         ),
                     )
                 }
-                Text(
-                    text = "type in the form: dd/mm/yyyy",
-                    fontFamily = font,
-                    color = Color.Black,
-                    fontSize = 15.sp,
-                    textAlign = TextAlign.Center
-                )
             }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
             if (showDatePicker) {
                 DatePickerDialog(
                     context,
@@ -343,7 +346,7 @@ fun PostPage(
             Text(
                 text = "Important Links - 1",
                 fontFamily = font,
-                fontSize = 20.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.ExtraBold
             )
             val link1 = remember { mutableStateOf("") }
@@ -355,10 +358,13 @@ fun PostPage(
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp)
             )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
             Text(
                 text = "Important Links - 2",
                 fontFamily = font,
-                fontSize = 20.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.ExtraBold
             )
             val link2 = remember { mutableStateOf("") }
@@ -370,6 +376,9 @@ fun PostPage(
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp)
             )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
             LaunchedEffect(viewModel.uploadStatus.value) {
                 when (uploadVal) {
                     "success" -> {
@@ -430,6 +439,10 @@ fun PostPage(
                     }
                     else
                     {
+                        if (selectedDate == "" && mode.value == 0){
+                            Toast.makeText(context, "Please select a deadline", Toast.LENGTH_LONG).show()
+                            return@clickable
+                        }
                         if(isFieldBlank[0])
                         {
                             Toast.makeText(context, "Please fill title", Toast.LENGTH_LONG).show()

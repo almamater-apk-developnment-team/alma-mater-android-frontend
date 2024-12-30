@@ -74,6 +74,7 @@ dependencies {
 
     //firebase BoM
     implementation("com.google.firebase:firebase-bom:32.1.0")
+    implementation("io.coil-kt:coil-compose:2.2.2")
 
     //storage dependency
     implementation(platform(libs.firebase.bom)) // Use Firebase BOM

@@ -17,6 +17,32 @@ class FileUploadViewModel : ViewModel() {
     private val _isLoaded = mutableStateOf(false)
     val isLoaded: State<Boolean>  = _isLoaded
     val fileUrl = mutableStateOf<String?>("")
+    val deleteStatus = mutableStateOf("")
+    private val _isDeleted = mutableStateOf(false)
+    val isDeleted: State<Boolean> = _isDeleted
+
+    fun deletePost(postId: String) {
+        viewModelScope.launch {
+            try {
+                val response = FileUploadClient.deletePost(postId)
+                if (response.isSuccessful) {
+                    deleteStatus.value = "success"
+                    _isDeleted.value = true
+                    Log.d("FileDelete", "Post deleted successfully: ${response.body()?.message}")
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    deleteStatus.value = "failure"
+                    _isDeleted.value = false
+                    Log.e("FileDelete", "Delete failed: ${response.code()}, Error: $errorBody")
+                }
+            } catch (e: Exception) {
+                deleteStatus.value = "failure"
+                _isDeleted.value = false
+                Log.e("FileDelete", "Error deleting post", e)
+            }
+        }
+    }
+
     fun uploadFile(fileUri: Uri?, contentResolver: ContentResolver?) {
         viewModelScope.launch {
             try {

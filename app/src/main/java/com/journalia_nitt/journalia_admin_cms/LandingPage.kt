@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -32,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -46,7 +48,7 @@ import coil.decode.SvgDecoder
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
-val poppins = FontFamily(Font(R.font.poppins))
+val poppins = FontFamily(Font(R.font.urbanist))
 val landingPageButtonTexts = listOf(
     Pair("ADMIN DASHBOARD", Screens.AdminPage),
     Pair("POST A DEADLINE" , Screens.DeadlinePage),
@@ -83,14 +85,14 @@ fun SplashPage(innerPadding: PaddingValues , navController: NavController) {
         {
             Text(
                 text = "alma",
-                fontFamily = poppins,
+                fontFamily = urbanist,
                 fontSize = 50.sp,
                 color = Color(0XFF9667E0),
                 fontWeight = FontWeight.ExtraBold
             )
             Text(
                 text = "mater",
-                fontFamily = poppins,
+                fontFamily = urbanist,
                 fontSize = 50.sp,
                 color = Color(0XFFBC80F0),
                 fontWeight = FontWeight.ExtraBold
@@ -99,7 +101,7 @@ fun SplashPage(innerPadding: PaddingValues , navController: NavController) {
         Text(
             text = "made for NIT Trichy's Admin",
             color = Color(0XFF9667E0),
-            fontFamily = poppins,
+            fontFamily = urbanist,
             fontSize = 16.sp
         )
         Spacer(modifier = Modifier.height(20.dp))
@@ -138,6 +140,21 @@ fun LandingPage(token : MutableState<String>,innerPadding: PaddingValues , navCo
             colors = CardDefaults.cardColors(Color.Companion.White)
         ) {
             Box() {
+                IconButton(
+                    modifier = Modifier.padding(end = 10.dp, top = 10.dp),
+                    onClick = {
+                        token.value = ""
+                        saveToSharedPreferences(context,"token",token.value)
+                        navController.popBackStack()
+                        navController.popBackStack()
+                    }
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.signout),
+                        contentDescription = "sign_out",
+                        modifier = Modifier.scale(2f)
+                    )
+                }
                 Column(
                     modifier = Modifier
                 ) {
@@ -147,31 +164,19 @@ fun LandingPage(token : MutableState<String>,innerPadding: PaddingValues , navCo
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = "Alma mater",
-                            fontFamily = poppins,
-                            fontSize = 32.sp,
-                            color = Color.Companion.Black,
-                            fontWeight = FontWeight.Companion.Bold
+                            text = "alma",
+                            fontFamily = urbanist,
+                            fontSize = 40.sp,
+                            color = Color(0XFF9667E0),
+                            fontWeight = FontWeight.ExtraBold
                         )
-                    }
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    IconButton(
-                        modifier = Modifier.padding(end = 10.dp, top = 10.dp),
-                        onClick = {
-                            token.value = ""
-                            saveToSharedPreferences(context,"token",token.value)
-                            navController.popBackStack()
-                            navController.popBackStack()
-                        }
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.signout),
-                            contentDescription = "sign_out",
-                            modifier = Modifier.scale(3f)
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            text = "mater",
+                            fontFamily = urbanist,
+                            fontSize = 40.sp,
+                            color = Color(0XFFBC80F0),
+                            fontWeight = FontWeight.ExtraBold
                         )
                     }
                 }
@@ -193,15 +198,15 @@ fun LandingPage(token : MutableState<String>,innerPadding: PaddingValues , navCo
                 horizontalAlignment = Alignment.Companion.CenterHorizontally
             ) {
                 Text(
-                    text = "Welcome to Student Welfare ",
-                    fontFamily = poppins,
+                    text = "Welcome to "+token.value,
+                    fontFamily = urbanist,
                     fontSize = 20.sp,
                     color = Color.Companion.Black,
                     fontWeight = FontWeight.Companion.Bold
                 )
                 Text(
                     text = "Dashboard",
-                    fontFamily = poppins,
+                    fontFamily = urbanist,
                     fontSize = 20.sp,
                     color = Color.Companion.Black,
                     fontWeight = FontWeight.Companion.Bold
@@ -214,7 +219,7 @@ fun LandingPage(token : MutableState<String>,innerPadding: PaddingValues , navCo
                     modifier = Modifier
                         .height(70.dp)
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
+                        .padding(horizontal = 25.dp)
                         .clickable {
                             if (i.first == "POST A DEADLINE") mode.value = 0
                             else if(i.first == "POST ANNOUNCEMENT") mode.value = 1
@@ -226,10 +231,9 @@ fun LandingPage(token : MutableState<String>,innerPadding: PaddingValues , navCo
                             }
                             navController.navigate(route)
                         }
-                        .border(
-                            width = 2.dp,
-                            color = Color.Companion.Black,
-                            shape = RoundedCornerShape(12.dp)
+                        .shadow(
+                            elevation = 15.dp,
+                            shape = RoundedCornerShape(10.dp)
                         ),
                     colors = CardDefaults.cardColors(Color(205, 193, 255))
                 ) {
@@ -240,7 +244,7 @@ fun LandingPage(token : MutableState<String>,innerPadding: PaddingValues , navCo
                     ) {
                         Text(
                             text = i.first,
-                            fontFamily = poppins,
+                            fontFamily = urbanist,
                             fontSize = 20.sp,
                             color = Color.Companion.Black,
                             fontWeight = FontWeight.Companion.Bold
@@ -269,8 +273,8 @@ fun LandingPage(token : MutableState<String>,innerPadding: PaddingValues , navCo
                     ) {
                         Text(
                             text = "POST A QUERY",
-                            fontFamily = poppins,
-                            fontSize = 20.sp,
+                            fontFamily = urbanist,
+                            fontSize = 16.sp,
                             color = Color.Companion.White,
                             fontWeight = FontWeight.Companion.Bold
                         )
@@ -291,8 +295,8 @@ fun LandingPage(token : MutableState<String>,innerPadding: PaddingValues , navCo
                     ) {
                         Text(
                             text = "CONTACT US",
-                            fontFamily = poppins,
-                            fontSize = 20.sp,
+                            fontFamily = urbanist,
+                            fontSize = 16.sp,
                             color = Color.Companion.White,
                             fontWeight = FontWeight.Companion.Bold
                         )
