@@ -15,10 +15,10 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
-import com.example.journalia.Firebase.fcmTokenToDataStore
-import com.example.journalia.Navigation.Screens
-import com.example.journalia.Student.decodeJWT
+import com.journalia_nitt.journalia_admin_cms.firebase.fcmTokenToDataStore
+import com.journalia_nitt.journalia_admin_cms.student.screens.decodeJWT
 import com.example.journalia.Student.SharedPreferences.saveUserDetails
+import com.journalia_nitt.journalia_admin_cms.navigation.Screens
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

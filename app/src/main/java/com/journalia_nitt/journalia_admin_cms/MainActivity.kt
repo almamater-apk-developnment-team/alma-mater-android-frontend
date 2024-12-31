@@ -10,14 +10,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.compose.rememberNavController
-import com.example.journalia.Alumni.Services.LoggedInAccount
-import com.example.journalia.Firebase.fcmTokenToDataStore
-import com.example.journalia.Student.Authentication.JWTToken
-import com.example.journalia.Student.PostDeadLine
-import com.example.journalia.Student.Responses.DeadlineRequest
+import com.journalia_nitt.journalia_admin_cms.firebase.fcmTokenToDataStore
+import com.journalia_nitt.journalia_admin_cms.student.viewModels.PostDeadLine
+import com.journalia_nitt.journalia_admin_cms.student.responses.DeadlineRequest
 import com.example.journalia.Student.SharedPreferences.saveTokenDetails
-import com.journalia_nitt.journalia_admin_cms.ui.theme.MyApplicationTheme
+import com.journalia_nitt.journalia_admin_cms.alumni.response.LoggedInAccount
+import com.journalia_nitt.journalia_admin_cms.navigation.MyApp
+import com.journalia_nitt.journalia_admin_cms.student.authentication.JWTToken
+
 var theUser = LoggedInAccount(
     username = "",
     email = "",
@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
             }
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    com.example.journalia.Navigation.MyApp(innerPadding)
+                   MyApp(innerPadding)
 //                    AlarmNotificationUI(this,this,innerPadding)
                 }
 
