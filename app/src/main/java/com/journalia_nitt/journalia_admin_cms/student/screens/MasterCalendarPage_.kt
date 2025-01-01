@@ -210,7 +210,7 @@ fun CalenderPage(navController: NavController) {
         verticalArrangement = Arrangement.Top
     ) {
         Spacer(modifier = Modifier.height(5.dp))
-        selectedDate = calendarScreen()
+        selectedDate = StudentCalendarScreen()
         Spacer(modifier = Modifier.height(10.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
