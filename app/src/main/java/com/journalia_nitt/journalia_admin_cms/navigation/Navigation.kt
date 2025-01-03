@@ -14,7 +14,6 @@ import com.journalia_nitt.journalia_admin_cms.common.screens.AdminComponents
 import com.journalia_nitt.journalia_admin_cms.student.screens.AdminDetailsPage
 import com.journalia_nitt.journalia_admin_cms.student.screens.CommunityPage
 import com.journalia_nitt.journalia_admin_cms.common.screens.LoginPage
-import com.journalia_nitt.journalia_admin_cms.common.screens.SpalshScreen
 import com.journalia_nitt.journalia_admin_cms.student.screens.PostCreation
 import com.journalia_nitt.journalia_admin_cms.student.screens.ProfilePage
 import com.journalia_nitt.journalia_admin_cms.student.screens.BookmarkPage
@@ -32,10 +31,11 @@ import com.example.journalia.WebView.buildUrl
 import com.google.gson.Gson
 import com.journalia_nitt.journalia_admin_cms.alumni.screens.AlumniPageContent
 import com.journalia_nitt.journalia_admin_cms.alumni.screens.CommunityScreen
+import com.journalia_nitt.journalia_admin_cms.common.screens.SplashScreen
 import com.journalia_nitt.journalia_admin_cms.student.responses.Deadline
 import com.journalia_nitt.journalia_admin_cms.student.responses.UserFetchClass
+import com.journalia_nitt.journalia_admin_cms.student.webmailURL
 
-val webmailURL = "https://students.nitt.edu/horde/login.php"
 
 @Composable
 fun MyApp(innerPaddingValues: PaddingValues) {
@@ -45,7 +45,7 @@ fun MyApp(innerPaddingValues: PaddingValues) {
         startDestination = Screens.SplashScreen.route
     ) {
         composable(Screens.SplashScreen.route) {
-            SpalshScreen(innerPaddingValues,navController)
+            SplashScreen(innerPaddingValues,navController)
         }
         composable(Screens.LoginPage.route) {
             LoginPage(navController=navController)
@@ -54,61 +54,62 @@ fun MyApp(innerPaddingValues: PaddingValues) {
             WebView(navController = navController, url = buildUrl())
         }
         composable(Screens.HomePage.route) {
-            LandingPage(navController,innerPaddingValues)
-        }
-        composable(Screens.CalenderPage.route) {
             Page(
-                innerPadding = innerPaddingValues ,
                 currentPage = {
-                    CalenderPage(navController = navController)
+                    LandingPage(navController)
                 },
                 navController = navController,
                 searchBar = false,
-                heading = "CALENDAR"
+                heading = "HOME",
+            )
+        }
+        composable(Screens.CalenderPage.route) {
+            Page(
+                currentPage = {
+                    CalenderPage()},
+                navController = navController,
+                searchBar = false,
+                heading = "CALENDAR",
             )
         }
         composable(Screens.AdminPage.route) {
             Page(
-                innerPadding = innerPaddingValues ,
                 currentPage = {
                     AdminComponents(navController)
                 },
                 navController = navController,
                 searchBar = false,
-                heading = "ADMIN BOARD"
+                heading = "ADMIN BOARD",
             )
         }
         composable(Screens.PostCreationPage.route) {
             Page(
-                innerPadding = innerPaddingValues ,
                 currentPage = {
                     PostCreation(navController)
                 },
                 navController = navController,
                 searchBar = false,
-                heading = "CREATE A POST"
+                heading = "CREATE A POST",
             )
         }
         composable(Screens.BookMarkPage.route) {
             Page(
-                innerPadding = innerPaddingValues ,
                 currentPage = {
                     BookmarkPage()
                 },
                 navController = navController,
                 searchBar = false,
-                heading = "BOOKMARKS"
+                heading = "BOOKMARKS",
             )
         }
         composable(Screens.ProfilePage.route) {
             Page(
-                innerPadding = innerPaddingValues ,
                 currentPage = {
                     ProfilePage(navController)
                 },
                 navController = navController,
                 searchBar = false,
-                heading = "PROFILE"
+                heading = "PROFILE",
             )
         }
         composable(
@@ -129,13 +130,12 @@ fun MyApp(innerPaddingValues: PaddingValues) {
 
             if (item != null) {
                 Page(
-                    innerPadding = innerPaddingValues ,
                     currentPage = {
                         AdminDetailsPage(item,navController)
                     },
                     navController = navController,
                     searchBar = false,
-                    heading = "CIRCULAR"
+                    heading = "CIRCULAR",
                 )
             } else {
                 Text("Error: Item not found")
@@ -144,68 +144,62 @@ fun MyApp(innerPaddingValues: PaddingValues) {
 
         composable(Screens.FestDirectory.route) {
             Page(
-                innerPaddingValues,
                 currentPage={
                     FestDirectory(navController)
                 },
                 navController = navController,
                 searchBar = false,
-                heading = "FEST DIRECTORY"
+                heading = "FEST DIRECTORY",
             )
         }
         composable(Screens.ClubDirectory.route) {
             Page(
-                innerPaddingValues,
                 currentPage = {
                     ClubSubPage(navController)
                 },
                 navController = navController,
                 searchBar = false,
-                heading = "CLUB DIRECTORY"
+                heading = "CLUB DIRECTORY",
             )
         }
         composable(Screens.ClubPage.route) {
             Page(
-                innerPaddingValues,
                 currentPage = {
                     ClubPage(innerPaddingValues,navController)
                 },
                 navController = navController,
                 searchBar = false,
-                heading = "Explore"
+                heading = "Explore",
             )
         }
         composable(Screens.CommunityPage.route) {
             Page(
-                innerPaddingValues,
                 currentPage = {
                     CommunityPage(innerPaddingValues,navController)
                 },
                 navController = navController,
                 searchBar = false,
-                heading = "PUBLIC COMMUNITY"
+                heading = "PUBLIC COMMUNITY",
             )
         }
         composable(Screens.Webmail.route) {
             Page(
-                innerPaddingValues,
                 currentPage = {
                     Webmail(webmailURL)
                 },
                 navController = navController,
                 searchBar = false,
-                heading = ""
+                heading = "",
             )
         }
         composable(Screens.ClubCommunityPage.route) {
             Page(
-                innerPaddingValues,
                 currentPage = {
                     clubCommunityPage(innerPaddingValues,navController)
                 },
                 navController = navController,
                 searchBar = false,
-                heading = "FEST COMMUNITY"
+                heading = "FEST COMMUNITY",
             )
         }
         composable(
@@ -216,7 +210,6 @@ fun MyApp(innerPaddingValues: PaddingValues) {
                 }
             )
         ) {navBackStackEntry ->
-
             val itemJson1 = navBackStackEntry.arguments?.getString("item")
             val item = if (itemJson1 != null) {
                 Gson().fromJson(itemJson1, UserFetchClass::class.java)
@@ -226,13 +219,12 @@ fun MyApp(innerPaddingValues: PaddingValues) {
 
             if (item != null) {
                 Page(
-                    innerPaddingValues,
                     currentPage = {
                         ViewPost(navController,item)
                     },
                     navController = navController,
                     searchBar = false,
-                    heading = "VIEW POST"
+                    heading = "VIEW POST",
                 )
             } else {
                 Text("Error: Item not found")
@@ -240,36 +232,33 @@ fun MyApp(innerPaddingValues: PaddingValues) {
         }
         composable(Screens.AlumniCommunityScreen.route) {
             Page(
-                innerPaddingValues,
                 currentPage = {
                     CommunityScreen(innerPaddingValues,navController)
                 },
                 navController = navController,
                 searchBar = false,
-                heading = "ALUMNI COMMUNITY"
+                heading = "ALUMNI COMMUNITY",
             )
         }
         composable(Screens.PdfWebViewPage.route) {
             Page(
-                innerPaddingValues,
                 currentPage = {
                     PDFWebViewScreen()
                 },
                 navController = navController,
                 searchBar = false,
-                heading = "PDF VIEW SCREEN"
+                heading = "PDF VIEW SCREEN",
             )
         }
         composable(Screens.AlumniContentPage.route) {
             val showBottomSheet = remember { mutableStateOf(false) }
             Page(
-                innerPaddingValues,
                 currentPage = {
                     AlumniPageContent(innerPaddingValues,showBottomSheet,navController)
                 },
                 navController = navController,
                 searchBar = false,
-                heading = "POST SCREEN"
+                heading = "POST SCREEN",
             )
         }
     }

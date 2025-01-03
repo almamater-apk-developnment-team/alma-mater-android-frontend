@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.example.journalia.Student.SharedPreferences.getUserDetails
 import com.journalia_nitt.journalia_admin_cms.firebase.fcmTokenToDataStore
 import com.journalia_nitt.journalia_admin_cms.student.viewModels.PostDeadLine
 import com.journalia_nitt.journalia_admin_cms.student.responses.DeadlineRequest
@@ -31,12 +32,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val context = LocalContext.current
-            authRepository.getToken("user1") { result ->
-                result.onSuccess { token ->
-                    Log.d("Token",token)
-                    saveTokenDetails(context = context, token = token)
-                }.onFailure { error ->
-                    Log.d("Token",error.message.toString())
+            val userDetails = getUserDetails(context = context)
+            if (userDetails != null) {
+                authRepository.getToken(userDetails.collegeId) { result ->
+                    result.onSuccess { token ->
+                        Log.d("Token",token)
+                        saveTokenDetails(context = context, token = token)
+                    }.onFailure { error ->
+                        Log.d("Token",error.message.toString())
+                    }
                 }
             }
             val deadlineRequest = DeadlineRequest(deadline = "2024-12-31")

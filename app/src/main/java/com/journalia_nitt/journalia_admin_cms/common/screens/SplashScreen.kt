@@ -33,7 +33,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 
-fun SpalshScreen(innerPadding: PaddingValues,navController: NavController){
+fun SplashScreen(innerPadding: PaddingValues,navController: NavController){
     Column(modifier=Modifier
         .fillMaxSize()
         .padding(innerPadding)

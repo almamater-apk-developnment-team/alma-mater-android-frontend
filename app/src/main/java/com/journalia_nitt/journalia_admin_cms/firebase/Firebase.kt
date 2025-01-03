@@ -68,7 +68,7 @@ suspend fun reminderToCalendar(title:String,date:String,context: Context):Result
     val documentRef = userDetails?.let { db.collection("calendar").document(it.collegeId) }
     return try {
         val updates = hashMapOf(title to date)
-        documentRef?.set(updates as Map<String, Any>)?.await()
+        documentRef?.update(updates as Map<String, Any>)?.await()
         Result.success("Document successfully updated!")
     } catch (e: Exception) {
         Result.failure(e)
