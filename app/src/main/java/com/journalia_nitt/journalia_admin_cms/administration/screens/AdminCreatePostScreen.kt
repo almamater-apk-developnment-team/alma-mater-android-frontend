@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.journalia_nitt.journalia_admin_cms.R
+import com.journalia_nitt.journalia_admin_cms.administration.response.AdminDashBoardInfo
 import com.journalia_nitt.journalia_admin_cms.administration.viewModels.FileUploadViewModel
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
 import kotlinx.coroutines.Dispatchers
@@ -70,8 +71,8 @@ fun AdminCreateAPostScreen(
     navController: NavController,
     mode:Int
 ) {
-    val Uri by remember{ mutableStateOf<Uri?>(null) }
-    val ContentResolver1 by remember{ mutableStateOf<ContentResolver?>(null) }
+    val UriPost = remember{ mutableStateOf<Uri?>(null) }
+    val ContentResolver1 = remember{ mutableStateOf<ContentResolver?>(null) }
 
     val scrollState = rememberScrollState()
     val descriptionScrollState = rememberScrollState()
@@ -196,7 +197,7 @@ fun AdminCreateAPostScreen(
                     }
                 }
             }
-            CustomFileUploadButton(theFileName, fileUploadMode)
+            CustomFileUploadButton(theFileName, fileUploadMode,UriPost,ContentResolver1)
             Text(
                 text = "Deadline Date",
                 fontFamily = urbanist,
@@ -294,28 +295,28 @@ fun AdminCreateAPostScreen(
                     if(!isFieldBlank.contains(true) && fileUploadMode.value != 0)
                     {
                         isLoaded = true
-                        val uri = Uri
-                        val contentResolver = ContentResolver1
+                        val uri = UriPost.value
+                        val contentResolver = ContentResolver1.value
                         coroutineScope.launch(Dispatchers.IO) {
                             viewModel.uploadFile(uri, contentResolver)
                             delay(10000)
                             withContext(Dispatchers.Main) {
-//                                viewModel.uploadDetailsDeadline(
-//                                    AdminDashBoardInfo(
-//                                        token = token,
-//                                        author = "adminOffice",
-//                                        title = title,
-//                                        description = description,
-//                                        deadline = selectedDate,
-//                                        file_url = viewModel.fileUrl.value,
-//                                        mode = mode,
-//                                        link1 = link1.value,
-//                                        link2 = link2.value
-//                                    )
-//                                )
-//                                fileUploadMode.value = 0
-//                                posted = true
-//                                theFileName.value = "Attach circular"
+                                viewModel.uploadDetailsDeadline(
+                                    AdminDashBoardInfo(
+                                        token = "111",
+                                        author = "adminOffice",
+                                        title = title,
+                                        description = description,
+                                        deadline = selectedDate,
+                                        file_url = viewModel.fileUrl.value,
+                                        mode = mode,
+                                        link1 = link1.value,
+                                        link2 = link2.value
+                                    )
+                                )
+                                fileUploadMode.value = 0
+                                posted = true
+                                theFileName.value = "Attach circular"
                             }
                         }
                         isFieldBlank.replaceAll(
@@ -377,7 +378,9 @@ fun AdminCreateAPostScreen(
         }
 }
 @Composable
-fun CustomFileUploadButton(theFileName: MutableState<String>, fileUploadMode: MutableState<Int>) {
+fun CustomFileUploadButton(theFileName: MutableState<String>, fileUploadMode: MutableState<Int>,
+                           UriPost :MutableState<Uri?>,
+                           contentResolverPost:MutableState<ContentResolver?>) {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
@@ -386,6 +389,8 @@ fun CustomFileUploadButton(theFileName: MutableState<String>, fileUploadMode: Mu
             val contentResolver = context.contentResolver
             val mimeType = contentResolver.getType(uri)
             fileUploadMode.value = 1
+            UriPost.value = uri
+            contentResolverPost.value = contentResolver
 
             if (mimeType in listOf("image/png", "image/jpeg", "image/jpg", "application/pdf")) {
                 val fileName = getFileName(contentResolver, uri)
