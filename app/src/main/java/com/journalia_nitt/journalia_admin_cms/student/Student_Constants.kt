@@ -26,7 +26,6 @@ val days = arrayOf(
 val logging = HttpLoggingInterceptor().apply {
     level = HttpLoggingInterceptor.Level.BODY
 }
-val webmailURL = "https://students.nitt.edu/horde/login.php"
 
 val client = OkHttpClient.Builder()
     .addInterceptor(logging)

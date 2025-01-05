@@ -35,11 +35,11 @@ import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
 fun BottomNavigationBar(navController: NavController)
 {
     val componentList = listOf(
-        Navigation(Screens.HomePage.route,Icons.Outlined.Home,"Home",25,Color.Black,true),
-        Navigation(Screens.CalenderPage.route,Icons.Outlined.DateRange,"Calendar",25,Color.Black,true),
-        Navigation(Screens.PostCreationPage.route,Icons.Outlined.AddCircle,"",30, color_3,false),
-        Navigation(Screens.BookMarkPage.route,ImageVector.vectorResource(R.drawable.baseline_bookmark_border_24),"Bookmarks",25,Color.Black,true),
-        Navigation(Screens.ProfilePage.route,Icons.Outlined.Person,"Account",25,Color.Black,true),
+        Navigation(Screens.StudentHomeScreen.route,Icons.Outlined.Home,"Home",25,Color.Black,true),
+        Navigation(Screens.StudentCalendarScreen.route,Icons.Outlined.DateRange,"Calendar",25,Color.Black,true),
+        Navigation(Screens.StudentCreateAPostScreen.route,Icons.Outlined.AddCircle,"",30, color_3,false),
+        Navigation(Screens.StudentBookMarkScreen.route,ImageVector.vectorResource(R.drawable.baseline_bookmark_border_24),"Bookmarks",25,Color.Black,true),
+        Navigation(Screens.StudentProfileScreen.route,Icons.Outlined.Person,"Account",25,Color.Black,true),
     )
     Column()
     {

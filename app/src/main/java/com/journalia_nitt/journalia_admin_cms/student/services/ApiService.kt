@@ -2,15 +2,12 @@ package com.journalia_nitt.journalia_admin_cms.student.services
 
 import com.journalia_nitt.journalia_admin_cms.student.responses.BookMark
 import com.journalia_nitt.journalia_admin_cms.student.responses.BookMarkFetch
-import com.journalia_nitt.journalia_admin_cms.student.responses.CalendarResponse
 import com.journalia_nitt.journalia_admin_cms.student.responses.DeadlineRequest
 import com.journalia_nitt.journalia_admin_cms.student.responses.DeadlineResponse
 import com.journalia_nitt.journalia_admin_cms.student.responses.LoginRequest
 import com.journalia_nitt.journalia_admin_cms.student.responses.TokenResponse
 import com.journalia_nitt.journalia_admin_cms.student.responses.ZResponse
 import com.journalia_nitt.journalia_admin_cms.student.responses.userUploadResponse
-import org.json.JSONArray
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body

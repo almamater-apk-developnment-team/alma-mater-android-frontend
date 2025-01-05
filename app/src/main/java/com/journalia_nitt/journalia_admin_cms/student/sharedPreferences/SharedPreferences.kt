@@ -1,12 +1,13 @@
-package com.example.journalia.Student.SharedPreferences
+package com.journalia_nitt.journalia_admin_cms.student.sharedPreferences
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.journalia_nitt.journalia_admin_cms.student.responses.StudentInfo
+import com.journalia_nitt.journalia_admin_cms.student.responses.UserInfo
 
-fun saveUserDetails(context: Context, name: String, email: String) {
+fun saveUserDetails(context: Context, name: String, email: String,role:String) {
     val sharedPreferences: SharedPreferences = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
+    editor.putString("role",role)
     editor.putString("name", name)
     editor.putString("email", email)
     editor.putBoolean("login_status",true)
@@ -23,13 +24,14 @@ fun getTokenDetails(context: Context): String? {
     val token = sharedPreferences.getString("token", null)
     return token
 }
-fun getUserDetails(context: Context): StudentInfo? {
+fun getUserDetails(context: Context): UserInfo? {
     val sharedPreferences: SharedPreferences = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
     val name = sharedPreferences.getString("name", null)
     val email = sharedPreferences.getString("email", null)
+    val role = sharedPreferences.getString("role", null)
     val loginStatus = sharedPreferences.getBoolean("login_status",false)
-    return if (name != null && email != null) {
-        StudentInfo(name, email,loginStatus)
+    return if (name != null && email != null && role != null) {
+        UserInfo(name, email,loginStatus,role)
     } else {
         null
     }

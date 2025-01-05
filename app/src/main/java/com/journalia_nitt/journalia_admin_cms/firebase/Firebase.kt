@@ -2,37 +2,16 @@ package com.journalia_nitt.journalia_admin_cms.firebase
 
 import android.content.Context
 import android.util.Log
-import com.example.journalia.Student.SharedPreferences.getUserDetails
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
+import com.journalia_nitt.journalia_admin_cms.student.sharedPreferences.getUserDetails
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-suspend fun fireStore(context :Context): List<Pair<String, String>> {
-    val events = mutableListOf<Pair<String, String>>()
-    val db = FirebaseFirestore.getInstance()
-    val usersCollection = db.collection("calendar")
-    val userDetails = getUserDetails(context = context)
-    return try {
-        val documents = usersCollection.get().await()
-        for (document in documents) {
-            if (userDetails != null) {
-                if (document.id == userDetails.collegeId ) {
-                    for ((event, date) in document.data) {
-                        events.add(Pair(date.toString(), event.toString()))
-                    }
-                }
-            }
-        }
-        events
-    } catch (e: Exception) {
-        Log.w("Firestore", "Error getting documents: ", e)
-        emptyList()
-    }
-}
+
 suspend fun fcmTokenToDataStore(context: Context) {
     val token = fetchFcmToken()
     val userDetails = getUserDetails(context)

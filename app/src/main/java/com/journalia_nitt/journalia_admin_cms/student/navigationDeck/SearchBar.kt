@@ -24,13 +24,6 @@ import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
 fun SearchBar()
 {
     var textFieldValue by remember { mutableStateOf("") }
-//    val filteredPosts = remember(query, posts) {
-//        if (query.isBlank()) posts
-//        else posts.filter {
-//            it.title.contains(query, ignoreCase = true) ||
-//                    it.description.contains(query, ignoreCase = true)
-//        }
-//    }
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()

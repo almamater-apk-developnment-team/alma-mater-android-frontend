@@ -2,10 +2,10 @@ package com.journalia_nitt.journalia_admin_cms.student.viewModels
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
-import com.example.journalia.Student.SharedPreferences.getTokenDetails
 import com.google.gson.Gson
 import com.journalia_nitt.journalia_admin_cms.api.RetrofitClient
 import com.journalia_nitt.journalia_admin_cms.student.services.StudentApiService
+import com.journalia_nitt.journalia_admin_cms.student.sharedPreferences.getTokenDetails
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
