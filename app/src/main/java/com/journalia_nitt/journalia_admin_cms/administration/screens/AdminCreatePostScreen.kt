@@ -472,6 +472,7 @@ fun getFileName(contentResolver: ContentResolver?, uri: Uri?): String {
         val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
         if (nameIndex >= 0 && it.moveToFirst()) {
             fileName = it.getString(nameIndex)
+
         }
     }
     return fileName
