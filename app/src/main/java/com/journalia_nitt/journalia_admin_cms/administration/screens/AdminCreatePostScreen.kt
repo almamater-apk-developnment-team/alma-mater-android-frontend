@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.journalia_nitt.journalia_admin_cms.R
+import com.journalia_nitt.journalia_admin_cms.administration.response.AdminDashBoardInfo
 import com.journalia_nitt.journalia_admin_cms.administration.viewModels.FileUploadViewModel
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
 import kotlinx.coroutines.Dispatchers
@@ -70,8 +71,8 @@ fun AdminCreateAPostScreen(
     navController: NavController,
     mode:Int
 ) {
-    val Uri by remember{ mutableStateOf<Uri?>(null) }
-    val ContentResolver1 by remember{ mutableStateOf<ContentResolver?>(null) }
+    val Uri_post = remember{ mutableStateOf<Uri?>(null) }
+    val ContentResolver1 = remember{ mutableStateOf<ContentResolver?>(null) }
 
     val scrollState = rememberScrollState()
     val descriptionScrollState = rememberScrollState()
@@ -91,7 +92,7 @@ fun AdminCreateAPostScreen(
     val year = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)
     val day = calendar.get(Calendar.DAY_OF_MONTH)
-    var description by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf(" ") }
 
         Column(
             modifier = Modifier
@@ -162,7 +163,11 @@ fun AdminCreateAPostScreen(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.ExtraBold
             )
-            Column()
+            Column(
+                modifier = Modifier.clickable {
+                    expanded = true
+                }
+            )
             {
                 OutlinedTextField(
                     value = selectedItem,
@@ -170,7 +175,12 @@ fun AdminCreateAPostScreen(
                     readOnly = true,
                     shape = RoundedCornerShape(12.dp),
                     label = { Text("Choose an option") },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            expanded = true
+                        }
+                    ,
                     trailingIcon = {
                         Icon(
                             imageVector = Icons.Default.ArrowDropDown,
@@ -196,7 +206,7 @@ fun AdminCreateAPostScreen(
                     }
                 }
             }
-            CustomFileUploadButton(theFileName, fileUploadMode)
+            CustomFileUploadButton(theFileName, fileUploadMode , Uri_post,ContentResolver1)
             Text(
                 text = "Deadline Date",
                 fontFamily = urbanist,
@@ -294,28 +304,28 @@ fun AdminCreateAPostScreen(
                     if(!isFieldBlank.contains(true) && fileUploadMode.value != 0)
                     {
                         isLoaded = true
-                        val uri = Uri
-                        val contentResolver = ContentResolver1
+                        val uri = Uri_post.value
+                        val contentResolver = ContentResolver1.value
                         coroutineScope.launch(Dispatchers.IO) {
                             viewModel.uploadFile(uri, contentResolver)
                             delay(10000)
                             withContext(Dispatchers.Main) {
-//                                viewModel.uploadDetailsDeadline(
-//                                    AdminDashBoardInfo(
-//                                        token = token,
-//                                        author = "adminOffice",
-//                                        title = title,
-//                                        description = description,
-//                                        deadline = selectedDate,
-//                                        file_url = viewModel.fileUrl.value,
-//                                        mode = mode,
-//                                        link1 = link1.value,
-//                                        link2 = link2.value
-//                                    )
-//                                )
-//                                fileUploadMode.value = 0
-//                                posted = true
-//                                theFileName.value = "Attach circular"
+                                viewModel.uploadDetailsDeadline(
+                                    AdminDashBoardInfo(
+                                        token="233",
+                                        author = "adminOffice",
+                                        title = title,
+                                        description = description,
+                                        deadline = selectedDate,
+                                        file_url = viewModel.fileUrl.value,
+                                        mode = mode,
+                                        link1 = link1.value,
+                                        link2 = link2.value
+                                    )
+                                )
+                                fileUploadMode.value = 0
+                                posted = true
+                                theFileName.value = "Attach circular"
                             }
                         }
                         isFieldBlank.replaceAll(
@@ -377,7 +387,12 @@ fun AdminCreateAPostScreen(
         }
 }
 @Composable
-fun CustomFileUploadButton(theFileName: MutableState<String>, fileUploadMode: MutableState<Int>) {
+fun CustomFileUploadButton(
+    theFileName: MutableState<String>,
+    fileUploadMode: MutableState<Int>,
+    Uri_post : MutableState<Uri?>,
+    contentResolverValue :MutableState<ContentResolver?>
+) {
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
@@ -386,7 +401,8 @@ fun CustomFileUploadButton(theFileName: MutableState<String>, fileUploadMode: Mu
             val contentResolver = context.contentResolver
             val mimeType = contentResolver.getType(uri)
             fileUploadMode.value = 1
-
+            Uri_post.value = uri
+            contentResolverValue.value = contentResolver
             if (mimeType in listOf("image/png", "image/jpeg", "image/jpg", "application/pdf")) {
                 val fileName = getFileName(contentResolver, uri)
                 val fileContent = readFileContent(contentResolver, uri)

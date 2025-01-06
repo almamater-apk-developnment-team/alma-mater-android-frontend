@@ -116,12 +116,19 @@ fun AdminDashBoard(navController: NavController){
         ) {
             detailsList.forEach { user ->
                 items(user.details) { announcement ->
+                    var deadline = announcement.deadline
+                    if(deadline[1]=='/') {
+                        deadline = "0$deadline"
+                    }
+                    if(deadline[4]=='/') {
+                        deadline = deadline.substring(0,3) + "0" + deadline.substring(3)
+                    }
                     AdminCard(
                         navController = navController,
                         title = announcement.title,
                         description = announcement.description,
                         author = announcement.author,
-                        deadline = announcement.deadline,
+                        deadline = deadline,
                         pdfUrl = announcement.file_url.toString(),
                         link1 = announcement.link1,
                         link2 = announcement.link2
@@ -202,8 +209,9 @@ fun AdminCard(
                 }
                 HorizontalDivider(color = Color.White,modifier = Modifier.fillMaxWidth(0.85f),
                     thickness = 1.5.dp)
+                val month = getMonth(deadline.substring(3,5).toInt())
                 Text(
-                    text = "Deadline:   $deadline",
+                    text = deadline.substring(0,2) + " " + month.lowercase() + " " + deadline.substring(6,10),
                     fontSize = 18.sp,
                     fontFamily = urbanist,
                     color = Color.White,

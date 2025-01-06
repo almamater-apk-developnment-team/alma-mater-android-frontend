@@ -1,6 +1,12 @@
 package com.journalia_nitt.journalia_admin_cms.administration.screens
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,10 +27,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -36,6 +45,8 @@ import androidx.navigation.NavController
 import com.journalia_nitt.journalia_admin_cms.R
 import com.journalia_nitt.journalia_admin_cms.administration.infoPasser
 import com.journalia_nitt.journalia_admin_cms.administration.response.Deadline
+import com.journalia_nitt.journalia_admin_cms.student.pdfUrlGlobal
+import com.journalia_nitt.journalia_admin_cms.student.screens.ShowImageInDialog
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
 import java.time.LocalDate
 
@@ -108,6 +119,39 @@ fun getMonthCalender(
     return dateInRow.toList()
 }
 
+fun openPdf(
+    context: Context,
+    pdfUrl: String,
+    navController: NavController
+) {
+    try {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(Uri.parse(pdfUrlGlobal), "application/pdf")
+            addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        val packageManager = context.packageManager
+        val resolvedInfo = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+        if (resolvedInfo.isNotEmpty()) {
+            context.startActivity(intent)
+        }
+        else {
+            Toast.makeText(context, "No PDF reader found. Please install one.", Toast.LENGTH_LONG).show()
+//            val encodedPdfUrl = try {
+//                URLEncoder.encode(pdfUrl, "UTF-8")
+//            } catch (e: UnsupportedEncodingException) {
+//                e.printStackTrace()
+//                pdfUrl
+//            }
+//            pdfUrlGlobal = "https://docs.google.com/gview?embedded=true&url=$encodedPdfUrl"
+//            navController.navigate(Screens.PdfWebViewPage.route)
+        }
+    } catch (e: ActivityNotFoundException) {
+        Toast.makeText(context, "Error opening PDF. Please try again later.", Toast.LENGTH_LONG).show()
+    }
+}
+
 @Composable
 fun AdminViewPostScreen(
     item : Deadline? = Deadline(
@@ -123,9 +167,8 @@ fun AdminViewPostScreen(
     navController: NavController,
 ) {
     var item = infoPasser.value
-
     val verticalScroll = rememberScrollState()
-
+    val showDialog = remember { mutableStateOf(false) }
     Column(
         modifier = Modifier.verticalScroll(verticalScroll),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -219,12 +262,23 @@ fun AdminViewPostScreen(
             fontFamily = urbanist,
             fontSize = 20.sp
         )
+        val context = LocalContext.current
         Card(
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .padding(horizontal = 20.dp)
                 .clickable {
-
+                    Log.d("url",item.file_url.toString())
+                    if(item.file_url.toString().endsWith(".jpg")) {
+                        showDialog.value = true
+                    }
+                    else if(item.file_url.toString().endsWith(".pdf")) {
+                        openPdf(context,item.file_url.toString(), navController)
+                    }
+                    else {
+                        Toast.makeText(context, "No file found", Toast.LENGTH_SHORT).show()
+                        return@clickable
+                    }
                 },
             colors = CardDefaults.cardColors(
                 containerColor =  Color(163, 127, 219)
@@ -241,6 +295,9 @@ fun AdminViewPostScreen(
                 )
             }
         }
+    }
+    if(showDialog.value) {
+        ShowImageInDialog(showDialog,item.file_url)
     }
 }
 
