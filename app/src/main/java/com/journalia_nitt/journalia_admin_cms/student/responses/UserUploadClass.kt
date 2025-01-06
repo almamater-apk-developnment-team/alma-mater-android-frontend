@@ -86,9 +86,10 @@ data class AlumniUpload(
     val file_url: String, // camelCase convention
     val link1: String = "",
     val link2: String = "",
-    val comments: List<Comment> = emptyList(),
+    val comments: MutableList<Comment> = mutableListOf(),
     var upvotes: Int = 0,
-    val upvoters: List<String> = emptyList()
+    val upvoters: MutableList<String> = mutableListOf(),
+    val upload_time: String = ""
 )
 data class Comment(
     val comment: String,

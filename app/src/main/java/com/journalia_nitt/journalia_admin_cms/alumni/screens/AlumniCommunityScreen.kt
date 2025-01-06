@@ -1,6 +1,7 @@
 package com.journalia_nitt.journalia_admin_cms.alumni.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -36,9 +40,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,12 +53,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.journalia_nitt.journalia_admin_cms.R
 import com.journalia_nitt.journalia_admin_cms.alumni.clickedPost
+import com.journalia_nitt.journalia_admin_cms.alumni.gradient
 import com.journalia_nitt.journalia_admin_cms.alumni.response.AlumniUpload
 import com.journalia_nitt.journalia_admin_cms.alumni.response.Upvote
 import com.journalia_nitt.journalia_admin_cms.alumni.theUser
 import com.journalia_nitt.journalia_admin_cms.alumni.viewModels.AlumniUploadViewModel
 import com.journalia_nitt.journalia_admin_cms.navigation.Screens
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 @Composable
 fun AlumniCommunityScreen(navController: NavController)
@@ -87,7 +98,7 @@ fun AlumniCommunityScreen(navController: NavController)
                 Card(
                     modifier = Modifier
                         .width(377.dp)
-                        .height(130.dp)
+                        .height(132.dp)
                         .shadow(
                             elevation = 10.dp,
                             shape = RoundedCornerShape(16.dp),
@@ -102,30 +113,66 @@ fun AlumniCommunityScreen(navController: NavController)
                         containerColor = Color(163, 127, 219)
                     )
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        Text(
-                            text = "Top Opportunities of the day",
-                            color = Color.Black,
-                            fontFamily= urbanist,
-                            fontWeight = FontWeight(600),
-                            fontSize = 15.sp
-                        )
-                        Text(
-                            text = "Zomato is Hiring!",
-                            color = Color.White,
-                            fontSize = 27.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily= urbanist
-                        )
-                        Text(
-                            text = "20L-30LPA",
-                            color = Color.Black,
-                            fontFamily = urbanist,
-                            fontSize = 27.sp
+                    Box(
+                        modifier = Modifier.fillMaxSize()
+                    ){
+                        Column(
+                            Modifier
+                                .shadow(elevation = 3.dp, spotColor = Color(0x4D000000), ambientColor = Color(0x4D000000))
+                                .shadow(elevation = 8.dp, spotColor = Color(0x26000000), ambientColor = Color(0x26000000))
+                                .width(379.dp)
+                                .height(132.dp)
+                                .background(color = Color(0xFFFFFFFF), shape = RoundedCornerShape(size = 12.dp)),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Row (
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start=70.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ){
+                                Image(
+                                    modifier = Modifier
+                                        .width(134.dp)
+                                        .height(75.04.dp),
+                                    painter = painterResource(id = R.drawable.zomato),
+                                    contentDescription = "company logo",
+                                    contentScale = ContentScale.FillBounds
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    modifier = Modifier.offset(y=3.dp),
+                                    text = "is Hiring!",
+                                    color = Color.Black,
+                                    fontSize = 22.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily= urbanist
+                                )
+                            }
+                            Text(
+                                modifier = Modifier.offset(y=-15.dp),
+                                text = "CTC starting from 50 LPA",
+                                color = Color.Black,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily= urbanist
+                            )
+                            Text(
+                                modifier = Modifier.offset(y=-8.dp),
+
+                                text = "Click to learn more",
+                                color = Color.Black,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = urbanist,
+                                textDecoration = TextDecoration.Underline
+                            )
+                        }
+                        Box(
+                            modifier = Modifier
+                                .width(54.dp)
+                                .height(132.dp)
+                                .background(gradient)
                         )
                     }
                 }
@@ -202,153 +249,6 @@ fun NoImageCardForAlumni(
             )
             .clickable {
                 clickedPost.value = upload
-                navController.navigate(Screens.AlumniPostViewScreen.route)
-            },
-        colors = CardDefaults.cardColors(containerColor = Color(251, 251, 251))
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            Spacer(modifier = Modifier.padding(top = 10.dp))
-            Row(
-                modifier = Modifier.padding(horizontal = 10.dp)
-            ) {
-                Spacer(modifier = Modifier.padding(start = 10.dp))
-                Text(
-                    modifier = Modifier,
-                    text = upload.title,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
-                    color = Color.Black,
-                    fontFamily = urbanist,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-            Row(
-                modifier = Modifier.padding(horizontal = 10.dp)
-            ) {
-                Spacer(modifier = Modifier.padding(start = 10.dp))
-                Text(
-                    modifier = Modifier,
-                    text = upload.description,
-                    fontWeight = FontWeight.W400, // Use the W400 font weight
-                    fontSize = 12.sp,
-                    color = Color.Black,
-                    textAlign = TextAlign.Start, // Align text to the start (left-aligned)
-                    fontFamily = urbanist,
-                    maxLines = 2, // Limit text to 2 lines
-                    overflow = TextOverflow.Ellipsis, // Add ellipsis for overflowing text
-                )
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(60.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxHeight(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Spacer(modifier = Modifier.padding(start = 30.dp))
-                    Column(
-                        modifier = Modifier.fillMaxHeight(),
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Image(
-                            modifier = Modifier.scale(3f),
-                            painter = painterResource(id = R.drawable.user),
-                            contentDescription = "Profile"
-                        )
-                    }
-                    Spacer(modifier = Modifier.padding(start = 20.dp))
-                    Column(
-                        modifier = Modifier.fillMaxHeight(),
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = upload.username,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.offset(y=6.dp)
-                        )
-                        Text(
-                            text = "apple ceo",
-                            fontSize = 12.sp,
-                            modifier = Modifier.offset(y=(-6).dp)
-                        )
-                    }
-                }
-                Row(
-                    modifier = Modifier.fillMaxHeight(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxHeight(),
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Image(
-                            modifier = Modifier
-                                .size(18.dp)
-                                .offset(y = 4.dp),
-                            painter = painterResource(id = R.drawable.upvoteempty),
-                            contentDescription = "Profile"
-                        )
-                        Text(
-                            text = upload.upvotes.toString(),
-                            fontSize = 11.sp,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                        )
-                    }
-                    Spacer(modifier = Modifier.padding(start = 25.dp))
-                    Row(
-                        modifier = Modifier,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Image(
-                            modifier = Modifier
-                                .size(20.dp),
-                            painter = painterResource(id = R.drawable.comment_button),
-                            contentDescription = "comment"
-                        )
-                        Spacer(modifier = Modifier.padding(start = 5.dp))
-                        Text(
-                            text = upload.comments.size.toString(),
-                            fontSize = 11.sp,
-                            fontFamily = urbanist,
-                            modifier = Modifier
-                        )
-                    }
-                    Spacer(modifier = Modifier.padding(start = 20.dp))
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun ImageCardForAlumni(
-    navController: NavController,
-    upload: AlumniUpload
-) {
-    val viewModel: AlumniUploadViewModel = viewModel()
-    Card(
-        modifier = Modifier
-            .width(376.dp)
-            .padding(6.dp)
-            .height(338.dp)
-            .shadow(
-                elevation = 4.dp,
-                shape = RoundedCornerShape(16.dp),
-                spotColor = Color.Black,
-                ambientColor = Color.Black
-            )
-            .clickable {
-                clickedPost.value = upload
-                navController.navigate(Screens.AlumniPostViewScreen.route)
             },
         colors = CardDefaults.cardColors(containerColor = Color(251, 251, 251))
     ) {
@@ -386,6 +286,154 @@ fun ImageCardForAlumni(
                     fontFamily = urbanist,
                     maxLines = 2, // Limit text to 2 lines
                     overflow = TextOverflow.Ellipsis, // Add ellipsis for overflowing text
+                    lineHeight = 2.sp
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxHeight(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Spacer(modifier = Modifier.padding(start = 30.dp))
+                    Column(
+                        modifier = Modifier.fillMaxHeight(),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            modifier = Modifier.scale(3f),
+                            painter = painterResource(id = R.drawable.user),
+                            contentDescription = "Profile"
+                        )
+                    }
+                    Spacer(modifier = Modifier.padding(start = 20.dp))
+                    Column(
+                        modifier = Modifier.fillMaxHeight(),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = upload.username,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.offset(y=6.dp)
+                        )
+                        Text(
+                            text = "apple ceo" + "." + getRelativeTime(upload.upload_time),
+                            fontSize = 12.sp,
+                            modifier = Modifier.offset(y=(-6).dp)
+                        )
+                    }
+                }
+                Row(
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxHeight(),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .size(18.dp)
+                                .offset(y = 4.dp),
+                            painter = rememberVectorPainter(Icons.Outlined.FavoriteBorder),
+                            contentDescription = "Profile"
+                        )
+                        Text(
+                            text = upload.upvotes.toString(),
+                            fontSize = 11.sp,
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        )
+                    }
+                    Spacer(modifier = Modifier.padding(start = 25.dp))
+                    Row(
+                        modifier = Modifier,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .size(20.dp),
+                            painter = painterResource(id = R.drawable.comment_button),
+                            contentDescription = "comment"
+                        )
+                        Spacer(modifier = Modifier.padding(start = 5.dp))
+                        Text(
+                            text = upload.comments.size.toString(),
+                            fontSize = 11.sp,
+                            fontFamily = urbanist,
+                            modifier = Modifier
+                        )
+                    }
+                    Spacer(modifier = Modifier.padding(start = 20.dp))
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun ImageCardForAlumni(
+    navController: NavController,
+    upload: AlumniUpload
+) {
+    val viewModel: AlumniUploadViewModel = viewModel()
+    Card(
+        modifier = Modifier
+            .width(376.dp)
+            .padding(6.dp)
+            .height(338.dp)
+            .shadow(
+                elevation = 4.dp,
+                shape = RoundedCornerShape(16.dp),
+                spotColor = Color.Black,
+                ambientColor = Color.Black
+            )
+            .clickable {
+                clickedPost.value = upload
+            },
+        colors = CardDefaults.cardColors(containerColor = Color(251, 251, 251))
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            Spacer(modifier = Modifier.padding(top = 10.dp))
+            Row(
+                modifier = Modifier.padding(horizontal = 10.dp)
+            ) {
+                Spacer(modifier = Modifier.padding(start = 10.dp))
+                Text(
+                    modifier = Modifier,
+                    text = upload.title,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = Color.Black,
+                    fontFamily = urbanist,
+                    maxLines = 1, // Limit text to 2 lines
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            Row(
+                modifier = Modifier.padding(horizontal = 10.dp)
+            ) {
+                Spacer(modifier = Modifier.padding(start = 10.dp))
+                Text(
+                    modifier = Modifier,
+                    text = upload.description,
+                    fontWeight = FontWeight.W400, // Use the W400 font weight
+                    fontSize = 12.sp,
+                    color = Color.Black,
+                    textAlign = TextAlign.Start, // Align text to the start (left-aligned)
+                    fontFamily = urbanist,
+                    maxLines = 2, // Limit text to 2 lines
+                    overflow = TextOverflow.Ellipsis, // Add ellipsis for overflowing text
+                    lineHeight = 13.sp
                 )
             }
             Spacer(modifier = Modifier.padding(top = 10.dp))
@@ -434,29 +482,47 @@ fun ImageCardForAlumni(
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.offset(y=6.dp)
                         )
-                        Text(
-                            text = "apple ceo",
-                            fontSize = 12.sp,
-                            modifier = Modifier.offset(y=(-6).dp)
-                        )
+                        Row {
+                            Text(
+                                text = "apple ceo",
+                                fontSize = 12.sp,
+                                modifier = Modifier.offset(y=(-6).dp)
+                            )
+                            Spacer(
+                                modifier = Modifier.padding(start = 10.dp)
+                            )
+                            Text(
+                                text = ".",
+                                fontSize = 20.sp,
+                                modifier = Modifier.offset(y=(-12).dp)
+                            )
+                            Spacer(
+                                modifier = Modifier.padding(start = 10.dp)
+                            )
+                            Text(
+                                text = getRelativeTime(upload.upload_time),
+                                fontSize = 10.sp,
+                                modifier = Modifier.offset(y=(-6).dp)
+                            )
+                        }
                     }
                 }
                 Row(
                     modifier = Modifier.fillMaxHeight(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxHeight(),
-                        verticalArrangement = Arrangement.Center
+                    Row(
+                        modifier = Modifier.fillMaxHeight().offset(y=13.dp),
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        var image = remember{mutableStateOf( R.drawable.upvoteempty)}
+                        var image = remember{mutableStateOf(Icons.Outlined.FavoriteBorder)}
                         if(upload.upvoters.contains(theUser.username)) {
-                            image.value = R.drawable.triangle
+                            image.value = Icons.Filled.Favorite
                         }
                         var upvotes = remember(upload.upvotes){mutableStateOf(upload.upvotes)}
                         Image(
                             modifier = Modifier
-                                .size(18.dp)
+                                .size(22.dp)
                                 .offset(y = 4.dp)
                                 .clickable {
                                     if(!upload.upvoters.contains(theUser.username)) {
@@ -465,16 +531,20 @@ fun ImageCardForAlumni(
                                             Upvote(theUser.username, upload.id)
                                         )
                                         upload.upvotes++
-                                        image.value = R.drawable.triangle
+                                        upload.upvoters.add(theUser.username)
+                                        image.value = Icons.Filled.Favorite
                                     }
                                 },
-                            painter = painterResource(id = image.value),
+                            painter = rememberVectorPainter(image.value),
                             contentDescription = "Profile"
+                        )
+                        Spacer(
+                            modifier = Modifier.padding(start = 3.dp)
                         )
                         Text(
                             text = upvotes.value.toString(),
                             fontSize = 11.sp,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                            modifier = Modifier.align(Alignment.CenterVertically).offset(y=(-10).dp)
                         )
                     }
                     Spacer(modifier = Modifier.padding(start = 25.dp))
@@ -500,5 +570,27 @@ fun ImageCardForAlumni(
                 }
             }
         }
+    }
+}
+
+fun getRelativeTime(dateString: String): String {
+    // Parse the input date string
+    val formatter = DateTimeFormatter.ISO_DATE_TIME
+    val dateTime = LocalDateTime.parse(dateString, formatter)
+
+    // Get the current time
+    val now = LocalDateTime.now()
+
+    // Calculate the difference
+    val minutes = ChronoUnit.MINUTES.between(dateTime, now)
+    val hours = ChronoUnit.HOURS.between(dateTime, now)
+    val days = ChronoUnit.DAYS.between(dateTime, now)
+
+    return when {
+        minutes < 1 -> "just now"
+        minutes < 60 -> "$minutes mins ago"
+        hours < 24 -> "$hours hrs ago"
+        days < 7 -> "$days days ago"
+        else -> dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
     }
 }

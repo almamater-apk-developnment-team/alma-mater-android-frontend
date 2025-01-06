@@ -3,6 +3,8 @@ package com.journalia_nitt.journalia_admin_cms.alumni
 import android.content.ContentResolver
 import android.net.Uri
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import com.journalia_nitt.journalia_admin_cms.R
@@ -14,12 +16,13 @@ var clickedPost = mutableStateOf(
         username = "",
         title = "",
         description = "",
+        id = "",
         file_url = "",
         link1 = "",
         link2 = "",
-        comments = emptyList(),
+        comments = mutableListOf(),
         upvotes = 0,
-        upvoters = emptyList()
+        upvoters = mutableListOf(),
     )
 )
 val EditState = mutableStateOf(false)
@@ -31,3 +34,6 @@ var theUser = LoggedInAccount(
 val font = FontFamily(Font(R.font.urbanist))
 var Uri = mutableStateOf<Uri?>(null)
 var ContentResolver1 = mutableStateOf<ContentResolver?>(null)
+val gradient = Brush.linearGradient(
+    colors = listOf(Color(150, 103, 224), Color(188, 128, 240))
+)
