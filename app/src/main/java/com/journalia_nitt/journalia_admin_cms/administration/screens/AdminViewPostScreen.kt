@@ -45,9 +45,11 @@ import androidx.navigation.NavController
 import com.journalia_nitt.journalia_admin_cms.R
 import com.journalia_nitt.journalia_admin_cms.administration.infoPasser
 import com.journalia_nitt.journalia_admin_cms.administration.response.Deadline
-import com.journalia_nitt.journalia_admin_cms.student.pdfUrlGlobal
+import com.journalia_nitt.journalia_admin_cms.navigation.Screens
 import com.journalia_nitt.journalia_admin_cms.student.screens.ShowImageInDialog
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
+import java.io.UnsupportedEncodingException
+import java.net.URLEncoder
 import java.time.LocalDate
 
 fun getMonthInt(month : String) : Int {
@@ -126,7 +128,7 @@ fun openPdf(
 ) {
     try {
         val intent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(Uri.parse(pdfUrlGlobal), "application/pdf")
+            setDataAndType(Uri.parse(pdfUrl), "application/pdf")
             addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
@@ -138,14 +140,14 @@ fun openPdf(
         }
         else {
             Toast.makeText(context, "No PDF reader found. Please install one.", Toast.LENGTH_LONG).show()
-//            val encodedPdfUrl = try {
-//                URLEncoder.encode(pdfUrl, "UTF-8")
-//            } catch (e: UnsupportedEncodingException) {
-//                e.printStackTrace()
-//                pdfUrl
-//            }
-//            pdfUrlGlobal = "https://docs.google.com/gview?embedded=true&url=$encodedPdfUrl"
-//            navController.navigate(Screens.PdfWebViewPage.route)
+            val encodedPdfUrl = try {
+                URLEncoder.encode(pdfUrl, "UTF-8")
+            } catch (e: UnsupportedEncodingException) {
+                e.printStackTrace()
+                pdfUrl
+            }
+            val pdfUrlLocal = "https://docs.google.com/gview?embedded=true&url=$encodedPdfUrl"
+            navController.navigate(Screens.WebViewScreen.createRoute(pdfUrlLocal))
         }
     } catch (e: ActivityNotFoundException) {
         Toast.makeText(context, "Error opening PDF. Please try again later.", Toast.LENGTH_LONG).show()

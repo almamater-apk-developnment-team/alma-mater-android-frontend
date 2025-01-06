@@ -36,6 +36,8 @@ sealed class Screens(val route:String) {
     data object StudentPublicCommunityPostViewScreen : Screens("StudentPublicCommunityPostViewScreen")
     data object StudentPublicCommunityScreen : Screens("StudentPublicCommunityScreen")
     // Web View
-    data object WebViewScreen : Screens("WebViewScreen")
+    data object WebViewScreen : Screens("WebViewScreen") {
+        fun createRoute(url: String) = "$route/$url"
+    }
     data object WebMailScreen : Screens("WebMailScreen")
 }

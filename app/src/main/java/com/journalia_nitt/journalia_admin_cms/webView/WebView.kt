@@ -1,5 +1,6 @@
 package com.journalia_nitt.journalia_admin_cms.webView
 
+import android.util.Log
 import android.webkit.WebSettings
 import androidx.compose.runtime.Composable
 import android.webkit.WebView
@@ -17,8 +18,12 @@ import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun WebView(url:String) {
+    Log.d("url in webview",url)
     AndroidView(
-        modifier = Modifier.fillMaxSize().padding(WindowInsets.systemBars.asPaddingValues()).background(color = Color.Black),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(WindowInsets.systemBars.asPaddingValues())
+            .background(color = Color.Black),
         factory = { context ->
             WebView(context).apply {
                 settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW

@@ -43,4 +43,3 @@ var Uri1 = mutableStateOf<Uri?>(null)
 var ContentResolver1 = mutableStateOf<ContentResolver?>(null)
 val deadlineApiService = RetrofitInstance.create(DeadlineApiService::class.java)
 
-var pdfUrlGlobal = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
