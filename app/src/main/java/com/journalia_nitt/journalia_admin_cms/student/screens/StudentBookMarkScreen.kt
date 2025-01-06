@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -37,21 +38,30 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.journalia_nitt.journalia_admin_cms.R
+import com.journalia_nitt.journalia_admin_cms.navigation.Screens
 import com.journalia_nitt.journalia_admin_cms.student.responses.BookMark
+import com.journalia_nitt.journalia_admin_cms.student.responses.Deadline
+import com.journalia_nitt.journalia_admin_cms.student.screens.bookMarkToDeadline
+import com.journalia_nitt.journalia_admin_cms.student.sharedPreferences.getUserDetails
 import com.journalia_nitt.journalia_admin_cms.student.viewModels.bookMarkViewModel
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
 
 @Composable
 fun StudentBookMarkScreen(
-    navController: NavController
-)
-{
+    navController: NavController) {
+
     val mode = remember { mutableIntStateOf(1) }
+
+
     val bookMarkViewModel: bookMarkViewModel = viewModel()
+    val context= LocalContext.current
+    val username = getUserDetails(context = context)?.name?.substringBefore(" ") ?: ""
+
     LaunchedEffect(Unit) {
-        bookMarkViewModel.fetchBookMark("111")
+        bookMarkViewModel.fetchBookMark(username)
     }
     val posts = bookMarkViewModel.posts.value.data.details
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -63,10 +73,9 @@ fun StudentBookMarkScreen(
             val color1 = Color(163,127,219)
             val color2 = Color(205,193,255)
             val colorOfFirstCard = remember(mode.intValue) {
-                if(mode.intValue == 1) {
+                if (mode.intValue == 1) {
                     mutableStateOf(color1)
-                }
-                else {
+                } else {
                     mutableStateOf(color2)
                 }
             }
@@ -96,7 +105,7 @@ fun StudentBookMarkScreen(
         LazyColumn() {
             items(posts) { item ->
                 Spacer(modifier = Modifier.padding(top = 10.dp))
-                BookmarkCard(item)
+                BookmarkCard(item,navController)
             }
         }
     }
@@ -104,13 +113,13 @@ fun StudentBookMarkScreen(
 
 @Composable
 fun BookmarkCard(
-    item : BookMark
+    item : BookMark,
+    nav: NavController
 ) {
-
     val gradient = Brush.linearGradient(
         colors = listOf(Color(150, 103, 224), Color(188, 128, 240))
     )
-
+    val deadline=bookMarkToDeadline(item)
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -121,6 +130,9 @@ fun BookmarkCard(
                 shape = RoundedCornerShape(12.dp)
             )
             .height(170.dp)
+            .clickable{
+                //nav.navigate(Screens.AdminDetailsPage.createRoute(deadline))
+            }
     ) {
         Column(
             modifier = Modifier
@@ -200,4 +212,17 @@ fun BookmarkCard(
             }
         }
     }
+}
+
+fun bookMarkToDeadline(item : BookMark): Deadline {
+    return Deadline(
+        author = item.author,
+        deadline = item.deadline,
+        description = item.description,
+        file_url = item.file_url,
+        link1 = item.link1,
+        link2 = item.link2,
+        mode = item.mode,
+        title = item.title
+    )
 }
