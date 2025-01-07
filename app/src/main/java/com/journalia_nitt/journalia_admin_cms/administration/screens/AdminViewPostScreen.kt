@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.util.Log
+import android.util.Patterns
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -43,8 +44,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.journalia_nitt.journalia_admin_cms.R
+import com.journalia_nitt.journalia_admin_cms.administration.EditStateAdmin
 import com.journalia_nitt.journalia_admin_cms.administration.infoPasser
 import com.journalia_nitt.journalia_admin_cms.administration.response.Deadline
+import com.journalia_nitt.journalia_admin_cms.alumni.EditState
 import com.journalia_nitt.journalia_admin_cms.navigation.Screens
 import com.journalia_nitt.journalia_admin_cms.student.screens.ShowImageInDialog
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
@@ -196,6 +199,11 @@ fun AdminViewPostScreen(
             fontSize = 16.sp
         )
         Card(
+            modifier = Modifier
+                .clickable {
+                    EditStateAdmin.value = true
+                    navController.navigate(Screens.AdminCreatePostScreen.createRoute(mode = item.mode))
+                },
             colors = CardDefaults.cardColors(Color(163, 127, 219))
         ) {
             Row(
@@ -254,10 +262,10 @@ fun AdminViewPostScreen(
             )
         }
         else if(item.link1.toString().isNotEmpty()) {
-            LinkCard(item,navController)
+            LinkCard(item.link1,navController)
         }
         else if(item.link2.toString().isNotEmpty()) {
-            LinkCard(item,navController)
+            LinkCard(item.link2,navController)
         }
         Text(
             text = "CIRCULAR",
@@ -305,14 +313,34 @@ fun AdminViewPostScreen(
 
 
 @Composable
-fun LinkCard(item: Deadline,navController: NavController) {
+fun LinkCard(
+    url : String?,
+    navController: NavController
+) {
     val clipboardManager = LocalClipboardManager.current
+    val context = LocalContext.current
     Card(
         modifier = Modifier
             .fillMaxWidth(0.8f)
             .padding(horizontal = 20.dp)
             .clickable {
-                navController.navigate("WebViewScreen/${Uri.encode(item.link1.toString())}")
+                val url = url
+                if (url.isNullOrEmpty() || !Patterns.WEB_URL.matcher(url).matches()) {
+                    Toast.makeText(context, "Invalid URL", Toast.LENGTH_SHORT).show()
+                } else {
+                    val fixedUrl = if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                        "https://$url"
+                    } else {
+                        url
+                    }
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(fixedUrl))
+                    val resolvedActivities = context.packageManager.queryIntentActivities(intent, 0)
+                    if (resolvedActivities.isNotEmpty()) {
+                        context.startActivity(intent)
+                    } else {
+                        Toast.makeText(context, "No app found to handle this link", Toast.LENGTH_SHORT).show()
+                    }
+                }
             },
         colors = CardDefaults.cardColors(
             containerColor =  Color(163, 127, 219)
@@ -326,7 +354,7 @@ fun LinkCard(item: Deadline,navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = item.link1.toString(),
+                text = url.toString(),
                 fontFamily = urbanist,
                 color = Color.White,
                 fontSize = 18.sp,
@@ -340,7 +368,7 @@ fun LinkCard(item: Deadline,navController: NavController) {
                 modifier = Modifier
                     .size(30.dp)
                     .clickable {
-                        clipboardManager.setText( AnnotatedString(item.link1.toString()))
+                        clipboardManager.setText( AnnotatedString(url.toString()))
                     }
                 ,
                 tint = Color.White

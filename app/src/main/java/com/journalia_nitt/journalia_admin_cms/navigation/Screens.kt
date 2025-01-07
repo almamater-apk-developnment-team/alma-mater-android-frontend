@@ -6,7 +6,9 @@ sealed class Screens(val route:String) {
     data object CommonSplashScreen : Screens("CommonSplashScreen")
     // admin side
     data object AdminHomeScreen : Screens("AdminHomeScreen")
-    data object AdminCreatePostScreen : Screens("AdminCreatePostScreen")
+    data object AdminCreatePostScreen : Screens("AdminCreatePostScreen") {
+        fun createRoute(mode : Int) = "$route/$mode"
+    }
     data object AdminDashboardScreen : Screens("AdminDashboardScreen")
     data object AdminLoginScreen : Screens("AdminLoginScreen")
     data object AdminLoginVerificationScreen : Screens("AdminVerificationScreen")

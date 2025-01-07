@@ -16,4 +16,4 @@ val FileUploadClient= retrofit.create(FileUpload::class.java)
 val LoginClient = retrofit.create(Login::class.java)
 val SecretClient = retrofit.create(Secret::class.java)
 val infoPasser = mutableStateOf(Deadline("", "", "", "", "", "", 0, ""))
-
+val EditStateAdmin = mutableStateOf(false)

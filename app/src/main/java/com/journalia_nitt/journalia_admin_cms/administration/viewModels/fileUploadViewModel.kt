@@ -13,14 +13,24 @@ import androidx.compose.runtime.State
 import com.journalia_nitt.journalia_admin_cms.administration.FileUploadClient
 import com.journalia_nitt.journalia_admin_cms.administration.response.AdminDashBoardInfo
 import com.journalia_nitt.journalia_admin_cms.administration.screens.getFileName
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 
 class FileUploadViewModel : ViewModel() {
-    val uploadStatus = mutableStateOf("")
+
+    private val _uploadFileStatus = MutableStateFlow("")
+    val uploadFileStatus: StateFlow<String> get() = _uploadFileStatus
+
+    private val _uploadedFileUrl = MutableStateFlow("")
+    val uploadedFileUrl: StateFlow<String> get() = _uploadedFileUrl
+
     private val _isLoaded = mutableStateOf(false)
-    val isLoaded: State<Boolean>  = _isLoaded
-    val fileUrl = mutableStateOf<String?>("")
+    val isLoaded: State<Boolean> = _isLoaded
+
+    private val _deleteStatus = MutableStateFlow("")
     val deleteStatus = mutableStateOf("")
+
     private val _isDeleted = mutableStateOf(false)
     val isDeleted: State<Boolean> = _isDeleted
 
@@ -51,7 +61,7 @@ class FileUploadViewModel : ViewModel() {
             try {
                 if (fileUri == null || contentResolver == null) {
                     Log.e("FileUpload", "Invalid URI or ContentResolver")
-                    uploadStatus.value = "success1"
+                    _uploadFileStatus.value = "success1"
                     return@launch
                 }
 
@@ -69,19 +79,21 @@ class FileUploadViewModel : ViewModel() {
                 )
 
                 val response = FileUploadClient.uploadFile(multipartBody)
-                if (response.isSuccessful && response.body() != null) {
-                    fileUrl.value = response.body()?.url
+                if (response.isSuccessful) {
+                    if(response.body() != null) {
+                        _uploadedFileUrl.value = response.body()?.url.toString()
+                    }
                     Log.d("FileUpload", "Upload successful: ${response.body()?.url}")
-                    uploadStatus.value = "success"
+                    _uploadFileStatus.value = "success"
                 } else {
                     val errorBody = response.errorBody()?.string()
                     Log.e("FileUpload", "Upload failed: ${response.code()}, Error: $errorBody")
-                    uploadStatus.value = "failure"
+                    _uploadFileStatus.value = "failure"
                 }
 
                 _isLoaded.value = true
             } catch (e: Exception) {
-                uploadStatus.value = "failure"
+                _uploadFileStatus.value = "failure"
                 Log.e("FileUpload", "Error uploading file", e)
             }
         }

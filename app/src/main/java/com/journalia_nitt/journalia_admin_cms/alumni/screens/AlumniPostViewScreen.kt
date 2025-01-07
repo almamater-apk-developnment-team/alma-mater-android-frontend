@@ -76,6 +76,7 @@ import com.journalia_nitt.journalia_admin_cms.alumni.response.Comment
 import com.journalia_nitt.journalia_admin_cms.alumni.response.Upvote
 import com.journalia_nitt.journalia_admin_cms.alumni.theUser
 import com.journalia_nitt.journalia_admin_cms.alumni.viewModels.AlumniUploadViewModel
+import com.journalia_nitt.journalia_admin_cms.navigation.Screens
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
 
 @Composable
@@ -198,7 +199,7 @@ fun AlumniPostViewScreen( navController: NavController) {
                         IconButton(
                             onClick = {
                                 EditState.value = true
-//                                navController.navigate(Screens_in_alumni_cms.postPage.route)
+                                navController.navigate(Screens.AlumniCreateAPostScreen.route)
                             },
                             modifier = Modifier.scale(2f)
                         ) {

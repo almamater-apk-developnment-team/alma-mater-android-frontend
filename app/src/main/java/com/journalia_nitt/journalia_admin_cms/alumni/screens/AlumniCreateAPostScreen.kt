@@ -97,7 +97,7 @@ fun AlumniCreateAPostScreen(
             )
 
             // Title Input Field
-            val title = remember { mutableStateOf("") }
+            val title = remember { mutableStateOf(clickedPost.value.title) }
             OutlinedTextField(
                 value = title.value,
                 onValueChange = { title.value = it },
@@ -126,7 +126,7 @@ fun AlumniCreateAPostScreen(
             )
 
             // Description Input Field
-            val description = remember { mutableStateOf("") }
+            val description = remember { mutableStateOf(clickedPost.value.description) }
             OutlinedTextField(
                 value = description.value,
                 onValueChange = { description.value = it },
@@ -171,7 +171,7 @@ fun AlumniCreateAPostScreen(
             )
             Spacer(modifier = Modifier.height(5.dp))
             // Important Link Input Field
-            val link1= remember { mutableStateOf("") }
+            val link1= remember { mutableStateOf(clickedPost.value.link1) }
             OutlinedTextField(
                 value = link1.value,
                 onValueChange = { link1.value = it },
@@ -182,7 +182,7 @@ fun AlumniCreateAPostScreen(
 
             Spacer(modifier = Modifier.height(15.dp))
             // Important Link Input Field
-            val link2 = remember { mutableStateOf("") }
+            val link2 = remember { mutableStateOf(clickedPost.value.link2) }
             Row(modifier = Modifier.fillMaxWidth()
                 .height(80.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,

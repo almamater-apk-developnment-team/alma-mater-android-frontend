@@ -3,6 +3,7 @@ package com.journalia_nitt.journalia_admin_cms.administration.screens
 import android.app.DatePickerDialog
 import android.content.ActivityNotFoundException
 import android.content.ContentResolver
+import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Log
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -26,6 +28,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -36,7 +40,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -57,8 +63,19 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.journalia_nitt.journalia_admin_cms.R
+import com.journalia_nitt.journalia_admin_cms.administration.infoPasser
 import com.journalia_nitt.journalia_admin_cms.administration.response.AdminDashBoardInfo
+import com.journalia_nitt.journalia_admin_cms.administration.sharedPreferences.getFromSharedPreferences
 import com.journalia_nitt.journalia_admin_cms.administration.viewModels.FileUploadViewModel
+import com.journalia_nitt.journalia_admin_cms.alumni.EditState
+import com.journalia_nitt.journalia_admin_cms.alumni.Uri
+import com.journalia_nitt.journalia_admin_cms.alumni.clickedPost
+import com.journalia_nitt.journalia_admin_cms.alumni.response.AlumniUpload
+import com.journalia_nitt.journalia_admin_cms.alumni.response.LoggedInAccount
+import com.journalia_nitt.journalia_admin_cms.alumni.screens.UpdateButton
+import com.journalia_nitt.journalia_admin_cms.alumni.screens.UploadButton
+import com.journalia_nitt.journalia_admin_cms.alumni.theUser
+import com.journalia_nitt.journalia_admin_cms.alumni.viewModels.AlumniUploadViewModel
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -79,20 +96,19 @@ fun AdminCreateAPostScreen(
     val viewModel: FileUploadViewModel = viewModel()
     val context = LocalContext.current
     var isLoaded by remember { mutableStateOf(false) }
-    val uploadVal=viewModel.uploadStatus.value
     var posted by remember{mutableStateOf(false)}
     val coroutineScope = rememberCoroutineScope()
     var showDatePicker by remember { mutableStateOf(false) }
     val isFieldBlank  = remember { mutableListOf(true,true,true) }
-    var title by remember { mutableStateOf("") }
-    var selectedDate by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf(infoPasser.value.title) }
+    var selectedDate by remember { mutableStateOf(infoPasser.value.deadline) }
     val theFileName = remember { mutableStateOf("Attach circular") }
     val fileUploadMode = remember { mutableIntStateOf(0) }
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)
     val day = calendar.get(Calendar.DAY_OF_MONTH)
-    var description by remember { mutableStateOf(" ") }
+    var description by remember { mutableStateOf(infoPasser.value.description) }
 
         Column(
             modifier = Modifier
@@ -110,9 +126,9 @@ fun AdminCreateAPostScreen(
                 fontWeight = FontWeight.ExtraBold
             )
             OutlinedTextField(
-                value = title,
+                value = title.toString(),
                 onValueChange = { title = it
-                    isFieldBlank[0] = title.isBlank()},
+                    isFieldBlank[0] = title.toString().isBlank()},
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(100.dp),
@@ -141,9 +157,9 @@ fun AdminCreateAPostScreen(
             )
             {
                 OutlinedTextField(
-                    value = description,
+                    value = description.toString(),
                     onValueChange = { description = it
-                        isFieldBlank[1] = description.isBlank()},
+                        isFieldBlank[1] = description.toString().isBlank()},
                     modifier = Modifier
                         .fillMaxSize(),
                     singleLine = false,
@@ -190,7 +206,9 @@ fun AdminCreateAPostScreen(
                     }
                 )
                 DropdownMenu(
-                    modifier = Modifier.height(200.dp).fillMaxWidth(0.9f),
+                    modifier = Modifier
+                        .height(200.dp)
+                        .fillMaxWidth(0.9f),
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {
@@ -270,9 +288,9 @@ fun AdminCreateAPostScreen(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.ExtraBold
             )
-            val link1 = remember { mutableStateOf("") }
+            val link1 = remember { mutableStateOf(infoPasser.value.link1) }
             OutlinedTextField(
-                value = link1.value,
+                value = link1.value.toString(),
                 onValueChange = { link1.value = it },
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -284,9 +302,9 @@ fun AdminCreateAPostScreen(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.ExtraBold
             )
-            val link2 = remember { mutableStateOf("") }
+            val link2 = remember { mutableStateOf(infoPasser.value.link2) }
             OutlinedTextField(
-                value = link2.value,
+                value = link2.value.toString(),
                 onValueChange = { link2.value = it },
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -300,81 +318,99 @@ fun AdminCreateAPostScreen(
                     CircularProgressIndicator()
             }
             Card(
-                modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth(0.4f).clickable{
-                    if(!isFieldBlank.contains(true) && fileUploadMode.value != 0)
-                    {
-                        isLoaded = true
-                        val uri = Uri_post.value
-                        val contentResolver = ContentResolver1.value
-                        coroutineScope.launch(Dispatchers.IO) {
-                            viewModel.uploadFile(uri, contentResolver)
-                            delay(10000)
-                            withContext(Dispatchers.Main) {
-                                viewModel.uploadDetailsDeadline(
-                                    AdminDashBoardInfo(
-                                        token="233",
-                                        author = "adminOffice",
-                                        title = title,
-                                        description = description,
-                                        deadline = selectedDate,
-                                        file_url = viewModel.fileUrl.value,
-                                        mode = mode,
-                                        link1 = link1.value,
-                                        link2 = link2.value
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .fillMaxWidth(0.4f)
+                    .clickable {
+                        if (!isFieldBlank.contains(true) && fileUploadMode.intValue != 0) {
+                            isLoaded = true
+                            val uri = Uri_post.value
+                            val contentResolver = ContentResolver1.value
+                            coroutineScope.launch(Dispatchers.IO) {
+                                viewModel.uploadFile(uri, contentResolver)
+                                delay(10000)
+                                withContext(Dispatchers.Main) {
+                                    viewModel.uploadDetailsDeadline(
+                                        AdminDashBoardInfo(
+                                            token = "233",
+                                            author = "adminOffice",
+                                            title = title.toString(),
+                                            description = description.toString(),
+                                            deadline = selectedDate,
+                                            file_url = viewModel.uploadedFileUrl.toString(),
+                                            mode = mode,
+                                            link1 = link1.value.toString(),
+                                            link2 = link2.value.toString()
+                                        )
                                     )
-                                )
-                                fileUploadMode.value = 0
-                                posted = true
-                                theFileName.value = "Attach circular"
+                                    fileUploadMode.intValue = 0
+                                    posted = true
+                                    theFileName.value = "Attach circular"
+                                }
+                            }
+                            isFieldBlank.replaceAll(
+                                { false }
+                            )
+                        } else {
+                            if (selectedDate == "" && mode == 0) {
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Please select a deadline",
+                                        Toast.LENGTH_LONG
+                                    )
+                                    .show()
+                                return@clickable
+                            }
+                            if (isFieldBlank[0]) {
+                                Toast
+                                    .makeText(context, "Please fill title", Toast.LENGTH_LONG)
+                                    .show()
+                                return@clickable
+                            } else if (isFieldBlank[1]) {
+                                Toast
+                                    .makeText(context, "Please fill description", Toast.LENGTH_LONG)
+                                    .show()
+                                return@clickable
+                            } else if (isFieldBlank[2]) {
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "Please fill applicability",
+                                        Toast.LENGTH_LONG
+                                    )
+                                    .show()
+                                return@clickable
+                            } else {
+                                Toast
+                                    .makeText(context, "Please select a file", Toast.LENGTH_LONG)
+                                    .show()
+                                return@clickable
                             }
                         }
-                        isFieldBlank.replaceAll(
-                            { false }
-                        )
-                    }
-                    else
-                    {
-                        if (selectedDate == "" && mode == 0){
-                            Toast.makeText(context, "Please select a deadline", Toast.LENGTH_LONG).show()
-                            return@clickable
-                        }
-                        if(isFieldBlank[0])
-                        {
-                            Toast.makeText(context, "Please fill title", Toast.LENGTH_LONG).show()
-                            return@clickable
-                        }
-                        else if(isFieldBlank[1])
-                        {
-                            Toast.makeText(context, "Please fill description", Toast.LENGTH_LONG).show()
-                            return@clickable
-                        }
-                        else if(isFieldBlank[2])
-                        {
-                            Toast.makeText(context, "Please fill applicability", Toast.LENGTH_LONG).show()
-                            return@clickable
-                        }
-                        else
-                        {
-                            Toast.makeText(context, "Please select a file", Toast.LENGTH_LONG).show()
-                            return@clickable
-                        }
-                    }
-                },
+                    },
                 colors = CardDefaults.cardColors(
                     containerColor = Color((0xffa37fdb))
                 ),
                 elevation = CardDefaults.cardElevation(10.dp),
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Box(modifier = Modifier.fillMaxSize().padding(vertical = 10.dp), contentAlignment = Alignment.Center)
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 10.dp), contentAlignment = Alignment.Center)
                 {
-                    Text(
-                        text = "Upload",
-                        fontFamily = urbanist,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "Upload",
+                            fontFamily = urbanist,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                    }
                 }
             }
             if(posted){
@@ -386,6 +422,7 @@ fun AdminCreateAPostScreen(
             Spacer(modifier = Modifier.height(5.dp))
         }
 }
+
 @Composable
 fun CustomFileUploadButton(
     theFileName: MutableState<String>,
@@ -406,7 +443,7 @@ fun CustomFileUploadButton(
             if (mimeType in listOf("image/png", "image/jpeg", "image/jpg", "application/pdf")) {
                 val fileName = getFileName(contentResolver, uri)
                 val fileContent = readFileContent(contentResolver, uri)
-                theFileName.value = fileName ?: "Unknown File"
+                theFileName.value = fileName
 
                 Log.d("FileName", "File Name: $fileName")
             } else {
@@ -436,7 +473,9 @@ fun CustomFileUploadButton(
                         theFileName.value = "Attach circular"
                     }
                 } catch (e: ActivityNotFoundException) {
-                    Toast.makeText(context, "No app available to select files", Toast.LENGTH_SHORT).show()
+                    Toast
+                        .makeText(context, "No app available to select files", Toast.LENGTH_SHORT)
+                        .show()
                 }
             },
         colors = CardDefaults.cardColors(
@@ -446,11 +485,15 @@ fun CustomFileUploadButton(
         shape = RoundedCornerShape(16.dp)
     ) {
         Box(
-            modifier = Modifier.fillMaxSize().padding(vertical = 5.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 5.dp)
         )
         {
             Text(
-                modifier = Modifier.align(Alignment.Center).padding(vertical = 10.dp),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(vertical = 10.dp),
                 text = theFileName.value,
                 fontFamily = urbanist,
                 fontSize = 18.sp,
