@@ -330,6 +330,7 @@ fun AdminCreateAPostScreen(
                                 viewModel.uploadFile(uri, contentResolver)
                                 delay(10000)
                                 withContext(Dispatchers.Main) {
+//                                    viewModel.deletePost(//pass id)
                                     viewModel.uploadDetailsDeadline(
                                         AdminDashBoardInfo(
                                             token = "233",
