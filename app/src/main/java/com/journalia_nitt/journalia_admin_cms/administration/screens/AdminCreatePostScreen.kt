@@ -63,6 +63,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.journalia_nitt.journalia_admin_cms.R
+import com.journalia_nitt.journalia_admin_cms.administration.EditStateAdmin
 import com.journalia_nitt.journalia_admin_cms.administration.infoPasser
 import com.journalia_nitt.journalia_admin_cms.administration.response.AdminDashBoardInfo
 import com.journalia_nitt.journalia_admin_cms.administration.sharedPreferences.getFromSharedPreferences
@@ -102,7 +103,9 @@ fun AdminCreateAPostScreen(
     val isFieldBlank  = remember { mutableListOf(true,true,true) }
     var title by remember { mutableStateOf(infoPasser.value.title) }
     var selectedDate by remember { mutableStateOf(infoPasser.value.deadline) }
-    val theFileName = remember { mutableStateOf("Attach circular") }
+    val theFileName = remember {
+        mutableStateOf<String>("Attach circular")
+    }
     val fileUploadMode = remember { mutableIntStateOf(0) }
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
@@ -170,7 +173,7 @@ fun AdminCreateAPostScreen(
                 )
             }
             var expanded by remember { mutableStateOf(false) }
-            val items = listOf("Option 1", "Option 2", "Option 3","Option 1", "Option 2", "Option 3","Option 1", "Option 2", "Option 3","Option 1", "Option 2", "Option 3")
+            val items = listOf("B.Tech I year", "B.Tech II year", "B.Tech III year", "B.Tech IV year")
             var selectedItem by remember { mutableStateOf("") }
             Text(
                 text = "Applicability",
@@ -329,7 +332,7 @@ fun AdminCreateAPostScreen(
                             coroutineScope.launch(Dispatchers.IO) {
                                 viewModel.uploadFile(uri, contentResolver)
                                 delay(10000)
-                                withContext(Dispatchers.Main) {
+                                withContext(Dispatchers.IO) {
 //                                    viewModel.deletePost(//pass id)
                                     viewModel.uploadDetailsDeadline(
                                         AdminDashBoardInfo(

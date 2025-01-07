@@ -10,16 +10,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,6 +63,34 @@ fun AdminDashBoard(navController: NavController){
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ){
+        var textFieldValue by remember { mutableStateOf("") }
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+            value = textFieldValue,
+            onValueChange = {
+                textFieldValue = it
+            },
+            shape = RoundedCornerShape(12.dp),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent
+            ),
+            placeholder = {
+                Text(
+                    text = "Search for posts, deadlines and info",
+                    fontSize = 14.sp,
+                    fontFamily = urbanist
+                )
+            },
+            trailingIcon = {
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = "Search icon",
+                )
+            }
+        )
         var mode by remember{ mutableIntStateOf(0) }
         Row(
             modifier = Modifier
@@ -116,6 +151,7 @@ fun AdminDashBoard(navController: NavController){
         ) {
             detailsList.forEach { user ->
                 items(user.details) { announcement ->
+                    if(textFieldValue.isNotEmpty() && !announcement.title.contains(textFieldValue,ignoreCase = true)) return@items
                     var deadline = announcement.deadline
                     if(deadline[1]=='/') {
                         deadline = "0$deadline"
@@ -187,8 +223,9 @@ fun AdminCard(
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
+                    val items = listOf("B.Tech I year", "B.Tech II year", "B.Tech III year", "B.Tech IV year")
                     Text(
-                        text = description,
+                        text = items.random(),
                         fontSize = 18.sp,
                         fontFamily = urbanist,
                         fontWeight = FontWeight.Bold,

@@ -104,7 +104,7 @@ fun MyApp(innerPaddingValues: PaddingValues) {
         composable(Screens.AdminDashboardScreen.route) {
             AdminAndAlumniScaffold(
                 currentPage = { AdminDashBoard(navController = navController) },
-                searchBar = true,
+                searchBar = false,
                 heading = "ADMIN DASHBOARD",
                 navController = navController
             )

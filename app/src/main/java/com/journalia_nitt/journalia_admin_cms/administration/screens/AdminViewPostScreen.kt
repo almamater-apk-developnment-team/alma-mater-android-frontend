@@ -159,16 +159,6 @@ fun openPdf(
 
 @Composable
 fun AdminViewPostScreen(
-    item : Deadline? = Deadline(
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        1,
-        ""
-    ),
     navController: NavController,
 ) {
     var item = infoPasser.value
@@ -191,6 +181,12 @@ fun AdminViewPostScreen(
             text = item.deadline.substring(0,2) + " " + month.lowercase() + " " + item.deadline.substring(6,10),
             fontFamily = urbanist,
             fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = "B.Tech I year",
+            fontFamily = urbanist,
+            fontSize = 16.sp,
             fontWeight = FontWeight.Bold
         )
         Text(
