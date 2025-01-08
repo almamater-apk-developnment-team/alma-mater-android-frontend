@@ -160,7 +160,7 @@ fun AdminCreateAPostScreen(
                 )
             }
             var expanded by remember { mutableStateOf(false) }
-            val items = listOf("Option 1", "Option 2", "Option 3","Option 1", "Option 2", "Option 3","Option 1", "Option 2", "Option 3","Option 1", "Option 2", "Option 3")
+            val items = listOf("B-Tech Second Year","B-Tech First Year","B-Tech Third Year","B-Tech Fourth Year")
             Text(
                 text = "Applicability",
                 fontFamily = urbanist,

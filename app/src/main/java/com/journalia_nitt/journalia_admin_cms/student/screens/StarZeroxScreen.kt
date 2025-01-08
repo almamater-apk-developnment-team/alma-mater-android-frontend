@@ -64,52 +64,6 @@ fun StarZeroxScreen(
         modifier = Modifier.fillMaxSize()
             .verticalScroll(scrollState)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            IconButton(
-                onClick = {},
-                modifier = Modifier
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.back_button_navigation),
-                    contentDescription = "Back button",
-                    modifier = Modifier
-                        .scale(1.5f)
-//                        .clickable {
-//                            navController.popBackStack()
-//                        }
-                )
-            }
-            Text(
-                text = "PRINTING OPTIONS",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.ExtraBold,
-                fontFamily = urbanist
-            )
-            IconButton(
-                onClick = {},
-                modifier = Modifier
-            ) {
-                Image(
-                    painter = rememberVectorPainter(Icons.Outlined.Menu),
-                    contentDescription = "Back button",
-                    modifier = Modifier
-                        .scale(1.2f)
-//                        .clickable {
-//                            navController.popBackStack()
-//                        }
-                )
-            }
-        }
-        Divider(
-            color = Color.LightGray,
-            thickness = 1.dp,
-            modifier = Modifier.fillMaxWidth().padding(top=4.dp),
-        )
         Text(
             text = "File Upload",
             fontWeight = FontWeight.ExtraBold,

@@ -50,7 +50,6 @@ fun AdminDashBoard(navController: NavController){
     val detailsList = adminDetailsViewModel.detailsList
 
 
-//    Log.d("Info List",detailsList.)
 
     Column(
         modifier= Modifier
@@ -153,12 +152,8 @@ fun AdminCard(
             .fillMaxWidth()
             .shadow(shape = RoundedCornerShape(10.dp), elevation = 5.dp)
             .clickable {
-//                val postJson = Gson().toJson(post)
-//                navController.navigate(Screens.AdminViewPostScreen.route + "/$postJson")
-                // Add the post to the ViewModel
                 PostRepository.savePost(post)
                 navController.navigate(Screens.AdminViewPostScreen.route + "/${post.postId}")
-
             },
         colors = CardDefaults.cardColors(containerColor = Color(0xFFA37FDB))
     ) {

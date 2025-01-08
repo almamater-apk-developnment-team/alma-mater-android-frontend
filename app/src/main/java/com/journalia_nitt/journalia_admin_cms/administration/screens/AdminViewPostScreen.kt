@@ -19,6 +19,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,7 +45,7 @@ fun AdminViewPostScreen(
 ) {
     val verticalScroll = rememberScrollState()
     Column(
-        modifier = Modifier.verticalScroll(verticalScroll),
+        modifier = Modifier.verticalScroll(verticalScroll).padding(horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
@@ -51,19 +53,26 @@ fun AdminViewPostScreen(
         Text(
             text = adminPost.title,
             fontFamily = urbanist,
-            fontSize = 25.sp,
-            fontWeight = FontWeight.Bold
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
         )
         Text(
             text = adminPost.date.date.toString() + " " + adminPost.date.monthInString + adminPost.date.year ,
             fontFamily = urbanist,
-            fontSize = 20.sp,
+            fontSize = 16.sp,
             fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = adminPost.applicability,
+            fontFamily = urbanist,
+            fontSize = 16.sp
         )
         Text(
             text = adminPost.author,
             fontFamily = urbanist,
-            fontSize = 16.sp
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold
         )
         Card(
             colors = CardDefaults.cardColors(Color(163, 127, 219))
@@ -97,6 +106,11 @@ fun AdminViewPostScreen(
                 fontFamily = urbanist,
                 fontSize = 16.sp,
                 color = Color.Black
+            ),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color.Transparent,
+                unfocusedBorderColor = Color.Transparent,
+                disabledBorderColor = Color.Transparent
             ),
             modifier = Modifier
                 .fillMaxWidth()

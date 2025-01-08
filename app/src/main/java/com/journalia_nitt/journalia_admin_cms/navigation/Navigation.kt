@@ -30,6 +30,7 @@ import com.journalia_nitt.journalia_admin_cms.common.screens.UserRoleSelectionSc
 import com.journalia_nitt.journalia_admin_cms.student.navigationDeck.Page
 import com.journalia_nitt.journalia_admin_cms.student.responses.Deadline
 import com.journalia_nitt.journalia_admin_cms.student.responses.Post
+import com.journalia_nitt.journalia_admin_cms.student.screens.StarZeroxScreen
 import com.journalia_nitt.journalia_admin_cms.student.screens.StudentAdminDashboardScreen
 import com.journalia_nitt.journalia_admin_cms.student.screens.StudentAdminPostViewScreen
 import com.journalia_nitt.journalia_admin_cms.student.screens.StudentBookMarkScreen
@@ -119,8 +120,6 @@ fun MyApp(innerPaddingValues: PaddingValues) {
             val postId = backStackEntry.arguments?.getString("postId")
             val postDetails = postId?.let { PostRepository.getPost(it) }
 
-            Log.d("VIEW",postDetails.toString())
-
             AdminAndAlumniScaffold(
                 currentPage = {
                     if (postDetails != null) {
@@ -178,15 +177,17 @@ fun MyApp(innerPaddingValues: PaddingValues) {
             )
         }
         composable(
-            route = Screens.StudentAdminPostViewScreen.route +"/{deadline}",
-            arguments = listOf(navArgument("deadline") { type = NavType.StringType })
-            ) {
-                backStackEntry ->
-            val jsonString = backStackEntry.arguments?.getString("deadline")
-            val gson = Gson()
-            val deadline = jsonString?.let { gson.fromJson(it, Deadline::class.java) }
+            route = Screens.StudentAdminPostViewScreen.route + "/{postId}",
+            arguments = listOf(navArgument("postId") { type = NavType.StringType })
+            ) { backStackEntry ->
+            val postId = backStackEntry.arguments?.getString("postId")
+            val postDetails = postId?.let { PostRepository.getPost(it) }
             Page(
-                currentPage ={  StudentAdminPostViewScreen(item = deadline,navController = navController) },
+                currentPage ={
+                    if (postDetails != null) {
+                        StudentAdminPostViewScreen(navController = navController, adminPost = postDetails)
+                    }
+                },
                 navController = navController,
                 searchBar  = false,
                 heading = "PROFILE"
@@ -258,5 +259,15 @@ fun MyApp(innerPaddingValues: PaddingValues) {
         composable(Screens.WebMailScreen.route) {
             Webmail(url = "https://students.nitt.edu/horde/login.php")
         }
+        // Student Services
+        composable(Screens.StarXeroxScreen.route) {
+            Page(
+                currentPage ={  StarZeroxScreen(navController = navController) },
+                navController = navController,
+                searchBar  = false,
+                heading = "STAR XEROX"
+            )
+        }
+
     }
 }
