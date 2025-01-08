@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,12 +29,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.Text
@@ -54,6 +59,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -98,43 +104,7 @@ fun AlumniPostViewScreen( navController: NavController) {
             .fillMaxSize()
             .verticalScroll(scrollState)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(0.6f)
-                .align(Alignment.Start),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            IconButton(
-                onClick = {},
-                modifier = Modifier
-                    .padding(start = 10.dp)
-                    .align(Alignment.CenterVertically)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.back_button_navigation),
-                    contentDescription = "Back button",
-                    modifier = Modifier
-                        .scale(2f)
-                        .clickable {
-                            navController.popBackStack()
-                        }
-                )
-            }
-            Text(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically),
-                text = "POSTS",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = urbanist
-            )
-        }
-        Divider(
-            color = Color.LightGray,
-            thickness = (1.5).dp,
-            modifier = Modifier
-                .fillMaxWidth()
-        )
+
         Spacer(modifier = Modifier.padding(top = 10.dp))
         Row(
             modifier = Modifier.fillMaxWidth()
@@ -148,10 +118,10 @@ fun AlumniPostViewScreen( navController: NavController) {
                 IconButton(
                     onClick = {},
                     modifier = Modifier
-                        .scale(2.5f)
+                        .scale(2.0f)
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.person),
+                        painter = painterResource(id = R.drawable.john_doe),
                         contentDescription = "Profile image"
                     )
                 }
@@ -221,13 +191,13 @@ fun AlumniPostViewScreen( navController: NavController) {
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Spacer(modifier = Modifier.padding(start = 20.dp))
+                Spacer(modifier = Modifier.padding(start = 5.dp))
                 Text(
                     text = heading,
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
                     fontFamily = urbanist,
-                    modifier = Modifier.padding(horizontal = 20.dp)
+                    modifier = Modifier.padding(horizontal = 5.dp)
                 )
             }
             Spacer(modifier = Modifier.padding(top = 25.dp))
@@ -300,53 +270,62 @@ fun AlumniPostViewScreen( navController: NavController) {
                 horizontalArrangement = Arrangement.End
             ) {
                 Text(
-                    text = "3 mins ago",
+                    text =  getRelativeTime(clickedPost.value.upload_time),
                     fontSize = 12.sp,
                     fontFamily = urbanist
                 )
             }
-            Divider(
-                color = Color.LightGray,
-                thickness = (1).dp,
+            HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 30.dp)
+                    .padding(horizontal = 30.dp),
+                thickness = (1).dp,
+                color = Color.LightGray
             )
             Spacer(modifier = Modifier.padding(top = 10.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Spacer(modifier = Modifier.padding(start = 20.dp))
-                Box {
+                Row(
+                    modifier = Modifier.fillMaxHeight(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically //Added vertical alignment
+                ) {
                     IconButton(
                         onClick = {
                         },
                         modifier = Modifier
                             .scale(2f)
-                            .align(Alignment.TopCenter)
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.comment_button),
                             contentDescription = "Comment button"
                         )
                     }
+                    Spacer(
+                        modifier = Modifier.padding(start = 3.dp)
+                    )
                     Text(
-                        modifier = Modifier
-                            .align(Alignment.TopCenter)
-                            .offset(y = 30.dp),
+                        modifier = Modifier.align(Alignment.CenterVertically),
                         text = clickedPost.value.comments.size.toString(),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         fontFamily = urbanist
                     )
                 }
-                var image = remember(clickedPost.value.upvoters) { mutableStateOf( R.drawable.upvoteempty) }
+                var image = remember(clickedPost.value.upvoters) { mutableStateOf( Icons.Outlined.FavoriteBorder ) }
                 if(clickedPost.value.upvoters.contains(theUser.username)) {
-                    image.value = R.drawable.triangle
+                    image.value = Icons.Filled.Favorite
                 }
                 var upvotes = remember(clickedPost.value.upvotes){ mutableStateOf(clickedPost.value.upvotes) }
                 Spacer(modifier = Modifier.padding(start = 20.dp))
-                Box{
+                Row(
+                    modifier = Modifier,
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     IconButton(
                         onClick = {
                             if(!clickedPost.value.upvoters.contains(theUser.username)) {
@@ -356,22 +335,19 @@ fun AlumniPostViewScreen( navController: NavController) {
                                     Upvote(theUser.username, clickedPost.value.id)
                                 )
                                 clickedPost.value.upvotes++
-                                image.value = R.drawable.triangle
+                                image.value = Icons.Filled.Favorite
                             }
                         },
                         modifier = Modifier
-                            .align(Alignment.TopCenter)
                     ) {
                         Image(
-                            painter = painterResource(id = image.value),
+                            painter = rememberVectorPainter(image.value),
                             contentDescription = "Like button",
                             modifier = Modifier.size(23.dp)
                         )
                     }
                     Text(
-                        modifier = Modifier
-                            .align(Alignment.TopCenter)
-                            .offset(y = 31.dp),
+                        modifier = Modifier,
                         text = upvotes.value.toString(),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,

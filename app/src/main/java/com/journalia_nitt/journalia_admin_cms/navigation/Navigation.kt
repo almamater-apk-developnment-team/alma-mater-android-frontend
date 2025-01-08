@@ -247,6 +247,7 @@ fun MyApp(innerPaddingValues: PaddingValues) {
                 searchBar  = false,
                 heading = "COMMUNITY"
             )
+
         }
         composable(Screens.AlumniPostViewScreen.route) {
             AdminAndAlumniScaffold(
