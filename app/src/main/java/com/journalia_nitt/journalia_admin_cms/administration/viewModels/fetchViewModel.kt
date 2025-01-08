@@ -5,12 +5,12 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.journalia_nitt.journalia_admin_cms.administration.FileUploadClient
-import com.journalia_nitt.journalia_admin_cms.administration.response.forEachUser
+import com.journalia_nitt.journalia_admin_cms.administration.response.ForEachUser
 import kotlinx.coroutines.launch
 
 class AdminDetailsViewModel : ViewModel() {
-    private val _detailsList = mutableStateListOf<forEachUser>()
-    val detailsList: List<forEachUser> = _detailsList
+    private val _detailsList = mutableStateListOf<ForEachUser>()
+    val detailsList: List<ForEachUser> = _detailsList
     fun fetchAdminDetails() {
         viewModelScope.launch {
             try {

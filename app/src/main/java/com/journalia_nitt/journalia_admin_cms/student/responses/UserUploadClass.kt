@@ -91,12 +91,6 @@ data class AlumniUpload(
     val upvoters: MutableList<String> = mutableListOf(),
     val upload_time: String = ""
 )
-data class Comment(
-    val comment: String,
-    val username: String,
-    val time: String? = null,
-    val id: String? = null
-)
 
 data class FetchUploadsResponse(val message: String, val uploads: List<UploadOutput>)
 data class UploadOutput(

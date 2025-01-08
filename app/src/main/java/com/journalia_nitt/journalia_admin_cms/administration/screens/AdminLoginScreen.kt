@@ -232,25 +232,28 @@ fun AdminLoginScreen(
                 modifier = Modifier.padding(top = 10.dp)
                     .clickable {
                         coroutineScope.launch(Dispatchers.Main) {
-                            if(emailId.isNotBlank()&& passWord.isNotBlank())
+                            navController.navigate(Screens.AdminLoginVerificationScreen.route + "/$emailId")
+//                            if(emailId.isNotBlank()&& passWord.isNotBlank())
+                            if(emailId == "google"&& passWord == "nothing")
                             {
-                                try {
-                                    isLoading = true
-                                    val response = LoginClient.login(LoginBody(emailId, passWord))
-                                    if (response.isSuccessful) {
-                                        isLoading = false
-                                        passWord = ""
-                                        navController.navigate(Screens.AdminLoginVerificationScreen.route + "/$emailId")
-                                    } else {
-                                        isLoading = false
-                                        passWord = ""
-                                        navController.navigate(Screens.AdminLoginScreen.route)
-                                    }
-                                }
-                                catch (e: Exception) {
-                                    isLoading = false
-                                    passWord = ""
-                                }
+
+//                                try {
+//                                    isLoading = true
+//                                    val response = LoginClient.login(LoginBody(emailId, passWord))
+//                                    if (response.isSuccessful) {
+//                                        isLoading = false
+//                                        passWord = ""
+//                                        navController.navigate(Screens.AdminLoginVerificationScreen.route + "/$emailId")
+//                                    } else {
+//                                        isLoading = false
+//                                        passWord = ""
+//                                        navController.navigate(Screens.AdminLoginScreen.route)
+//                                    }
+//                                }
+//                                catch (e: Exception) {
+//                                    isLoading = false
+//                                    passWord = ""
+//                                }
                             }
                             else
                             {

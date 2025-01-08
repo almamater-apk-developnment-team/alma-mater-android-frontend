@@ -11,7 +11,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import androidx.compose.runtime.State
 import com.journalia_nitt.journalia_admin_cms.administration.FileUploadClient
-import com.journalia_nitt.journalia_admin_cms.administration.response.AdminDashBoardInfo
+import com.journalia_nitt.journalia_admin_cms.administration.response.AdminPost
 import com.journalia_nitt.journalia_admin_cms.administration.screens.getFileName
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 
@@ -87,7 +87,7 @@ class FileUploadViewModel : ViewModel() {
         }
     }
 
-    fun uploadDetailsDeadline(details: AdminDashBoardInfo){
+    fun uploadDetailsDeadline(details: AdminPost){
         viewModelScope.launch{
             try{
                 val response=FileUploadClient.detailsUpload(details)

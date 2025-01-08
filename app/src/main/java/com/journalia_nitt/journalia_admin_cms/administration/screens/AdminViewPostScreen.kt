@@ -34,98 +34,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.journalia_nitt.journalia_admin_cms.R
-import com.journalia_nitt.journalia_admin_cms.administration.infoPasser
-import com.journalia_nitt.journalia_admin_cms.administration.response.Deadline
+import com.journalia_nitt.journalia_admin_cms.administration.response.AdminPost
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
-import java.time.LocalDate
-
-fun getMonthInt(month : String) : Int {
-    val ans = when(month) {
-        "Jan" -> 1
-        "Feb" -> 2
-        "Mar" -> 3
-        "Apr" -> 4
-        "May" -> 5
-        "Jun" -> 6
-        "Jul" -> 7
-        "Aug" -> 8
-        "Sep" -> 9
-        "Oct" -> 10
-        "Nov" -> 11
-        "Dec" -> 12
-        else -> 0
-    }
-    return ans
-}
-
-fun getMonth(month : Int) : String {
-    val ans =  when(month) {
-        1 -> "January"
-        2 -> "February"
-        3 -> "March"
-        4 -> "April"
-        5 -> "May"
-        6 -> "June"
-        7 -> "July"
-        8 -> "August"
-        9 -> "September"
-        10 -> "October"
-        11 -> "November"
-        12 -> "December"
-        else -> "Invalid Month"
-    }
-    return ans.uppercase()
-}
-
-fun getMonthCalender(
-    year : Int ,
-    month : Int
-) : List<List<Int>> {
-
-    val specificDate = LocalDate.of(year,month,1)
-
-    val firstDayOfMonth = specificDate.dayOfWeek.value
-    val noOfDaysInTheMonth = specificDate.lengthOfMonth()
-
-    val dateInRow = mutableListOf<List<Int>>()
-    var dateInCurrentRow = mutableListOf<Int>()
-
-    var n = firstDayOfMonth
-
-    for(i in 1..noOfDaysInTheMonth) {
-        n += 1
-        dateInCurrentRow.add(i)
-        if(n%7==0) {
-            while(dateInCurrentRow.size<7) dateInCurrentRow.add(0,0)
-            dateInRow.add(dateInCurrentRow.toList())
-            dateInCurrentRow = mutableListOf()
-        }
-    }
-    if(dateInCurrentRow.isNotEmpty()) {
-        while(dateInCurrentRow.size<7) dateInCurrentRow.add(0)
-        dateInRow.add(dateInCurrentRow)
-    }
-    return dateInRow.toList()
-}
-
 @Composable
 fun AdminViewPostScreen(
-    item : Deadline? = Deadline(
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        1,
-        ""
-    ),
+    adminPost:AdminPost,
     navController: NavController,
 ) {
-    var item = infoPasser.value
-
     val verticalScroll = rememberScrollState()
-
     Column(
         modifier = Modifier.verticalScroll(verticalScroll),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -133,20 +49,19 @@ fun AdminViewPostScreen(
     ) {
         Spacer(modifier = Modifier.height(5.dp))
         Text(
-            text = item.title.toString(),
+            text = adminPost.title,
             fontFamily = urbanist,
             fontSize = 25.sp,
             fontWeight = FontWeight.Bold
         )
-        val month = getMonth(item.deadline.substring(3,5).toInt())
         Text(
-            text = item.deadline.substring(0,2) + " " + month.lowercase() + " " + item.deadline.substring(6,10),
+            text = adminPost.date.date.toString() + " " + adminPost.date.monthInString + adminPost.date.year ,
             fontFamily = urbanist,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = item.author,
+            text = adminPost.author,
             fontFamily = urbanist,
             fontSize = 16.sp
         )
@@ -173,10 +88,10 @@ fun AdminViewPostScreen(
             }
         }
         OutlinedTextField(
-            value = item.description.toString(),
+            value = adminPost.description,
             enabled = false,
             onValueChange = {
-                //do nothing
+
             },
             textStyle = TextStyle(
                 fontFamily = urbanist,
@@ -199,7 +114,7 @@ fun AdminViewPostScreen(
             fontSize = 20.sp
         )
 
-        if(item.link1.toString().isEmpty() && item.link2.toString().isEmpty()) {
+        if(adminPost.link1.isEmpty() && adminPost.link2.isEmpty()) {
             Text(
                 text = "No Important links found",
                 fontFamily = urbanist,
@@ -208,12 +123,13 @@ fun AdminViewPostScreen(
                 fontWeight = FontWeight.Bold
             )
         }
-        else if(item.link1.toString().isNotEmpty()) {
-            LinkCard(item,navController)
+        else {
+            LinkCard(adminPost.link1,navController)
+            if(adminPost.link2.isNotEmpty()) {
+                LinkCard(adminPost.link2,navController)
+            }
         }
-        else if(item.link2.toString().isNotEmpty()) {
-            LinkCard(item,navController)
-        }
+
         Text(
             text = "CIRCULAR",
             fontFamily = urbanist,
@@ -246,14 +162,14 @@ fun AdminViewPostScreen(
 
 
 @Composable
-fun LinkCard(item: Deadline,navController: NavController) {
+fun LinkCard(link: String,navController: NavController) {
     val clipboardManager = LocalClipboardManager.current
     Card(
         modifier = Modifier
             .fillMaxWidth(0.8f)
             .padding(horizontal = 20.dp)
             .clickable {
-                navController.navigate("WebViewScreen/${Uri.encode(item.link1.toString())}")
+                navController.navigate("WebViewScreen/${Uri.encode(link)}")
             },
         colors = CardDefaults.cardColors(
             containerColor =  Color(163, 127, 219)
@@ -267,7 +183,7 @@ fun LinkCard(item: Deadline,navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = item.link1.toString(),
+                text = link,
                 fontFamily = urbanist,
                 color = Color.White,
                 fontSize = 18.sp,
@@ -281,7 +197,7 @@ fun LinkCard(item: Deadline,navController: NavController) {
                 modifier = Modifier
                     .size(30.dp)
                     .clickable {
-                        clipboardManager.setText( AnnotatedString(item.link1.toString()))
+                        clipboardManager.setText( AnnotatedString(link))
                     }
                 ,
                 tint = Color.White

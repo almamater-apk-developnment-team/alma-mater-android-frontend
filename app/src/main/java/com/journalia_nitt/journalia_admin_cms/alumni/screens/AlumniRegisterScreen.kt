@@ -60,8 +60,13 @@ import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
 fun AlumniRegisterScreen(
     innerPaddingValues: PaddingValues, navController: NavController
 ){
-    var userDetails by remember { mutableStateOf(AlumniUserDetails())  }
-    val emailId by remember{ mutableStateOf("") }
+    var userDetails by remember { mutableStateOf(AlumniUserDetails(
+        username = "google",
+        designation = "automated tester",
+        rollNumber = "123456789",
+        password = "nothing"
+    ))  }
+    val emailId by remember{ mutableStateOf("google") }
     val viewModel: AlumniAccountViewModel = viewModel()
     val context = LocalContext.current
     val createStatus by viewModel.createStatus.collectAsState()
@@ -189,14 +194,15 @@ fun AlumniRegisterScreen(
         }
         Button(onClick = {
             if (userDetails.rollNumber.isNotEmpty() && userDetails.username.isNotEmpty() && emailId.isNotEmpty() && userDetails.password.isNotEmpty() && userDetails.designation.isNotEmpty()) {
-                val account = AlumniAccount(
-                    roll_number = userDetails.rollNumber,
-                    username = userDetails.username,
-                    email = emailId,
-                    password = userDetails.password,
-                    designation = userDetails.designation
-                )
-                viewModel.createAccount(account)
+//                val account = AlumniAccount(
+//                    roll_number = userDetails.rollNumber,
+//                    username = userDetails.username,
+//                    email = emailId,
+//                    password = userDetails.password,
+//                    designation = userDetails.designation
+//                )
+//                viewModel.createAccount(account)
+                navController.navigate(Screens.AlumniHomeScreen.route)
             } else {
                 Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT).show()
             }

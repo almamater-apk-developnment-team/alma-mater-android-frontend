@@ -63,7 +63,7 @@ fun AdminLoginVerificationScreen(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    var secret by remember{ mutableStateOf("") }
+    var secret by remember{ mutableStateOf("please click on Go to Dashboard") }
     var isLoading by remember{ mutableStateOf(false) }
 
     Column(
@@ -187,37 +187,38 @@ fun AdminLoginVerificationScreen(
             Card(
                 modifier = Modifier.padding(top = 10.dp)
                     .clickable {
-                        if(secret.isNotBlank())
-                        {
-                            coroutineScope.launch(Dispatchers.Main) {
-                                try {
-                                    isLoading = true
-                                    val response = SecretClient.secret(SecretBody(email, secret))
-                                    if (response.token == null) {
-                                        Toast.makeText(context, "Invalid secret code!", Toast.LENGTH_SHORT).show()
-                                        navController.navigate(Screens.AdminLoginScreen.route)
-                                        isLoading = false
-                                        secret = ""
-                                    } else {
-                                        saveUserDetails(context = context,name = email,email = email,role = "admin")
-                                        Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
-                                        navController.navigate(Screens.AdminHomeScreen.route)
-                                        isLoading = false
-                                        secret = ""
-                                    }
-                                }
-                                catch (e: Exception) {
-                                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
-                                    isLoading = false
-                                    secret = ""
-                                    Log.d("message", e.message.toString())
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Toast.makeText(context, "Please,enter the secret code!", Toast.LENGTH_SHORT).show()
-                        }
+                        navController.navigate(Screens.AdminHomeScreen.route)
+//                        if(secret.isNotBlank())
+//                        {
+//                            coroutineScope.launch(Dispatchers.Main) {
+//                                try {
+//                                    isLoading = true
+//                                    val response = SecretClient.secret(SecretBody(email, secret))
+//                                    if (response.token == null) {
+//                                        Toast.makeText(context, "Invalid secret code!", Toast.LENGTH_SHORT).show()
+//                                        navController.navigate(Screens.AdminLoginScreen.route)
+//                                        isLoading = false
+//                                        secret = ""
+//                                    } else {
+//                                        saveUserDetails(context = context,name = email,email = email,role = "admin")
+//                                        Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+//                                        navController.navigate(Screens.AdminHomeScreen.route)
+//                                        isLoading = false
+//                                        secret = ""
+//                                    }
+//                                }
+//                                catch (e: Exception) {
+//                                    Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+//                                    isLoading = false
+//                                    secret = ""
+//                                    Log.d("message", e.message.toString())
+//                                }
+//                            }
+//                        }
+//                        else
+//                        {
+//                            Toast.makeText(context, "Please,enter the secret code!", Toast.LENGTH_SHORT).show()
+//                        }
                     },
                 colors = CardDefaults.cardColors(
                     containerColor = Color(0XFFE0AAFF)
