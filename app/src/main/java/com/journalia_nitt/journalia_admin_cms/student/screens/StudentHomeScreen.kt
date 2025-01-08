@@ -151,60 +151,15 @@ fun StudentHomeScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround)
             {
-                CommunityCardComponent( navController = navController, route = Screens.StudentHomeScreen.route, communityName = "Club", data = R.raw.club_community_logo)
-                CommunityCardComponent( navController = navController, route = Screens.StudentHomeScreen.route, communityName = "Fest", data = R.raw.fest_community_logo)
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceAround
-            )
-            {
-                Button(
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(
-                            rgb(
-                                163,
-                                127,
-                                219
-                            )
-                        )
-                    ),
-                    onClick = { navController.navigate(Screens.StudentClubDirectoryScreen.route)
-                        Toast.makeText(context,"Releasing soon....",Toast.LENGTH_SHORT).show()
-                    },
-                ) {
-                    Text(text = "Club Directory",
-                        fontWeight = FontWeight(600),
-                        fontFamily = FontFamily(Font(R.font.urbanist)),
-                        fontSize = 16.sp,
-                        color = Color.White)
-                }
-                Button(
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(
-                            rgb(
-                                163,
-                                127,
-                                219
-                            )
-                        )
-                    ),
-                    onClick = {navController.navigate(Screens.StudentFestDirectoryScreen.route)},
-                ) {
-                    Text(text = "Fest Directory",
-                        fontWeight = FontWeight(600),
-                        fontFamily = FontFamily(Font(R.font.urbanist)),
-                        fontSize = 16.sp,
-                        color = Color.White)
-                }
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceAround
-            )
-            {
                 CommunityCardComponent( navController = navController, route = Screens.StudentHomeScreen.route, communityName = "Alumni", data = R.raw.alumni_logo)
-                CommunityCardComponent( navController = navController, route = Screens.StudentHomeScreen.route, communityName = "Student", data = R.raw.student_community_logo)
+                CommunityCardComponent( navController = navController, route = Screens.StudentHomeScreen.route, communityName = "Star Zerox", data = R.raw.star_zeros_logo)
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top=20.dp),
+                horizontalArrangement = Arrangement.SpaceAround
+            )
+            {
+                CommunityCardComponent( navController = navController, route = Screens.StudentHomeScreen.route, communityName = "Club", data = R.raw.club_community_logo)
             }
             Spacer(modifier = Modifier.height(5.dp))
         }

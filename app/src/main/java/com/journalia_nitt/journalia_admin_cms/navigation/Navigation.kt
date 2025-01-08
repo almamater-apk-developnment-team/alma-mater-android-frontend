@@ -44,7 +44,7 @@ fun MyApp(innerPaddingValues: PaddingValues) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = Screens.CommonSplashScreen.route
+        startDestination = Screens.StudentHomeScreen.route
     ) {
         composable(
             route = Screens.WebViewScreen.route+"/{url}",
