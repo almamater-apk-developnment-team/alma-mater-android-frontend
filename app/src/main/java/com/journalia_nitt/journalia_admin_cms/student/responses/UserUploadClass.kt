@@ -1,5 +1,8 @@
 package com.journalia_nitt.journalia_admin_cms.student.responses
 
+import com.journalia_nitt.journalia_admin_cms.administration.response.AdminPost
+import com.journalia_nitt.journalia_admin_cms.administration.response.Date
+
 data class DeadlineResponse(
     val deadlines: List<DeadlineContainer>, // Updated to reflect the array
     val status: String // To match the "status" field
@@ -74,9 +77,23 @@ data class BookMarkFetch(
 )
 
 data class bookMarkClass(
-    val details: List<BookMark> = emptyList()
+    val details: List<AdminPost> = emptyList()
 )
-
+data class studentBookMark(
+    var postId: String = "",
+    var author: String = "",
+    var title: String = "",
+    var description: String = "",
+    var deadline: Date = Date(0, "",0, 0),
+    var fileUrl: String? = "",
+    var type: String = "",
+    var link1: String = "",
+    var link2: String = "",
+    var applicability: String = "",
+    var time: String = "",
+    var date: Date = Date(0, "",0, 0),
+    var bookMarkedBy: List<String> = emptyList()
+)
 //ALUMNI FETCH
 data class AlumniUpload(
     val username: String,

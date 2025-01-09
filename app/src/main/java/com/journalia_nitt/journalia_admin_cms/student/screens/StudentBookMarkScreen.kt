@@ -1,22 +1,16 @@
 package com.journalia_nitt.journalia_admin_cms.student.screens
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -27,21 +21,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
+
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.journalia_nitt.journalia_admin_cms.R
-import com.journalia_nitt.journalia_admin_cms.navigation.Screens
-import com.journalia_nitt.journalia_admin_cms.student.responses.BookMark
-import com.journalia_nitt.journalia_admin_cms.student.responses.Deadline
-import com.journalia_nitt.journalia_admin_cms.student.screens.bookMarkToDeadline
+
 import com.journalia_nitt.journalia_admin_cms.student.sharedPreferences.getUserDetails
 import com.journalia_nitt.journalia_admin_cms.student.viewModels.bookMarkViewModel
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
@@ -55,15 +42,16 @@ fun StudentBookMarkScreen(
 
     val bookMarkViewModel: bookMarkViewModel = viewModel()
     val context= LocalContext.current
-    val username = getUserDetails(context = context)?.name?.substringBefore(" ") ?: ""
+    val username = getUserDetails(context = context)?.collegeId.toString()
 
     LaunchedEffect(Unit) {
-        bookMarkViewModel.fetchBookMark(username)
+        bookMarkViewModel.fetchBookMark(username,context)
     }
     val posts = bookMarkViewModel.posts.value.data.details
 
     Column(
         modifier = Modifier.fillMaxSize()
+            .padding(30.dp),
     ) {
         Spacer(modifier = Modifier.padding(top = 20.dp))
         Row(
@@ -105,124 +93,8 @@ fun StudentBookMarkScreen(
         LazyColumn() {
             items(posts) { item ->
                 Spacer(modifier = Modifier.padding(top = 10.dp))
-                BookmarkCard(item,navController)
+                StudentAdminCard(navController,item)
             }
         }
     }
-}
-
-@Composable
-fun BookmarkCard(
-    item : BookMark,
-    nav: NavController
-) {
-    val gradient = Brush.linearGradient(
-        colors = listOf(Color(150, 103, 224), Color(188, 128, 240))
-    )
-    val deadline=bookMarkToDeadline(item)
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp)
-            .border(
-                width = 1.dp,
-                color = Color.Black,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .height(170.dp)
-            .clickable{
-                //nav.navigate(Screens.AdminDetailsPage.createRoute(deadline))
-            }
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(gradient),
-            verticalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Spacer(modifier = Modifier.padding(start = 20.dp))
-                Text(
-                    text = item.title.toString(),
-                    fontSize = 20.sp,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            Column() {
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Spacer(modifier = Modifier.padding(start = 20.dp))
-                    Text(
-                        text = "B.Tech All Years",
-                        fontSize = 16.sp,
-                        color = Color.White,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Spacer(modifier = Modifier.padding(start = 20.dp))
-                    Text(
-                        text = item.author,
-                        fontSize = 16.sp,
-                        color = Color.White,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-            }
-            val description = when(item.description.toString().length) {
-                in 0..100 -> item.description.toString()
-                else -> item.description.toString().substring(0, 100) + "..."
-            }
-            Box(
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .padding(end = 30.dp)
-            ) {
-                Image(
-                    modifier = Modifier.scale(2f),
-                    painter = painterResource(id = R.drawable.bookmark),
-                    contentDescription = null
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Spacer(modifier = Modifier.padding(start = 20.dp))
-                if(description.length<=100) {
-                    Text(
-                        text = description,
-                        fontSize = 16.sp,
-                        color = Color.White
-                    )
-                }
-                else {
-                    Text(
-                        text = description.substring(0, 100) + "...",
-                        fontSize = 16.sp,
-                        color = Color.White
-                    )
-                }
-            }
-        }
-    }
-}
-
-fun bookMarkToDeadline(item : BookMark): Deadline {
-    return Deadline(
-        author = item.author,
-        deadline = item.deadline,
-        description = item.description,
-        file_url = item.file_url,
-        link1 = item.link1,
-        link2 = item.link2,
-        mode = item.mode,
-        title = item.title
-    )
 }

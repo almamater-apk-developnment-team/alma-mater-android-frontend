@@ -151,7 +151,7 @@ fun StudentHomeScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround)
             {
-                CommunityCardComponent( navController = navController, route = Screens.StudentHomeScreen.route, communityName = "Alumni", data = R.raw.alumni_logo)
+                CommunityCardComponent( navController = navController, route = Screens.AlumniCommunityScreen.route, communityName = "Alumni", data = R.raw.alumni_logo)
                 CommunityCardComponent( navController = navController, route = Screens.StarXeroxScreen.route, communityName = "Star Zerox", data = R.raw.star_zeros_logo)
             }
             Row(

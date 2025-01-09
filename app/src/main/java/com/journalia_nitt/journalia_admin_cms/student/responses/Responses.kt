@@ -29,17 +29,7 @@ data class FileData(
 data class DeadlineRequest(
     val deadline: String,
 )
-data class BookMark(
-    val token: String,
-    val author: String,
-    val deadline: String,
-    val description: String?,
-    val file_url: String?,
-    val link1: String?,
-    val link2: String?,
-    val mode: Int,
-    val title: String?
-)
+
 
 data class ZResponse(
     @SerializedName("deadline")
