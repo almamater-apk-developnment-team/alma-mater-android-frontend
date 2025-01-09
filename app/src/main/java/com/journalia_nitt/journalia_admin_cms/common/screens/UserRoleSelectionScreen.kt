@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -46,7 +47,7 @@ fun UserRoleSelectionScreen(navController: NavController)
     Column(
         modifier = Modifier.fillMaxSize().background(color = color_2).padding(WindowInsets.systemBars.asPaddingValues()).background(color = Color.White),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(50.dp,Alignment.CenterVertically)
+        verticalArrangement = Arrangement.SpaceAround
     )
     {
         Column(
@@ -128,6 +129,45 @@ fun UserRoleSelectionScreen(navController: NavController)
             )
             {
                 Text(text = "ALUMNI CONNECT",fontSize = 18.sp,modifier= Modifier.padding(0.dp,25.dp).align(Alignment.CenterHorizontally), fontFamily = urbanist,fontWeight = FontWeight.Bold)
+            }
+        }
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "By moving forward you accept to our",
+                fontSize = 18.sp,
+                fontFamily = urbanist,
+                color = Color.Gray
+            )
+            Row {
+                Text(
+                    text = "Terms and Conditions",
+                    fontSize = 18.sp,
+                    fontFamily = urbanist,
+                    color = Color.Black,
+                    textDecoration = TextDecoration.Underline,
+                    modifier = Modifier.clickable {
+
+                    }
+                )
+                Text(
+                    text = " and ",
+                    fontSize = 18.sp,
+                    fontFamily = urbanist,
+                    color = Color.Gray
+                )
+                Text(
+                    text = "Privacy Policy",
+                    fontSize = 18.sp,
+                    fontFamily = urbanist,
+                    color = Color.Black,
+                    textDecoration = TextDecoration.Underline,
+                    modifier = Modifier.clickable {
+
+                    }
+                )
             }
         }
     }
