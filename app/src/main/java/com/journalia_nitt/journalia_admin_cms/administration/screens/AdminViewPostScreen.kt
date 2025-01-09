@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -27,10 +28,13 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -86,6 +90,8 @@ fun AdminViewPostScreen(
     navController: NavController,
 ) {
     val verticalScroll = rememberScrollState()
+    val showDialog = remember { mutableStateOf(false) }
+    val context = LocalContext.current
     Column(
         modifier = Modifier.verticalScroll(verticalScroll).padding(horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -196,7 +202,17 @@ fun AdminViewPostScreen(
                 .fillMaxWidth(0.8f)
                 .padding(horizontal = 20.dp)
                 .clickable {
-
+                    Log.d("url",adminPost.toString())
+                    if(adminPost.fileUrl.toString().endsWith(".jpg")) {
+                        showDialog.value = true
+                    }
+                    else if(adminPost.fileUrl.toString().endsWith(".pdf")) {
+                        openPdf(context,adminPost.fileUrl.toString(), navController)
+                    }
+                    else {
+                        Toast.makeText(context, "No file found", Toast.LENGTH_SHORT).show()
+                        return@clickable
+                    }
                 },
             colors = CardDefaults.cardColors(
                 containerColor =  Color(163, 127, 219)
