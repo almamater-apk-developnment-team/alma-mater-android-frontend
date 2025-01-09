@@ -163,6 +163,7 @@ fun StudentAdminDashboardScreen(navController: NavController)
                 items(user.details) { post ->
                     val arrayOfPosts = getArrayFromSharedPreferences(context,"report")
                     val arrayOfAuthors = getArrayFromSharedPreferences(context,"block")
+                    if(arrayOfPosts.contains(post.postId) || arrayOfAuthors.contains(post.author)) return@items
                     if(mode == 0 && post.type == "Deadline")
                     {
                         StudentAdminCard(
