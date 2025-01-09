@@ -172,6 +172,3 @@ fun UserRoleSelectionScreen(navController: NavController)
         }
     }
 }
-
-
-

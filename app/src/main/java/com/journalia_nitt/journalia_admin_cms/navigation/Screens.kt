@@ -40,4 +40,6 @@ sealed class Screens(val route:String) {
     data object WebMailScreen : Screens("WebMailScreen")
     // Student-Services
     data object StarXeroxScreen : Screens("StarXeroxScreen")
+    data object StudentAlumniCommunityScreen : Screens("StudentAlumniCommunityScreen")
+    data object StudentAlumniPostViewScreen : Screens("StudentAlumniPostViewScreen")
 }

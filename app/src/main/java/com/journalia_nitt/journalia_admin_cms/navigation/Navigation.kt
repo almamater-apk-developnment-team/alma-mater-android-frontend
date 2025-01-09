@@ -33,6 +33,8 @@ import com.journalia_nitt.journalia_admin_cms.student.responses.Post
 import com.journalia_nitt.journalia_admin_cms.student.screens.StarZeroxScreen
 import com.journalia_nitt.journalia_admin_cms.student.screens.StudentAdminDashboardScreen
 import com.journalia_nitt.journalia_admin_cms.student.screens.StudentAdminPostViewScreen
+import com.journalia_nitt.journalia_admin_cms.student.screens.StudentAlumniCommunityScreen
+import com.journalia_nitt.journalia_admin_cms.student.screens.StudentAlumniPostViewScreen
 import com.journalia_nitt.journalia_admin_cms.student.screens.StudentBookMarkScreen
 import com.journalia_nitt.journalia_admin_cms.student.screens.StudentCalendarScreen
 import com.journalia_nitt.journalia_admin_cms.student.screens.StudentClubDirectoryScreen
@@ -269,6 +271,21 @@ fun MyApp(innerPaddingValues: PaddingValues) {
                 heading = "STAR XEROX"
             )
         }
-
+        composable(Screens.StudentAlumniCommunityScreen.route) {
+            Page(
+                currentPage ={  StudentAlumniCommunityScreen(navController = navController) },
+                navController = navController,
+                searchBar  = false,
+                heading = "COMMUNITY"
+            )
+        }
+        composable(Screens.StudentAlumniPostViewScreen.route) {
+            Page(
+                currentPage ={  StudentAlumniPostViewScreen(navController) },
+                navController = navController,
+                searchBar  = false,
+                heading = "POST"
+            )
+        }
     }
 }
