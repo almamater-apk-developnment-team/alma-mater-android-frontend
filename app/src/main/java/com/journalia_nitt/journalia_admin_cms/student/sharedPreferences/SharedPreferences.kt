@@ -2,6 +2,8 @@ package com.journalia_nitt.journalia_admin_cms.student.sharedPreferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.google.common.reflect.TypeToken
+import com.google.gson.Gson
 import com.journalia_nitt.journalia_admin_cms.student.responses.UserInfo
 
 fun saveUserDetails(context: Context, name: String, email: String,role:String) {
@@ -42,4 +44,25 @@ fun clearUserDetails(context: Context) {
     editor.clear()
     editor.putBoolean("login_status", false)
     editor.apply()
+}
+fun saveArrayToSharedPreferences(context : Context, complaint : String , key : String) {
+    val sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
+    val gson = Gson()
+    val array = getArrayFromSharedPreferences(context,key)
+    array.add(complaint)
+    val json = gson.toJson(array)
+    editor.putString(key, json)
+    editor.apply()
+}
+fun getArrayFromSharedPreferences(context : Context, key : String): MutableList<String> {
+    val sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+    val gson = Gson()
+    val json = sharedPreferences.getString(key, null)
+    return if (json != null) {
+        val type = object : TypeToken<MutableList<String>>() {}.type
+        gson.fromJson(json, type)
+    } else {
+        mutableListOf()
+    }
 }

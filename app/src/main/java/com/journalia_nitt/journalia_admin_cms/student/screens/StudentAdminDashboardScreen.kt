@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -44,25 +45,26 @@ import com.journalia_nitt.journalia_admin_cms.administration.response.Date
 import com.journalia_nitt.journalia_admin_cms.administration.viewModels.AdminDetailsViewModel
 import com.journalia_nitt.journalia_admin_cms.administration.viewModels.PostRepository
 import com.journalia_nitt.journalia_admin_cms.navigation.Screens
+import com.journalia_nitt.journalia_admin_cms.student.sharedPreferences.getArrayFromSharedPreferences
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
 
 @Composable()
 fun StudentAdminDashboardScreen(navController: NavController)
 {
     val adminDetailsViewModel: AdminDetailsViewModel = viewModel()
-
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
         adminDetailsViewModel.fetchAdminDetails()
     }
     var query by remember { mutableStateOf("") }
     val detailsList = adminDetailsViewModel.detailsList
     val filteredPosts = remember(query,detailsList) {
-      if(query.isBlank())detailsList
+        if(query.isBlank()) detailsList
         else detailsList.filter {
             it.details.any { post ->
-            post.title.contains(query, ignoreCase = true)
+                post.title.contains(query, ignoreCase = true)
+            }
         }
-    }
     }
     Column(
         modifier= Modifier
@@ -159,7 +161,8 @@ fun StudentAdminDashboardScreen(navController: NavController)
         ) {
             filteredPosts.forEach { user ->
                 items(user.details) { post ->
-
+                    val arrayOfPosts = getArrayFromSharedPreferences(context,"report")
+                    val arrayOfAuthors = getArrayFromSharedPreferences(context,"block")
                     if(mode == 0 && post.type == "Deadline")
                     {
                         StudentAdminCard(
