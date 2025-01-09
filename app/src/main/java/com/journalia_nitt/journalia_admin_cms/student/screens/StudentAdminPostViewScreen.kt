@@ -61,20 +61,25 @@ import coil.compose.rememberImagePainter
 import com.journalia_nitt.journalia_admin_cms.R
 import com.journalia_nitt.journalia_admin_cms.administration.response.AdminPost
 import com.journalia_nitt.journalia_admin_cms.administration.screens.LinkCard
+import com.journalia_nitt.journalia_admin_cms.administration.screens.openPdf
+import com.journalia_nitt.journalia_admin_cms.navigation.Screens
 import com.journalia_nitt.journalia_admin_cms.student.pdfUrlGlobal
 import com.journalia_nitt.journalia_admin_cms.student.responses.BookMark
 import com.journalia_nitt.journalia_admin_cms.student.responses.Deadline
 import com.journalia_nitt.journalia_admin_cms.student.viewModels.bookMarkViewModel
 import com.journalia_nitt.journalia_admin_cms.ui.theme.color_2
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
+import java.io.UnsupportedEncodingException
+import java.net.URLEncoder
 
 @Composable
 fun StudentAdminPostViewScreen(
     adminPost: AdminPost,
     navController: NavController,
-)
-{
+) {
     val verticalScroll = rememberScrollState()
+    val showDialog = remember { mutableStateOf(false) }
+    val context = LocalContext.current
     Column(
         modifier = Modifier.verticalScroll(verticalScroll).padding(horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -184,7 +189,17 @@ fun StudentAdminPostViewScreen(
                 .fillMaxWidth(0.8f)
                 .padding(horizontal = 20.dp)
                 .clickable {
-
+                    Log.d("url",adminPost.toString())
+                    if(adminPost.fileUrl.toString().endsWith(".jpg")) {
+                        showDialog.value = true
+                    }
+                    else if(adminPost.fileUrl.toString().endsWith(".pdf")) {
+                        openPdf(context, adminPost.fileUrl.toString(), navController)
+                    }
+                    else {
+                        Toast.makeText(context, "No file found", Toast.LENGTH_SHORT).show()
+                        return@clickable
+                    }
                 },
             colors = CardDefaults.cardColors(
                 containerColor =  Color(163, 127, 219)
@@ -202,6 +217,9 @@ fun StudentAdminPostViewScreen(
             }
         }
     }
+    if (showDialog.value) {
+        ShowImageInDialog(showDialog,adminPost.fileUrl)
+    }
 }
 
 fun convertDeadlineToBookMark(deadline: Deadline, token:String): BookMark {
@@ -215,56 +233,6 @@ fun convertDeadlineToBookMark(deadline: Deadline, token:String): BookMark {
         link2 = deadline.link2,
         mode = deadline.mode,
         title = deadline.title
-    )
-}
-
-fun openPdf(
-    context: Context,
-    pdfUrl: String,
-    navController: NavController
-) {
-    try {
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(Uri.parse(pdfUrlGlobal), "application/pdf")
-            addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-
-        val packageManager = context.packageManager
-        val resolvedInfo = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
-        if (resolvedInfo.isNotEmpty()) {
-            context.startActivity(intent)
-        }
-        else {
-            Toast.makeText(context, "No PDF reader found. Please install one.", Toast.LENGTH_LONG).show()
-//            val encodedPdfUrl = try {
-//                URLEncoder.encode(pdfUrl, "UTF-8")
-//            } catch (e: UnsupportedEncodingException) {
-//                e.printStackTrace()
-//                pdfUrl
-//            }
-//            pdfUrlGlobal = "https://docs.google.com/gview?embedded=true&url=$encodedPdfUrl"
-//            navController.navigate(Screens.PdfWebViewPage.route)
-        }
-    } catch (e: ActivityNotFoundException) {
-        Toast.makeText(context, "Error opening PDF. Please try again later.", Toast.LENGTH_LONG).show()
-    }
-}
-
-@Composable
-fun PDFWebViewScreen() {
-    Log.d("pdfurl", pdfUrlGlobal)
-    AndroidView(
-        factory = { context ->
-            val webView = WebView(context)
-            webView.apply {
-                webViewClient = WebViewClient()
-                settings.javaScriptEnabled = true
-                loadUrl(pdfUrlGlobal)
-            }
-            webView
-        },
-        modifier = Modifier.fillMaxSize()
     )
 }
 

@@ -47,6 +47,7 @@ import androidx.navigation.NavController
 import com.journalia_nitt.journalia_admin_cms.R
 import com.journalia_nitt.journalia_admin_cms.administration.response.AdminPost
 import com.journalia_nitt.journalia_admin_cms.navigation.Screens
+import com.journalia_nitt.journalia_admin_cms.student.screens.ShowImageInDialog
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
@@ -218,8 +219,10 @@ fun AdminViewPostScreen(
                 containerColor =  Color(163, 127, 219)
             )
         ) {
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center)
-            {
+            Column (
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Text(
                     text = "Click to view circular",
                     fontFamily = urbanist,
@@ -229,6 +232,9 @@ fun AdminViewPostScreen(
                 )
             }
         }
+    }
+    if (showDialog.value) {
+        ShowImageInDialog(showDialog,adminPost.fileUrl)
     }
 }
 
