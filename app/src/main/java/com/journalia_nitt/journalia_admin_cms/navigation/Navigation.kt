@@ -197,7 +197,7 @@ fun MyApp(innerPaddingValues: PaddingValues) {
             Page(
                 currentPage ={  StudentAdminDashboardScreen(navController = navController) },
                 navController = navController,
-                searchBar  = true,
+                searchBar  = false,
                 heading = "DASHBOARD"
             )
         }

@@ -62,8 +62,8 @@ import com.journalia_nitt.journalia_admin_cms.R
 import com.journalia_nitt.journalia_admin_cms.administration.response.AdminPost
 import com.journalia_nitt.journalia_admin_cms.administration.screens.LinkCard
 import com.journalia_nitt.journalia_admin_cms.student.pdfUrlGlobal
-import com.journalia_nitt.journalia_admin_cms.student.responses.BookMark
-import com.journalia_nitt.journalia_admin_cms.student.responses.Deadline
+import com.journalia_nitt.journalia_admin_cms.student.sharedPreferences.getTokenDetails
+import com.journalia_nitt.journalia_admin_cms.student.sharedPreferences.getUserDetails
 import com.journalia_nitt.journalia_admin_cms.student.viewModels.bookMarkViewModel
 import com.journalia_nitt.journalia_admin_cms.ui.theme.color_2
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
@@ -74,6 +74,8 @@ fun StudentAdminPostViewScreen(
     navController: NavController,
 )
 {
+    val context = LocalContext.current
+    val rollno = getUserDetails(context = context)?.collegeId
     val verticalScroll = rememberScrollState()
     Column(
         modifier = Modifier.verticalScroll(verticalScroll).padding(horizontal = 10.dp),
@@ -121,6 +123,9 @@ fun StudentAdminPostViewScreen(
                 modifier = Modifier.size(25.dp).align(Alignment.CenterEnd)
                     .clickable {
                         bookMarked = !bookMarked
+                        if(bookMarked) {
+                            bookMarkViewModel().postBookMark(adminPost,rollno.toString(),context)
+                        }
                     },
                 tint =  if(!bookMarked) Color.Black else color_2
             )
@@ -204,19 +209,7 @@ fun StudentAdminPostViewScreen(
     }
 }
 
-fun convertDeadlineToBookMark(deadline: Deadline, token:String): BookMark {
-    return BookMark(
-        token = token,
-        author = deadline.author,
-        deadline = deadline.deadline,
-        description = deadline.description,
-        file_url = deadline.file_url,
-        link1 = deadline.link1,
-        link2 = deadline.link2,
-        mode = deadline.mode,
-        title = deadline.title
-    )
-}
+
 
 fun openPdf(
     context: Context,
@@ -278,7 +271,7 @@ fun ShowImageInDialog(
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(onClick = { showDialog.value = true }) {
             Text(text = "Show Image")
