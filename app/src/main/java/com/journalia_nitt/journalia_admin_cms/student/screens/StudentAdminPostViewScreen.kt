@@ -67,6 +67,7 @@ import com.journalia_nitt.journalia_admin_cms.navigation.Screens
 import com.journalia_nitt.journalia_admin_cms.student.pdfUrlGlobal
 import com.journalia_nitt.journalia_admin_cms.student.sharedPreferences.getTokenDetails
 import com.journalia_nitt.journalia_admin_cms.student.sharedPreferences.getUserDetails
+import com.journalia_nitt.journalia_admin_cms.student.sharedPreferences.saveArrayToSharedPreferences
 import com.journalia_nitt.journalia_admin_cms.student.viewModels.bookMarkViewModel
 import com.journalia_nitt.journalia_admin_cms.ui.theme.color_2
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
@@ -221,6 +222,48 @@ fun StudentAdminPostViewScreen(
                     fontSize = 18.sp,
                     modifier = Modifier.padding(vertical = 10.dp, horizontal = 5.dp)
                 )
+            }
+        }
+        Spacer(modifier = Modifier.padding(top = 20.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Card(
+                modifier = Modifier
+                    .size(100.dp,40.dp)
+                    .clickable {
+                        saveArrayToSharedPreferences(context,adminPost.author,"block")
+                        navController.popBackStack()
+                    }
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Block"
+                    )
+                }
+            }
+            Card(
+                modifier = Modifier
+                    .size(100.dp,40.dp)
+                    .clickable {
+                        saveArrayToSharedPreferences(context,adminPost.postId,"report")
+                        navController.popBackStack()
+                    }
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Report"
+                    )
+                }
             }
         }
     }
