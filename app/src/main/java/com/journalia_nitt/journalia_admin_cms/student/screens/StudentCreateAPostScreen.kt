@@ -53,6 +53,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -449,7 +450,7 @@ fun CustomFileUploadButton(onFileSelected: (FileData?) -> Unit) {
             ContentResolver1.value = contentResolver
             fileUploadMode.value = 1
 
-            if (mimeType in listOf("image/png", "image/jpeg", "image/jpg")) {
+            if (mimeType in listOf("application/pdf")) {
                 val fileName = getFileName(contentResolver, uri)
                 val fileContent = readFileContent(contentResolver, uri)
                 Log.d("FileName", "File Name: $fileName")
@@ -457,7 +458,8 @@ fun CustomFileUploadButton(onFileSelected: (FileData?) -> Unit) {
                     FileData(
                         name = fileName,
                         mimeType = mimeType ?: "application/octet-stream",
-                        content = fileContent
+                        content = fileContent,
+                        uri = uri
                     )
                 )
             } else {
@@ -467,50 +469,55 @@ fun CustomFileUploadButton(onFileSelected: (FileData?) -> Unit) {
             onFileSelected(null)
         }
     }
+
     Card(
         modifier = Modifier
-            .width(270.dp)
-            .padding(start = 20.dp)
-            .height(50.dp)
             .clickable {
                 if (fileUploadMode.value == 0) {
                     launcher.launch(
                         arrayOf(
-                            "image/png",
-                            "image/jpeg",
-                            "image/jpg"
+                            "application/pdf"
                         )
                     )
-                } else fileUploadMode.value = 0; theFileName.value = "Attach circular"
+                } else {
+                    fileUploadMode.value = 0
+                    theFileName.value = "Attach circular"
+                }
             },
         colors = CardDefaults.cardColors(Color.White),
         elevation = CardDefaults.cardElevation(5.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.padding(10.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            Row() {
                 Text(
                     text = theFileName.value,
                     fontFamily = urbanist,
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
+            if(fileUploadMode.value == 0)
+            {
                 Text(
                     text = "( max 5 MB )",
                     fontFamily = urbanist,
-                    fontSize = 12.sp
+                    fontSize = 12.sp,
+                    modifier = Modifier.align(Alignment.Bottom)
+                )
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.redirect),
+                    contentDescription = "Attach image",
+                    modifier = Modifier.size(25.dp)
                 )
             }
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.redirect),
-                contentDescription = "Attach image",
-                modifier = Modifier.scale(0.5f)
-            )
+
         }
     }
 }
+
 
 @Composable
 fun photoPicker():MultipartBody.Part?

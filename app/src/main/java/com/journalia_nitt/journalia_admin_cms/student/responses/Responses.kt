@@ -1,5 +1,6 @@
 package com.journalia_nitt.journalia_admin_cms.student.responses
 
+import android.net.Uri
 import com.google.gson.annotations.SerializedName
 
 data class TokenId(
@@ -24,7 +25,8 @@ data class LoginRequest(val name: String)
 data class FileData(
     val name: String,
     val mimeType: String,
-    val content: ByteArray
+    val content: ByteArray,
+    val uri : Uri
 )
 data class DeadlineRequest(
     val deadline: String,

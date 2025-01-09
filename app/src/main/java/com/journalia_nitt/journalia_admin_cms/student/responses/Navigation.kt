@@ -1,5 +1,6 @@
 package com.journalia_nitt.journalia_admin_cms.student.responses
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 

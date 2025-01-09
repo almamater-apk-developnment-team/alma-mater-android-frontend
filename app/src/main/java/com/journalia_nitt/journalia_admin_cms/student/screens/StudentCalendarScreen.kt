@@ -93,10 +93,6 @@ fun StudentCalendarScreen()
     var response by remember { mutableStateOf("") }
     val today = LocalDate.now()
     var selectedDate by remember { mutableStateOf(today) }
-    val deadlineViewModel: DeadlineViewModel = viewModel()
-    LaunchedEffect(Unit) {
-        deadlineViewModel.fetchDeadlines()
-    }
     var showPopup by remember { mutableStateOf(false) }
     var isRefreshing by remember { mutableStateOf(false) }
     val pullToRefreshState = rememberPullToRefreshState()
@@ -423,7 +419,7 @@ fun calendarScreen(): LocalDate {
                 text = state.firstVisibleMonth.yearMonth.month.toString() + " " + state.firstVisibleMonth.yearMonth.year,
                 modifier = Modifier.padding(12.dp),
                 fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
+                fontSize = 15.sp
             )
         }
         Column(modifier = Modifier.padding(10.dp,0.dp).background(brush = gradient,shape = RoundedCornerShape(16.dp)), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally)
@@ -436,7 +432,6 @@ fun calendarScreen(): LocalDate {
                 {
                     Box(
                         modifier = Modifier.padding(horizontal = 5.dp).width(40.dp)
-//                            .border(2.dp,Color.Black)
                         , contentAlignment = Alignment.Center
                     )
                     {

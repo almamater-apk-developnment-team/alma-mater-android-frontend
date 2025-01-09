@@ -1,5 +1,6 @@
 package com.journalia_nitt.journalia_admin_cms.navigation
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
@@ -59,9 +60,11 @@ fun MyApp(innerPaddingValues: PaddingValues) {
             arguments = listOf(navArgument("url") { type = NavType.StringType })
         )
         { backStackEntry ->
-            val url = backStackEntry.arguments?.getString("url")
-            if (url != null) {
-                WebView(url = url)
+            val encodedUrl = backStackEntry.arguments?.getString("url")
+            val decodedUrl = Uri.decode(encodedUrl) // Decode the URL
+
+            if (decodedUrl != null) {
+                WebView(url = decodedUrl) // Use the decoded URL in the WebView
             }
         }
         composable(Screens.CommonSplashScreen.route) {

@@ -1,68 +1,65 @@
 package com.journalia_nitt.journalia_admin_cms.student.screens
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import android.net.Uri
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.outlined.Menu
-import androidx.compose.material3.Divider
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.journalia_nitt.journalia_admin_cms.R
-import com.journalia_nitt.journalia_admin_cms.alumni.gradient
+import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfReader
+import com.journalia_nitt.journalia_admin_cms.ui.theme.color_2
+import com.journalia_nitt.journalia_admin_cms.ui.theme.color_3
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
+import java.io.IOException
 
 @Composable
 fun StarZeroxScreen(
     navController: NavController
 ){
 
-    val page = remember { mutableStateOf("") }
+    val numberOfPages by remember { mutableIntStateOf(0) }
+    var filePath by remember { mutableStateOf(Uri.EMPTY) }
     val copies = remember { mutableStateOf("") }
-    val sided = remember { mutableStateOf("") }
-    val color = remember { mutableStateOf("") }
-    val color_pages = remember { mutableStateOf("") }
-    val binding = remember { mutableStateOf("") }
-    val amount = remember { mutableStateOf("") }
+    var singleSided by remember { mutableStateOf(true) }
+    var color by remember { mutableStateOf(false) }
+    val colorPages = remember { mutableStateOf("") }
+    var binding by remember { mutableStateOf(false) }
+    var hardBinding by remember { mutableStateOf(false) }
+    val amount  by remember { mutableIntStateOf(0) }
     val scrollState = rememberScrollState();
     Column(
-        modifier = Modifier.fillMaxSize()
-            .verticalScroll(scrollState)
+        modifier = Modifier.fillMaxSize().padding(horizontal = 10.dp)
+            .verticalScroll(scrollState),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         Text(
             text = "File Upload",
@@ -79,11 +76,33 @@ fun StarZeroxScreen(
             CustomFileUploadButton { fileData ->
                 if (fileData != null) {
                     theFileName.value = fileData.name
+                    filePath = fileData.uri
                     println("MIME Type: ${fileData.mimeType}")
                     println("File Content Size: ${fileData.content.size} bytes")
                 } else {
                     println("No file selected")
                 }
+            }
+        }
+
+        val context = LocalContext.current
+        if(filePath.toString() != "")
+        {
+            val inputStream = context.contentResolver.openInputStream(filePath)
+
+            if (inputStream != null) {
+                try {
+                    val pdfReader = PdfReader(inputStream)
+                    val pdfDocument = PdfDocument(pdfReader)
+                    val pageCount = pdfDocument.numberOfPages
+                    pdfDocument.close()
+                    Toast.makeText(context, "Number of pages: $pageCount", Toast.LENGTH_SHORT).show()
+
+                } catch (e: IOException) {
+                    Log.e("PDF Error", "Failed to read PDF file: ${e.message}")
+                }
+            } else {
+                Log.e("Error", "Unable to open InputStream for URI: $filePath")
             }
         }
 
@@ -97,28 +116,27 @@ fun StarZeroxScreen(
             modifier = Modifier.align(Alignment.CenterHorizontally).padding(top=20.dp)
         )
 
+
         Row(
-            modifier = Modifier.padding(top=40.dp)
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                modifier = Modifier.padding(start = 26.dp, end = 70.dp).align(Alignment.CenterVertically)  ,
-                text = "Number of pages in the pdf",
+                text = "Number of copies",
                 fontWeight = FontWeight.Bold,
                 fontFamily = urbanist,
                 fontSize = 16.sp,
+                modifier = Modifier
+                    .fillMaxWidth(0.6f),
                 color = Color.Black,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Start
             )
             OutlinedTextField(
-                value = page.value,
-                onValueChange = { page.value = it },
+                value =copies.value,
+                onValueChange = { copies.value = it },
                 modifier = Modifier
-                    .width(78.dp)
-                    .height(50.dp)
-                    .align(Alignment.CenterVertically),
-                textStyle = androidx.compose.ui.text.TextStyle(
-                    fontSize = 16.sp // Set font size here
-                ),
+                    .fillMaxWidth(0.4f),
                 shape = RoundedCornerShape(12.dp),
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
@@ -129,146 +147,93 @@ fun StarZeroxScreen(
                 )
             )
         }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        )
+        {
+            Text(
+                text = "Copy Type",
+                fontWeight = FontWeight.Bold,
+                fontFamily = urbanist,
+                fontSize = 16.sp,
+                color = Color.Black,
+                textAlign = TextAlign.Start
+            )
+            Button(
+                onClick =
+                {
+                    singleSided = !singleSided
+                },
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonColors(
+                    containerColor = color_2,
+                    contentColor = Color.Black,
+                    disabledContentColor = Color.Black,
+                    disabledContainerColor = color_3
+                )
+            )
+            {
+                Text(
+                    text = if(singleSided) "Single Side" else "Double Side",
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = urbanist,
+                    fontSize = 16.sp,
+                    color = Color.Black,
+                    textAlign = TextAlign.Start
+                )
+            }
+        }
 
 
         Row(
-            modifier = Modifier.padding(top=40.dp)
-        ) {
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        )
+        {
             Text(
-                modifier = Modifier.padding(start = 26.dp, end = 145.dp).align(Alignment.CenterVertically),
                 text = "Number of copies",
                 fontWeight = FontWeight.Bold,
                 fontFamily = urbanist,
                 fontSize = 16.sp,
                 color = Color.Black,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Start
             )
-            OutlinedTextField(
-                value =copies.value,
-                onValueChange = { copies.value = it },
-                modifier = Modifier
-                    .width(78.dp)
-                    .height(50.dp)
-                    .align(Alignment.CenterVertically),
+            Button(
+                onClick =
+                {
+                    color = !color
+                },
                 shape = RoundedCornerShape(12.dp),
-                singleLine = false,
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color.Black,
-                    focusedBorderColor = Color.Black,
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black
+                colors = ButtonColors(
+                    containerColor = color_2,
+                    contentColor = Color.Black,
+                    disabledContentColor = Color.Black,
+                    disabledContainerColor = color_3
                 )
-            )
-        }
-
-
-        Row(
-            modifier = Modifier.padding(top=40.dp)
-        ) {
-            Text(
-                modifier = Modifier.padding(start = 26.dp, end = 50.dp).align(Alignment.CenterVertically)  ,
-                text = "Single or Double sided",
-                fontWeight = FontWeight.Bold,
-                fontFamily = urbanist,
-                fontSize = 16.sp,
-                color = Color.Black,
-                textAlign = TextAlign.Center
-            )
-            Column(
-                modifier = Modifier.align(Alignment.CenterVertically)
             )
             {
-                var expanded by remember { mutableStateOf(false) }
-                OutlinedTextField(
-                    value = sided.value,
-                    onValueChange = {},
-                    readOnly = true,
-                    shape = RoundedCornerShape(12.dp),
-                    label = { Text("select") },
-                    modifier = Modifier.width(138.dp),
-                    trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.ArrowDropDown,
-                            contentDescription = "Dropdown icon",
-                            modifier = Modifier.clickable { expanded = !expanded }
-                        )
-                    }
+                Text(
+                    text = if(color) "Color Xerox" else "Black & White Xerox",
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = urbanist,
+                    fontSize = 16.sp,
+                    color = Color.Black,
+                    textAlign = TextAlign.Start
                 )
-                val items = listOf("Single", "Double")
-                DropdownMenu(
-                    modifier = Modifier,
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    items.forEach { option ->
-                        DropdownMenuItem(
-                            text = { Text(option) },
-                            onClick = {
-                                sided.value = option
-                                expanded = false
-                            }
-                        )
-                    }
-                }
             }
         }
 
-        Row(
-            modifier = Modifier.padding(top=40.dp)
-        ) {
-            Text(
-                modifier = Modifier.padding(start = 26.dp, end = 180.dp).align(Alignment.CenterVertically)  ,
-                text = "Color",
-                fontWeight = FontWeight.Bold,
-                fontFamily = urbanist,
-                fontSize = 16.sp,
-                color = Color.Black,
-                textAlign = TextAlign.Center
-            )
-            Column(
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
-            {
-                var expanded by remember { mutableStateOf(false) }
-                OutlinedTextField(
-                    value = color.value,
-                    onValueChange = {},
-                    readOnly = true,
-                    shape = RoundedCornerShape(12.dp),
-                    label = { Text("select") },
-                    modifier = Modifier.width(138.dp),
-                    trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.ArrowDropDown,
-                            contentDescription = "Dropdown icon",
-                            modifier = Modifier.clickable { expanded = !expanded }
-                        )
-                    }
-                )
-                val items = listOf("B&W", "Coloured")
-                DropdownMenu(
-                    modifier = Modifier,
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    items.forEach { option ->
-                        DropdownMenuItem(
-                            text = { Text(option) },
-                            onClick = {
-                                color.value = option
-                                expanded = false
-                            }
-                        )
-                    }
-                }
-            }
-        }
 
         Row(
-            modifier = Modifier.padding(top=40.dp)
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Column (
-                modifier = Modifier.padding(start = 26.dp, end = 95.dp).align(Alignment.CenterVertically)
+
             ){
                 Text(
                     modifier = Modifier,
@@ -295,13 +260,12 @@ fun StarZeroxScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
                 OutlinedTextField(
-                    value =color_pages.value,
-                    onValueChange = { color_pages.value = it },
-                    modifier = Modifier
-                        .width(138.dp)
-                        .height(73.dp),
+                    value =colorPages.value,
+                    onValueChange = { colorPages.value = it },
                     shape = RoundedCornerShape(12.dp),
-                    singleLine = false,
+                    modifier = Modifier
+                        .fillMaxWidth(0.5f),
+                    singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedBorderColor = Color.Black,
                         focusedBorderColor = Color.Black,
@@ -322,109 +286,126 @@ fun StarZeroxScreen(
             }
         }
         Row(
-            modifier = Modifier.padding(top=40.dp)
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                modifier = Modifier.padding(start = 26.dp, end = 170.dp).align(Alignment.CenterVertically)  ,
                 text = "Binding",
                 fontWeight = FontWeight.Bold,
                 fontFamily = urbanist,
                 fontSize = 16.sp,
+                modifier = Modifier
+                    .fillMaxWidth(0.6f),
                 color = Color.Black,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Start
             )
-            Column(
-                modifier = Modifier.align(Alignment.CenterVertically)
+            Button(
+                onClick =
+                {
+                    binding = !binding
+                },
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonColors(
+                    containerColor = color_2,
+                    contentColor = Color.Black,
+                    disabledContentColor = Color.Black,
+                    disabledContainerColor = color_3
+                )
             )
             {
-                var expanded by remember { mutableStateOf(false) }
-                OutlinedTextField(
-                    value = binding.value,
-                    onValueChange = {},
-                    readOnly = true,
-                    shape = RoundedCornerShape(12.dp),
-                    label = { Text("select") },
-                    modifier = Modifier.width(138.dp),
-                    trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.ArrowDropDown,
-                            contentDescription = "Dropdown icon",
-                            modifier = Modifier.clickable { expanded = !expanded }
-                        )
-                    }
+                Text(
+                    text = if(binding) "Enable" else "Disable",
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = urbanist,
+                    fontSize = 16.sp,
+                    color = Color.Black,
+                    textAlign = TextAlign.Start
                 )
-                val items = listOf("Yes", "no")
-                DropdownMenu(
-                    modifier = Modifier,
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    items.forEach { option ->
-                        DropdownMenuItem(
-                            text = { Text(option) },
-                            onClick = {
-                                binding.value = option
-                                expanded = false
-                            }
-                        )
-                    }
+            }
+        }
+        if(binding)
+        {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Binding Type",
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = urbanist,
+                    fontSize = 16.sp,
+                    modifier = Modifier
+                        .fillMaxWidth(0.6f),
+                    color = Color.Black,
+                    textAlign = TextAlign.Start
+                )
+                Button(
+                    onClick =
+                    {
+                        hardBinding = !hardBinding
+                    },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonColors(
+                        containerColor = color_2,
+                        contentColor = Color.Black,
+                        disabledContentColor = Color.Black,
+                        disabledContainerColor = color_3
+                    )
+                )
+                {
+                    Text(
+                        text = if(hardBinding) "Hard Binding" else "Soft Binding",
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = urbanist,
+                        fontSize = 16.sp,
+                        color = Color.Black,
+                        textAlign = TextAlign.Start
+                    )
                 }
             }
         }
-        Row(
-            modifier = Modifier.padding(top=40.dp, bottom = 40.dp)
-        ) {
+
+        Text(
+            text = "Total amount: $amount",
+            fontWeight = FontWeight.Bold,
+            fontFamily = urbanist,
+            fontSize = 16.sp,
+            color = Color.Black,
+            textAlign = TextAlign.Center
+        )
+
+        Button(
+            onClick =
+            {
+                //
+            },
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonColors(
+                containerColor = color_2,
+                contentColor = Color.Black,
+                disabledContentColor = Color.Black,
+                disabledContainerColor = color_3
+            )
+        )
+        {
             Text(
-                modifier = Modifier.padding(start = 26.dp, end = 180.dp).align(Alignment.CenterVertically)  ,
-                text = "Total amount",
+                text = "Pay Now",
                 fontWeight = FontWeight.Bold,
                 fontFamily = urbanist,
                 fontSize = 16.sp,
                 color = Color.Black,
-                textAlign = TextAlign.Center
-            )
-            OutlinedTextField(
-                value = amount.value,
-                onValueChange = { amount.value = it},
-                modifier = Modifier
-                    .width(78.dp)
-                    .height(50.dp)
-                    .align(Alignment.CenterVertically),
-                shape = RoundedCornerShape(12.dp),
-                singleLine = false,
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color.Black,
-                    focusedBorderColor = Color.Black,
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color.Black
-                )
-            )
-        }
-
-        Box(
-            modifier = Modifier
-                .padding(bottom = 40.dp)
-                .clip(
-                    RoundedCornerShape(12.dp)
-                )
-                .height(48.dp)
-                .width(126.dp)
-                .background(gradient)
-                .align(Alignment.CenterHorizontally)
-                .clickable {
-
-                },
-        ) {
-            Text(
-                modifier = Modifier.align(
-                    Alignment.Center
-                ),
-                text = "Pay now",
-                fontWeight = FontWeight.Bold,
-                fontFamily = urbanist,
-                fontSize = 16.sp,
-                color = Color.Black,
+                textAlign = TextAlign.Start
             )
         }
     }
+}
+
+fun getPdfPageCount(filePath: String): Int {
+    val pdfReader = PdfReader(filePath)
+    val pdfDocument = PdfDocument(pdfReader)
+    val pageCount = pdfDocument.numberOfPages
+    pdfDocument.close()
+    return pageCount
 }
