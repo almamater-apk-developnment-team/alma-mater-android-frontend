@@ -3,6 +3,7 @@ package com.journalia_nitt.journalia_admin_cms.administration.screens
 import android.app.DatePickerDialog
 import android.content.ActivityNotFoundException
 import android.content.ContentResolver
+import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Log
@@ -57,13 +58,17 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.journalia_nitt.journalia_admin_cms.R
-import com.journalia_nitt.journalia_admin_cms.administration.response.AdminDashBoardInfo
+import com.journalia_nitt.journalia_admin_cms.administration.response.AdminPost
+import com.journalia_nitt.journalia_admin_cms.administration.response.Date
 import com.journalia_nitt.journalia_admin_cms.administration.viewModels.FileUploadViewModel
+import com.journalia_nitt.journalia_admin_cms.student.sharedPreferences.getUserDetails
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
+import java.time.LocalTime
 import java.util.Calendar
 
 @Composable
@@ -93,6 +98,7 @@ fun AdminCreateAPostScreen(
     val month = calendar.get(Calendar.MONTH)
     val day = calendar.get(Calendar.DAY_OF_MONTH)
     var description by remember { mutableStateOf("") }
+    var adminPost by remember { mutableStateOf(AdminPost()) }
 
         Column(
             modifier = Modifier
@@ -110,9 +116,9 @@ fun AdminCreateAPostScreen(
                 fontWeight = FontWeight.ExtraBold
             )
             OutlinedTextField(
-                value = title,
-                onValueChange = { title = it
-                    isFieldBlank[0] = title.isBlank()},
+                value = adminPost.title,
+                onValueChange = { adminPost = adminPost.copy(title = it)
+                    isFieldBlank[0] = adminPost.title.isBlank()},
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(100.dp),
@@ -141,9 +147,9 @@ fun AdminCreateAPostScreen(
             )
             {
                 OutlinedTextField(
-                    value = description,
-                    onValueChange = { description = it
-                        isFieldBlank[1] = description.isBlank()},
+                    value = adminPost.description,
+                    onValueChange = { adminPost = adminPost.copy(description = it)
+                        isFieldBlank[1] = adminPost.description.isBlank()},
                     modifier = Modifier
                         .fillMaxSize(),
                     singleLine = false,
@@ -154,8 +160,7 @@ fun AdminCreateAPostScreen(
                 )
             }
             var expanded by remember { mutableStateOf(false) }
-            val items = listOf("Option 1", "Option 2", "Option 3","Option 1", "Option 2", "Option 3","Option 1", "Option 2", "Option 3","Option 1", "Option 2", "Option 3")
-            var selectedItem by remember { mutableStateOf("") }
+            val items = listOf("B-Tech Second Year","B-Tech First Year","B-Tech Third Year","B-Tech Fourth Year")
             Text(
                 text = "Applicability",
                 fontFamily = urbanist,
@@ -166,7 +171,7 @@ fun AdminCreateAPostScreen(
             Column()
             {
                 OutlinedTextField(
-                    value = selectedItem,
+                    value = adminPost.applicability,
                     onValueChange = {},
                     readOnly = true,
                     shape = RoundedCornerShape(12.dp),
@@ -189,8 +194,8 @@ fun AdminCreateAPostScreen(
                         DropdownMenuItem(
                             text = { Text(option) },
                             onClick = {
-                                selectedItem = option
-                                isFieldBlank[2] = selectedItem.isBlank()
+                                adminPost.applicability = option
+                                isFieldBlank[2] = adminPost.applicability.isBlank()
                                 expanded = false
                             }
                         )
@@ -206,7 +211,6 @@ fun AdminCreateAPostScreen(
                 fontWeight = FontWeight.ExtraBold,
                 textAlign = TextAlign.Center
             )
-
                 OutlinedTextField(
                     value = selectedDate,
                     onValueChange = { selectedDate = it },
@@ -215,7 +219,7 @@ fun AdminCreateAPostScreen(
                     },
                     readOnly = true,
                     enabled = false,
-                    modifier = Modifier.fillMaxWidth(0.7f),
+                    modifier = Modifier.fillMaxWidth(0.9f),
                     placeholder = { Text(modifier = Modifier.clickable { showDatePicker=true }, text = "dd/mm/yyyy", fontSize = 16.sp) },
                     shape = RoundedCornerShape(12.dp),
                     singleLine = true,
@@ -240,12 +244,22 @@ fun AdminCreateAPostScreen(
                         )
                     }
                 )
+            val months = listOf(
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            )
 
             if (showDatePicker) {
                 DatePickerDialog(
                     context,
                     { _, selectedYear, selectedMonth, selectedDay ->
                         selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+                        adminPost.deadline = Date(
+                            date = selectedDay,
+                            monthInString = months[selectedMonth],
+                            monthInInt = month+1,
+                            year =selectedYear
+                        )
                         showDatePicker = false
                     },
                     year,
@@ -261,10 +275,9 @@ fun AdminCreateAPostScreen(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.ExtraBold
             )
-            val link1 = remember { mutableStateOf("") }
             OutlinedTextField(
-                value = link1.value,
-                onValueChange = { link1.value = it },
+                value = adminPost.link1,
+                onValueChange = { adminPost = adminPost.copy(link1 = it) },
                 modifier = Modifier
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp)
@@ -275,10 +288,11 @@ fun AdminCreateAPostScreen(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.ExtraBold
             )
-            val link2 = remember { mutableStateOf("") }
             OutlinedTextField(
-                value = link2.value,
-                onValueChange = { link2.value = it },
+                value = adminPost.link2,
+                onValueChange = {
+                    adminPost = adminPost.copy(link2 = it)
+                },
                 modifier = Modifier
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp)
@@ -292,6 +306,7 @@ fun AdminCreateAPostScreen(
             }
             Card(
                 modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth(0.4f).clickable{
+
                     if(!isFieldBlank.contains(true) && fileUploadMode.value != 0)
                     {
                         isLoaded = true
@@ -300,19 +315,22 @@ fun AdminCreateAPostScreen(
                         coroutineScope.launch(Dispatchers.IO) {
                             viewModel.uploadFile(uri, contentResolver)
                             delay(10000)
+                            adminPost.apply {
+                                postId = postIdCreator()
+                                author = "thiru"
+                                type = if (mode == 1) "Announcement" else "Deadline"
+                                time = LocalTime.now().toString()
+                                date = Date(
+                                    LocalDate.now().dayOfMonth,
+                                    LocalDate.now().month.toString(),
+                                    LocalDate.now().monthValue,
+                                    LocalDate.now().year
+                                )
+                                fileUrl=viewModel.fileUrl.value
+                            }
                             withContext(Dispatchers.Main) {
                                 viewModel.uploadDetailsDeadline(
-                                    AdminDashBoardInfo(
-                                        token = "111",
-                                        author = "adminOffice",
-                                        title = title,
-                                        description = description,
-                                        deadline = selectedDate,
-                                        file_url = viewModel.fileUrl.value,
-                                        mode = mode,
-                                        link1 = link1.value,
-                                        link2 = link2.value
-                                    )
+                                    adminPost
                                 )
                                 fileUploadMode.value = 0
                                 posted = true
@@ -376,6 +394,13 @@ fun AdminCreateAPostScreen(
             }
             Spacer(modifier = Modifier.height(5.dp))
         }
+}
+fun postIdCreator():String
+{
+    val userDetails = "admin"
+    val date = LocalDate.now()
+    val time = LocalTime.now()
+    return "$userDetails-$date-$time"
 }
 @Composable
 fun CustomFileUploadButton(theFileName: MutableState<String>, fileUploadMode: MutableState<Int>,
@@ -457,7 +482,7 @@ fun CustomFileUploadButton(theFileName: MutableState<String>, fileUploadMode: Mu
                     .padding(end = 10.dp)
                     .size(25.dp)
                     .clickable {
-                        theFileName.value = "yoo"
+                        theFileName.value = "Attach circular"
                     },
                 tint = Color.Black
             )

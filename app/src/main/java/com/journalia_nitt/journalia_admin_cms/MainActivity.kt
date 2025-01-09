@@ -26,18 +26,18 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-//            val context = LocalContext.current
-//            val userDetails = getUserDetails(context = context)
-//            if (userDetails != null) {
-//                authRepository.getToken(userDetails.collegeId) { result ->
-//                    result.onSuccess { token ->
-//                        Log.d("Token",token)
-//                        saveTokenDetails(context = context, token = token)
-//                    }.onFailure { error ->
-//                        Log.d("Token",error.message.toString())
-//                    }
-//                }
-//            }
+            val context = LocalContext.current
+            val userDetails = getUserDetails(context = context)
+            if (userDetails != null) {
+                authRepository.getToken(userDetails.collegeId) { result ->
+                    result.onSuccess { token ->
+                        Log.d("Token",token)
+                        saveTokenDetails(context = context, token = token)
+                    }.onFailure { error ->
+                        Log.d("Token",error.message.toString())
+                    }
+                }
+            }
 //            val deadlineRequest = DeadlineRequest(deadline = "2024-12-31")
 //            postDeadLine.postDeadLine(deadlineRequest = deadlineRequest, context =  context)
 //            LaunchedEffect(Unit) {

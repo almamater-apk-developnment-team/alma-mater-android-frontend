@@ -1,19 +1,23 @@
 package com.journalia_nitt.journalia_admin_cms.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.gson.Gson
+import com.journalia_nitt.journalia_admin_cms.administration.response.AdminPost
 import com.journalia_nitt.journalia_admin_cms.administration.screens.AdminCreateAPostScreen
 import com.journalia_nitt.journalia_admin_cms.administration.screens.AdminDashBoard
 import com.journalia_nitt.journalia_admin_cms.administration.screens.AdminHomeScreen
 import com.journalia_nitt.journalia_admin_cms.administration.screens.AdminLoginScreen
 import com.journalia_nitt.journalia_admin_cms.administration.screens.AdminLoginVerificationScreen
 import com.journalia_nitt.journalia_admin_cms.administration.screens.AdminViewPostScreen
+import com.journalia_nitt.journalia_admin_cms.administration.viewModels.PostRepository
 import com.journalia_nitt.journalia_admin_cms.alumni.screens.AlumniCommunityScreen
 import com.journalia_nitt.journalia_admin_cms.alumni.screens.AlumniCreateAPostScreen
 import com.journalia_nitt.journalia_admin_cms.alumni.screens.AlumniHomeScreen
@@ -25,6 +29,8 @@ import com.journalia_nitt.journalia_admin_cms.common.screens.CommonSplashScreen
 import com.journalia_nitt.journalia_admin_cms.common.screens.UserRoleSelectionScreen
 import com.journalia_nitt.journalia_admin_cms.student.navigationDeck.Page
 import com.journalia_nitt.journalia_admin_cms.student.responses.Deadline
+import com.journalia_nitt.journalia_admin_cms.student.responses.Post
+import com.journalia_nitt.journalia_admin_cms.student.screens.StarZeroxScreen
 import com.journalia_nitt.journalia_admin_cms.student.screens.StudentAdminDashboardScreen
 import com.journalia_nitt.journalia_admin_cms.student.screens.StudentAdminPostViewScreen
 import com.journalia_nitt.journalia_admin_cms.student.screens.StudentBookMarkScreen
@@ -107,14 +113,25 @@ fun MyApp(innerPaddingValues: PaddingValues) {
                 navController = navController
             )
         }
-        composable(Screens.AdminViewPostScreen.route) {
+        composable(
+            route = Screens.AdminViewPostScreen.route + "/{postId}",
+            arguments = listOf(navArgument("postId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val postId = backStackEntry.arguments?.getString("postId")
+            val postDetails = postId?.let { PostRepository.getPost(it) }
+
             AdminAndAlumniScaffold(
-                currentPage = {  AdminViewPostScreen(navController = navController) },
+                currentPage = {
+                    if (postDetails != null) {
+                        AdminViewPostScreen(navController = navController, adminPost = postDetails)
+                    }
+                },
                 searchBar = false,
                 heading = "CIRCULAR",
                 navController = navController
             )
         }
+
         // student side
         composable(Screens.StudentLoginScreen.route) {
             StudentLoginScreen(navController, buildUrl())
@@ -160,15 +177,17 @@ fun MyApp(innerPaddingValues: PaddingValues) {
             )
         }
         composable(
-            route = Screens.StudentAdminPostViewScreen.route +"/{deadline}",
-            arguments = listOf(navArgument("deadline") { type = NavType.StringType })
-            ) {
-                backStackEntry ->
-            val jsonString = backStackEntry.arguments?.getString("deadline")
-            val gson = Gson()
-            val deadline = jsonString?.let { gson.fromJson(it, Deadline::class.java) }
+            route = Screens.StudentAdminPostViewScreen.route + "/{postId}",
+            arguments = listOf(navArgument("postId") { type = NavType.StringType })
+            ) { backStackEntry ->
+            val postId = backStackEntry.arguments?.getString("postId")
+            val postDetails = postId?.let { PostRepository.getPost(it) }
             Page(
-                currentPage ={  StudentAdminPostViewScreen(item = deadline,navController = navController) },
+                currentPage ={
+                    if (postDetails != null) {
+                        StudentAdminPostViewScreen(navController = navController, adminPost = postDetails)
+                    }
+                },
                 navController = navController,
                 searchBar  = false,
                 heading = "PROFILE"
@@ -178,7 +197,7 @@ fun MyApp(innerPaddingValues: PaddingValues) {
             Page(
                 currentPage ={  StudentAdminDashboardScreen(navController = navController) },
                 navController = navController,
-                searchBar  = true,
+                searchBar  = false,
                 heading = "DASHBOARD"
             )
         }
@@ -228,6 +247,7 @@ fun MyApp(innerPaddingValues: PaddingValues) {
                 searchBar  = false,
                 heading = "COMMUNITY"
             )
+
         }
         composable(Screens.AlumniPostViewScreen.route) {
             AdminAndAlumniScaffold(
@@ -240,5 +260,15 @@ fun MyApp(innerPaddingValues: PaddingValues) {
         composable(Screens.WebMailScreen.route) {
             Webmail(url = "https://students.nitt.edu/horde/login.php")
         }
+        // Student Services
+        composable(Screens.StarXeroxScreen.route) {
+            Page(
+                currentPage ={  StarZeroxScreen(navController = navController) },
+                navController = navController,
+                searchBar  = false,
+                heading = "STAR XEROX"
+            )
+        }
+
     }
 }

@@ -327,7 +327,7 @@ fun EachDeadline(
             ) {
                 Text(
                     text = event.key,
-                    fontSize = 18.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     fontFamily = urbanist,
                     overflow = TextOverflow.Ellipsis,
@@ -336,7 +336,7 @@ fun EachDeadline(
                 Text(
                     text = "Deadline: "+event.value.substring(8,10) + " " + getMonth(event.value.substring(5,7).toInt()) + " " + event.value.substring(0,4),
                     color = Color(141, 72, 203, 255),
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     fontFamily = urbanist
                 )
@@ -423,7 +423,7 @@ fun calendarScreen(): LocalDate {
                 text = state.firstVisibleMonth.yearMonth.month.toString() + " " + state.firstVisibleMonth.yearMonth.year,
                 modifier = Modifier.padding(12.dp),
                 fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
+                fontSize = 16.sp
             )
         }
         Column(modifier = Modifier.padding(10.dp,0.dp).background(brush = gradient,shape = RoundedCornerShape(16.dp)), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally)

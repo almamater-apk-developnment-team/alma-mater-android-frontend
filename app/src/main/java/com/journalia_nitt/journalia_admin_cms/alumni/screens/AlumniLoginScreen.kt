@@ -61,8 +61,8 @@ import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
 fun AlumniLoginScreen(
     innerPaddingValues: PaddingValues, navController: NavController
 ){
-    var emailId by remember{ mutableStateOf("") }
-    var passWord by remember{ mutableStateOf("") }
+    var emailId by remember{ mutableStateOf("google") }
+    var passWord by remember{ mutableStateOf("nothing") }
     val scrollState = rememberScrollState()
     val viewModel: AlumniAccountViewModel = viewModel()
     val loginStatus by viewModel.loginStatus.collectAsState()
@@ -170,7 +170,8 @@ fun AlumniLoginScreen(
         Button(
             onClick = {
                 if (emailId.isNotEmpty() && passWord.isNotEmpty()) {
-                    viewModel.login(emailId, passWord)
+//                    viewModel.login(emailId, passWord)
+                    navController.navigate(Screens.AlumniHomeScreen.route)
                 } else {
                     Toast.makeText(
                         context,

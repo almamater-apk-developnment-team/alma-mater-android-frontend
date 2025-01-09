@@ -19,7 +19,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -73,12 +75,16 @@ fun AlumniCommunityScreen(navController: NavController)
     LaunchedEffect(Unit) {
         viewModel.fetchAllUploads()
     }
+
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 10.dp, end = 10.dp, top = 25.dp)
+            .padding(start = 10.dp, end = 10.dp, top = 0.dp)
+            .verticalScroll(scrollState)
     ) {
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         Box(modifier= Modifier
             .fillMaxWidth()
             .height(190.dp),
@@ -185,7 +191,6 @@ fun AlumniCommunityScreen(navController: NavController)
         ) {
             Spacer(modifier = Modifier.width(140.dp))
             Box(){
-
                 Button(
                     onClick = { /* Handle sort */ },
                     colors = ButtonDefaults.buttonColors(
@@ -217,16 +222,13 @@ fun AlumniCommunityScreen(navController: NavController)
             }
         }
         Spacer(modifier = Modifier.height(20.dp))
-        LazyColumn {
-            items(uploads) { upload ->
-                if(upload.file_url.isNullOrEmpty()) {
-                    NoImageCardForAlumni(navController, upload)
-                }
-                else {
-                    ImageCardForAlumni(navController, upload)
-                }
-                Spacer(modifier = Modifier.height(8.dp))
+        uploads.forEach { upload ->
+            if (upload.file_url.isNullOrEmpty()) {
+                NoImageCardForAlumni(navController, upload)
+            } else {
+                ImageCardForAlumni(navController, upload)
             }
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
@@ -249,6 +251,7 @@ fun NoImageCardForAlumni(
             )
             .clickable {
                 clickedPost.value = upload
+                navController.navigate(Screens.AlumniPostViewScreen.route)
             },
         colors = CardDefaults.cardColors(containerColor = Color(251, 251, 251))
     ) {
@@ -306,8 +309,8 @@ fun NoImageCardForAlumni(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Image(
-                            modifier = Modifier.scale(3f),
-                            painter = painterResource(id = R.drawable.user),
+                            modifier = Modifier.scale(2.0f),
+                            painter = painterResource(id = R.drawable.john_doe),
                             contentDescription = "Profile"
                         )
                     }
@@ -385,9 +388,8 @@ fun ImageCardForAlumni(
     val viewModel: AlumniUploadViewModel = viewModel()
     Card(
         modifier = Modifier
-            .width(376.dp)
+            .fillMaxWidth() // Changed to fillMaxWidth
             .padding(6.dp)
-            .height(338.dp)
             .shadow(
                 elevation = 4.dp,
                 shape = RoundedCornerShape(16.dp),
@@ -396,6 +398,7 @@ fun ImageCardForAlumni(
             )
             .clickable {
                 clickedPost.value = upload
+                navController.navigate(Screens.AlumniPostViewScreen.route)
             },
         colors = CardDefaults.cardColors(containerColor = Color(251, 251, 251))
     ) {
@@ -405,42 +408,40 @@ fun ImageCardForAlumni(
         ) {
             Spacer(modifier = Modifier.padding(top = 10.dp))
             Row(
-                modifier = Modifier.padding(horizontal = 10.dp)
+                modifier = Modifier.padding(horizontal = 16.dp) // Increased padding
             ) {
-                Spacer(modifier = Modifier.padding(start = 10.dp))
                 Text(
                     modifier = Modifier,
                     text = upload.title,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
+                    fontSize = 16.sp, // Increased font size
                     color = Color.Black,
                     fontFamily = urbanist,
-                    maxLines = 1, // Limit text to 2 lines
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
             Row(
-                modifier = Modifier.padding(horizontal = 10.dp)
+                modifier = Modifier.padding(horizontal = 16.dp) // Increased padding
             ) {
-                Spacer(modifier = Modifier.padding(start = 10.dp))
                 Text(
                     modifier = Modifier,
                     text = upload.description,
-                    fontWeight = FontWeight.W400, // Use the W400 font weight
-                    fontSize = 12.sp,
+                    fontWeight = FontWeight.W400,
+                    fontSize = 14.sp, // Increased font size
                     color = Color.Black,
-                    textAlign = TextAlign.Start, // Align text to the start (left-aligned)
+                    textAlign = TextAlign.Start,
                     fontFamily = urbanist,
-                    maxLines = 2, // Limit text to 2 lines
-                    overflow = TextOverflow.Ellipsis, // Add ellipsis for overflowing text
-                    lineHeight = 13.sp
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    lineHeight = 20.sp // Adjusted line height
                 )
             }
             Spacer(modifier = Modifier.padding(top = 10.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
+                    .padding(horizontal = 16.dp) // Increased padding
                     .height(200.dp)
                     .clip(
                         shape = RoundedCornerShape(12.dp)
@@ -460,18 +461,18 @@ fun ImageCardForAlumni(
                         .fillMaxHeight(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Spacer(modifier = Modifier.padding(start = 30.dp))
+                    Spacer(modifier = Modifier.padding(start = 16.dp)) // Increased padding
                     Column(
                         modifier = Modifier.fillMaxHeight(),
                         verticalArrangement = Arrangement.Center
                     ) {
                         Image(
-                            modifier = Modifier.scale(3f),
-                            painter = painterResource(id = R.drawable.user),
+                            modifier = Modifier.scale(2.0f), // Reduced scale
+                            painter = painterResource(id = R.drawable.john_doe),
                             contentDescription = "Profile"
                         )
                     }
-                    Spacer(modifier = Modifier.padding(start = 20.dp))
+                    Spacer(modifier = Modifier.padding(start = 16.dp)) // Increased padding
                     Column(
                         modifier = Modifier.fillMaxHeight(),
                         verticalArrangement = Arrangement.Center
@@ -480,29 +481,29 @@ fun ImageCardForAlumni(
                             text = upload.username,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            modifier = Modifier.offset(y=6.dp)
+                            modifier = Modifier.offset(y = 4.dp) // Reduced y offset
                         )
-                        Row {
+                        Row(verticalAlignment = Alignment.CenterVertically) { // Added Vertical alignment to the row
                             Text(
                                 text = "apple ceo",
                                 fontSize = 12.sp,
-                                modifier = Modifier.offset(y=(-6).dp)
+                                color = Color.Gray // Added gray color
                             )
                             Spacer(
-                                modifier = Modifier.padding(start = 10.dp)
+                                modifier = Modifier.padding(start = 4.dp) // Reduced spacing
                             )
                             Text(
                                 text = ".",
-                                fontSize = 20.sp,
-                                modifier = Modifier.offset(y=(-12).dp)
+                                fontSize = 16.sp, //Reduced font size
+                                color = Color.Gray //Added gray color
                             )
                             Spacer(
-                                modifier = Modifier.padding(start = 10.dp)
+                                modifier = Modifier.padding(start = 4.dp) // Reduced spacing
                             )
                             Text(
                                 text = getRelativeTime(upload.upload_time),
                                 fontSize = 10.sp,
-                                modifier = Modifier.offset(y=(-6).dp)
+                                color = Color.Gray // Added gray color
                             )
                         }
                     }
@@ -512,20 +513,20 @@ fun ImageCardForAlumni(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxHeight().offset(y=13.dp),
-                        horizontalArrangement = Arrangement.Center
+                        modifier = Modifier.fillMaxHeight(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically //Added vertical alignment
                     ) {
-                        var image = remember{mutableStateOf(Icons.Outlined.FavoriteBorder)}
-                        if(upload.upvoters.contains(theUser.username)) {
+                        var image = remember { mutableStateOf(Icons.Outlined.FavoriteBorder) }
+                        if (upload.upvoters.contains(theUser.username)) {
                             image.value = Icons.Filled.Favorite
                         }
-                        var upvotes = remember(upload.upvotes){mutableStateOf(upload.upvotes)}
+                        val upvotes = remember(upload.upvotes) { mutableStateOf(upload.upvotes) }
                         Image(
                             modifier = Modifier
                                 .size(22.dp)
-                                .offset(y = 4.dp)
                                 .clickable {
-                                    if(!upload.upvoters.contains(theUser.username)) {
+                                    if (!upload.upvoters.contains(theUser.username)) {
                                         viewModel.upvotePost(
                                             upload.id,
                                             Upvote(theUser.username, upload.id)
@@ -544,13 +545,14 @@ fun ImageCardForAlumni(
                         Text(
                             text = upvotes.value.toString(),
                             fontSize = 11.sp,
-                            modifier = Modifier.align(Alignment.CenterVertically).offset(y=(-10).dp)
+                            modifier = Modifier.align(Alignment.CenterVertically)
                         )
                     }
-                    Spacer(modifier = Modifier.padding(start = 25.dp))
+                    Spacer(modifier = Modifier.padding(start = 20.dp)) // Increased spacing
                     Row(
                         modifier = Modifier,
-                        horizontalArrangement = Arrangement.Center
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Image(
                             modifier = Modifier
@@ -566,7 +568,7 @@ fun ImageCardForAlumni(
                             modifier = Modifier
                         )
                     }
-                    Spacer(modifier = Modifier.padding(start = 20.dp))
+                    Spacer(modifier = Modifier.padding(start = 16.dp)) // Increased spacing
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.journalia_nitt.journalia_admin_cms.administration.screens
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,9 +33,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.journalia_nitt.journalia_admin_cms.administration.infoPasser
-import com.journalia_nitt.journalia_admin_cms.administration.response.Deadline
+import com.journalia_nitt.journalia_admin_cms.administration.response.AdminPost
 import com.journalia_nitt.journalia_admin_cms.administration.viewModels.AdminDetailsViewModel
+import com.journalia_nitt.journalia_admin_cms.administration.viewModels.PostRepository
 import com.journalia_nitt.journalia_admin_cms.navigation.Screens
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
 
@@ -47,6 +48,8 @@ fun AdminDashBoard(navController: NavController){
     }
 
     val detailsList = adminDetailsViewModel.detailsList
+
+
 
     Column(
         modifier= Modifier
@@ -115,17 +118,23 @@ fun AdminDashBoard(navController: NavController){
             verticalArrangement = Arrangement.spacedBy(7.dp)
         ) {
             detailsList.forEach { user ->
-                items(user.details) { announcement ->
-                    AdminCard(
-                        navController = navController,
-                        title = announcement.title,
-                        description = announcement.description,
-                        author = announcement.author,
-                        deadline = announcement.deadline,
-                        pdfUrl = announcement.file_url.toString(),
-                        link1 = announcement.link1,
-                        link2 = announcement.link2
-                    )
+                items(user.details) { post ->
+
+                    if(mode == 0 && post.type == "Deadline")
+                    {
+                        AdminCard(
+                            navController = navController,
+                            post = post
+                        )
+                    }
+                    else if(mode == 1 && post.type == "Announcement")
+                    {
+                        AdminCard(
+                            navController = navController,
+                            post = post
+                        )}
+
+
                 }
             }
         }
@@ -135,13 +144,7 @@ fun AdminDashBoard(navController: NavController){
 @Composable
 fun AdminCard(
     navController: NavController,
-    title: String = "",
-    description: String = "",
-    author: String = "",
-    deadline: String = "",
-    pdfUrl: String = "",
-    link1: String = "",
-    link2: String = ""
+    post: AdminPost
 ) {
     Card(
         shape = RoundedCornerShape(10.dp),
@@ -149,17 +152,8 @@ fun AdminCard(
             .fillMaxWidth()
             .shadow(shape = RoundedCornerShape(10.dp), elevation = 5.dp)
             .clickable {
-                infoPasser.value = Deadline(
-                    author = author,
-                    deadline = deadline,
-                    description = description,
-                    file_url = pdfUrl,
-                    link1 = link1,
-                    link2 = link2,
-                    mode = 1,
-                    title = title
-                )
-                navController.navigate(Screens.AdminViewPostScreen.route)
+                PostRepository.savePost(post)
+                navController.navigate(Screens.AdminViewPostScreen.route + "/${post.postId}")
             },
         colors = CardDefaults.cardColors(containerColor = Color(0xFFA37FDB))
     ) {
@@ -171,7 +165,7 @@ fun AdminCard(
                 Column()
                 {
                     Text(
-                        text = title,
+                        text = post.title,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         fontFamily = urbanist,
@@ -181,7 +175,7 @@ fun AdminCard(
                         maxLines = 1
                     )
                     Text(
-                        text = description,
+                        text = post.description,
                         fontSize = 18.sp,
                         fontFamily = urbanist,
                         fontWeight = FontWeight.Bold,
@@ -191,7 +185,7 @@ fun AdminCard(
                         maxLines = 1
                     )
                     Text(
-                        text = author,
+                        text = post.author,
                         fontSize = 15.sp,
                         fontFamily = urbanist,
                         color = Color.White,
@@ -203,7 +197,7 @@ fun AdminCard(
                 HorizontalDivider(color = Color.White,modifier = Modifier.fillMaxWidth(0.85f),
                     thickness = 1.5.dp)
                 Text(
-                    text = "Deadline:   $deadline",
+                    text = "Deadline:   ${post.deadline.date.toString() + "/"+ post.deadline.monthInInt.toString() + "/"+ post.deadline.year }",
                     fontSize = 18.sp,
                     fontFamily = urbanist,
                     color = Color.White,
@@ -212,6 +206,5 @@ fun AdminCard(
                     maxLines = 1
                 )
             }
-
     }
 }

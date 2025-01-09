@@ -1,6 +1,9 @@
 package com.journalia_nitt.journalia_admin_cms.student.screens
 
 import android.content.ContentResolver
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Log
@@ -8,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,10 +29,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -46,23 +53,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.journalia_nitt.journalia_admin_cms.R
 import com.journalia_nitt.journalia_admin_cms.student.ContentResolver1
 import com.journalia_nitt.journalia_admin_cms.student.Uri1
+import com.journalia_nitt.journalia_admin_cms.student.responses.Date
 import com.journalia_nitt.journalia_admin_cms.student.responses.FileData
-import com.journalia_nitt.journalia_admin_cms.student.responses.UserUploadClass
+import com.journalia_nitt.journalia_admin_cms.student.responses.Post
 import com.journalia_nitt.journalia_admin_cms.student.sharedPreferences.getUserDetails
 import com.journalia_nitt.journalia_admin_cms.student.viewModels.UploadViewModel
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
+import java.time.LocalDate
+import java.time.LocalTime
+
 
 @Composable
 fun StudentCreateAPostScreen(
@@ -86,7 +95,7 @@ fun StudentCreateAPostScreen(
     val coroutineScope = rememberCoroutineScope()
 
     val userDetails = getUserDetails(context = context)
-    val userName= userDetails?.name
+    var post by remember { mutableStateOf(Post()) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -102,10 +111,10 @@ fun StudentCreateAPostScreen(
             )
         }
         OutlinedTextField(
-            value = textFieldVal,
+            value = post.title,
             onValueChange = {
                 if(it.length <= 50){
-                    textFieldVal = it
+                    post.title = it
                     titleCharLeft = 50 - it.length
                 }
             },
@@ -136,10 +145,10 @@ fun StudentCreateAPostScreen(
         }
         Box() {
             OutlinedTextField(
-                value = descFieldVal,
+                value = post.description,
                 onValueChange = {
                     if(it.length <= 200){
-                        descFieldVal = it
+                        post.description = it
                         descCharLeft = 200 - it.length
                     }
                 },
@@ -148,7 +157,6 @@ fun StudentCreateAPostScreen(
                     .padding(horizontal = 20.dp)
                     .height(150.dp)
             )
-            //add scroll bar
         }
         Row(
             modifier = Modifier
@@ -162,57 +170,64 @@ fun StudentCreateAPostScreen(
             )
         }
         Spacer(modifier = Modifier.padding(top = 10.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = 20.dp),
-            horizontalArrangement = Arrangement.End
-        ) {
-            Text(
-                text = "Comments",
-                fontFamily = urbanist
-            )
-        }
+
+
+
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            CustomFileUploadButton { fileData ->
-                if (fileData != null) {
-                    theFileName.value = fileData.name
-                    println("MIME Type: ${fileData.mimeType}")
-                    println("File Content Size: ${fileData.content.size} bytes")
-                } else {
-                    println("No file selected")
-                }
+//            CustomFileUploadButton { fileData ->
+//                if (fileData != null) {
+//                    theFileName.value = fileData.name
+//                    println("MIME Type: ${fileData.mimeType}")
+//                    println("File Content Size: ${fileData.content.size} bytes")
+//                } else {
+//                    println("No file selected")
+//                }
+//            }
+            Column(
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            )
+            {
+                Text(
+                    text = "Photo Upload",
+                    fontFamily = urbanist
+                )
+                post.image = photoPicker()
             }
-            Card(
-                modifier = Modifier
-                    .width(100.dp)
-                    .clickable {
-                        comments = if (comments == "ENABLED") "DISABLED"
-                        else "ENABLED"
-                    }
-                    .padding(start = 10.dp, end = 10.dp)
-                    .height(50.dp),
-                colors = CardDefaults.cardColors(Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            )
+            {
+                Text(
+                    text = "Comments",
+                    fontFamily = urbanist
+                )
+                Button(
+
+                        onClick = {
+                            post.canComment.value = !post.canComment.value
+                        },
+                    colors = ButtonDefaults.buttonColors(Color.Black),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text(
-                        text = comments,
-                        fontFamily = urbanist,
-                        color = Color.White,
-                        fontSize = 14.sp
-                    )
+                        Text(
+                            text = if(post.canComment.value) "Enabled" else "Disabled",
+                            fontFamily = urbanist,
+                            color = Color.White,
+                            fontSize = 14.sp,
+                        )
                 }
             }
         }
         Spacer(modifier = Modifier.padding(top = 20.dp))
+        val anonymityItems = listOf("enable", "disable")
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -224,79 +239,41 @@ fun StudentCreateAPostScreen(
                     text = "Anonymity",
                     fontFamily = urbanist
                 )
-                Spacer(modifier = Modifier.padding(top = 8.dp))
-                Card(
-                    modifier = Modifier.size(100.dp,40.dp),
-                    colors = CardDefaults.cardColors(Color(205, 193, 255))
-                ) {
+                Spacer(modifier = Modifier.height(10.dp))
+                Column(
+                    modifier = Modifier.background(color = Color(205, 193, 255), shape = RoundedCornerShape(12.dp) )
+                )
+                {
                     Row(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.padding(10.dp),
                         verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = anonymity,
-                            fontFamily = urbanist,
-                            color = Color(160, 55, 246)
-                        )
+                    )
+                    {
+                        Text(text = post.anonymity, fontFamily = urbanist,)
                         Icon(
-                            modifier = Modifier.clickable{anonymityExpanded=!anonymityExpanded},
                             imageVector = Icons.Default.KeyboardArrowDown,
-                            contentDescription = null,
-                            tint = Color(160, 55, 246)
+                            contentDescription = "Dropdown icon",
+                            modifier = Modifier.clickable { anonymityExpanded = !anonymityExpanded }
                         )
                     }
-                }
-                DropdownMenu(
-                    expanded = anonymityExpanded,
-                    onDismissRequest = { anonymityExpanded=false },
-                    modifier = Modifier.background(Color.Transparent)
-                ) {
-                    Card(modifier= Modifier
-                        .height(140.dp)
-                        .width(100.dp),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = CardDefaults.cardColors(Color(205, 193, 255))
-                    ){
-                        Column(Modifier.fillMaxSize()) {
-                            Box(modifier= Modifier
-                                .fillMaxWidth()
-                                .clickable {
+                    DropdownMenu(
+                        modifier = Modifier.height(100.dp).fillMaxWidth(0.25f),
+                        expanded = anonymityExpanded,
+                        onDismissRequest = { anonymityExpanded = false }
+                    ) {
+                        anonymityItems.forEach { option ->
+                            DropdownMenuItem(
+                                text = { Text(option) },
+                                onClick = {
+                                    post.anonymity = option
                                     anonymityExpanded = false
-                                    anonymity = "Disabled"
-                                },
-                                contentAlignment = Alignment.Center) {
-                                Text(
-                                    text = "Disabled",
-                                    fontFamily = urbanist,
-                                    color = Color(160, 55, 246),
-                                    fontWeight= FontWeight(500),
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1,
-                                )
-                            }
-                            Spacer(modifier = Modifier.padding(top = 10.dp))
-                            Box(modifier= Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    anonymityExpanded = false
-                                    anonymity = "Enabled"
-                                },
-                                contentAlignment = Alignment.Center) {
-                                Text(
-                                    text = "ENABLED",
-                                    fontFamily = urbanist,
-                                    color = Color(160, 55, 246),
-                                    fontWeight = FontWeight(500),
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1,
-                                )
-                            }
+                                }
+                            )
                         }
-
                     }
                 }
             }
+            val categoryItems = listOf("College", "Club")
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -304,112 +281,39 @@ fun StudentCreateAPostScreen(
                     text = "Category",
                     fontFamily = urbanist
                 )
-                Spacer(modifier = Modifier.padding(top = 8.dp))
-                Card(
-                    modifier = Modifier.size(100.dp,40.dp),
-                    colors = CardDefaults.cardColors(Color(205, 193, 255))
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = contentType,
-                            fontFamily = urbanist,
-                            color = Color(160, 55, 246)
+                Spacer(modifier = Modifier.height(10.dp))
+                    Column(
+                        modifier = Modifier.background(color = Color(205, 193, 255), shape = RoundedCornerShape(12.dp) )
+                    )
+                    {
+                        Row(
+                            modifier = Modifier.padding(10.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         )
-                        Icon(
-                            modifier = Modifier.clickable{contentTypeExpanded=!contentTypeExpanded},
-                            imageVector = Icons.Default.KeyboardArrowDown,
-                            contentDescription = null,
-                            tint = Color(160, 55, 246)
-                        )
-                    }
-                }
-                DropdownMenu(
-                    expanded = contentTypeExpanded,
-                    onDismissRequest = { contentTypeExpanded=false }
-                ) {
-                    Card(modifier= Modifier
-                        .height(140.dp)
-                        .width(100.dp),
-                        shape = RoundedCornerShape(10.dp),
-                        colors = CardDefaults.cardColors(Color(205, 193, 255))
-                    ){
-                        Column(Modifier.fillMaxSize()) {
-                            Box(modifier= Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    contentTypeExpanded = false
-                                    contentType = "Memes"
-                                },
-                                contentAlignment = Alignment.Center) {
-                                Text(
-                                    text = "MEME",
-                                    fontFamily = urbanist,
-                                    color = Color(160, 55, 246),
-                                    fontWeight= FontWeight(500),
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1,
-                                )
-                            }
-                            Spacer(modifier = Modifier.padding(top = 10.dp))
-                            Box(modifier= Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    contentTypeExpanded = false
-                                    contentType = "College"
-                                },
-                                contentAlignment = Alignment.Center) {
-                                Text(
-                                    text = "COLLEGE",
-                                    fontFamily = urbanist,
-                                    color = Color(160, 55, 246),
-                                    fontWeight= FontWeight(500),
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1,
-                                )
-                            }
-                            Spacer(modifier = Modifier.padding(top = 10.dp))
-                            Box(modifier= Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    contentTypeExpanded = false
-                                    contentType = "Hostel"
-                                },
-                                contentAlignment = Alignment.Center) {
-                                Text(
-                                    text = "HOSTEL",
-                                    fontFamily = urbanist,
-                                    color = Color(160, 55, 246),
-                                    fontWeight= FontWeight(500),
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1,
-                                )
-                            }
-                            Spacer(modifier = Modifier.padding(top = 10.dp))
-                            Box(modifier= Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    contentTypeExpanded = false
-                                    contentType = "Admin"
-                                },
-                                contentAlignment = Alignment.Center) {
-                                Text(
-                                    text = "ADMIN",
-                                    fontFamily = urbanist,
-                                    color = Color(160, 55, 246),
-                                    fontWeight= FontWeight(500),
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1,
-                                )
-                            }
-                            Spacer(modifier = Modifier.padding(top = 10.dp))
+                        {
+                            Text(text = post.category, fontFamily = urbanist,)
+                            Icon(
+                                imageVector = Icons.Default.KeyboardArrowDown,
+                                contentDescription = "Dropdown icon",
+                                modifier = Modifier.clickable { contentTypeExpanded = !contentTypeExpanded }
+                            )
                         }
-
+                        DropdownMenu(
+                            modifier = Modifier.height(150.dp).fillMaxWidth(0.35f),
+                            expanded = contentTypeExpanded,
+                            onDismissRequest = { contentTypeExpanded = false }
+                        ) {
+                            categoryItems.forEach { option ->
+                                DropdownMenuItem(
+                                    text = { Text(option) },
+                                    onClick = {
+                                        post.category = option
+                                        contentTypeExpanded = false
+                                    }
+                                )
+                            }
+                        }
                     }
-                }
             }
         }
         Spacer(modifier = Modifier.padding(top = 30.dp))
@@ -434,7 +338,6 @@ fun StudentCreateAPostScreen(
 //                }
 //            }
 //        }
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
@@ -443,6 +346,19 @@ fun StudentCreateAPostScreen(
                 modifier = Modifier
                     .size(120.dp, 50.dp)
                     .clickable {
+
+                        getUserDetails(context)?.let {
+                                post.time = LocalTime.now().toString()
+                                post.date = Date(
+                                    date = LocalDate.now().dayOfMonth,
+                                    month = LocalDate.now().month.toString(),
+                                    year = LocalDate.now().year
+                                )
+                                post.id = it.collegeId
+                                post.postId = imageIdCreator(context)
+
+                        }
+                        Log.d("cred",post.toString())
                         if (textFieldVal.isEmpty() || descFieldVal.isEmpty()) {
                             Toast.makeText(context, "Title or Description required", Toast.LENGTH_SHORT).show()
                         } else
@@ -450,34 +366,34 @@ fun StudentCreateAPostScreen(
                             isLoaded = true
                             val uri = Uri1.value
                             val contentResolver = ContentResolver1.value
-                            coroutineScope.launch(Dispatchers.IO) {
-                                uploadViewModel.uploadFile(uri, contentResolver)
-                                delay(10000)
-                                withContext(Dispatchers.Main) {
-                                    uploadViewModel.uploadUser(
-                                        UserUploadClass(
-                                            token = "111",
-                                            title = textFieldVal,
-                                            description = descFieldVal,
-                                            comments = comments == "ENABLED",
-                                            anonymity = anonymity == "Enabled",
-                                            tag = contentType,
-                                            fileUrl = uploadViewModel.fileUrl.value,
-                                            userName = userName.toString()
-
-                                        )
-                                    )
-                                    textFieldVal = ""
-                                    descFieldVal = ""
-                                    descCharLeft = 200
-                                    titleCharLeft = 50
-                                    contentTypeExpanded = false
-                                    anonymityExpanded = false
-                                    theFileName.value = "Attach Image"
-                                    posted = true
-                                }
-
-                            }
+//                            coroutineScope.launch(Dispatchers.IO) {
+//                                uploadViewModel.uploadFile(uri, contentResolver)
+//                                delay(10000)
+//                                withContext(Dispatchers.Main) {
+//                                    uploadViewModel.uploadUser(
+//                                        UserUploadClass(
+//                                            token = "111",
+//                                            title = textFieldVal,
+//                                            description = descFieldVal,
+//                                            comments = comments == "ENABLED",
+//                                            anonymity = anonymity == "Enabled",
+//                                            tag = contentType,
+//                                            fileUrl = uploadViewModel.fileUrl.value,
+//                                            userName = userName.toString()
+//
+//                                        )
+//                                    )
+//                                    textFieldVal = ""
+//                                    descFieldVal = ""
+//                                    descCharLeft = 200
+//                                    titleCharLeft = 50
+//                                    contentTypeExpanded = false
+//                                    anonymityExpanded = false
+//                                    theFileName.value = "Attach Image"
+//                                    posted = true
+//                                }
+//
+//                            }
                         }
 
                     },
@@ -510,11 +426,18 @@ fun StudentCreateAPostScreen(
         }
     }
 }
+
+fun imageIdCreator(context: Context):String
+{
+    val userDetails = getUserDetails(context = context)
+    val date = LocalDate.now()
+    val time = LocalTime.now()
+    return userDetails?.collegeId+"-"+date.toString()+"-"+time.toString()
+}
 val theFileName = mutableStateOf("Attach Image")
 val fileUploadMode = mutableStateOf(0)
 @Composable
 fun CustomFileUploadButton(onFileSelected: (FileData?) -> Unit) {
-
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
@@ -586,6 +509,69 @@ fun CustomFileUploadButton(onFileSelected: (FileData?) -> Unit) {
                 modifier = Modifier.scale(0.5f)
             )
         }
+    }
+}
+
+@Composable
+fun photoPicker():MultipartBody.Part?
+{
+    val context = LocalContext.current
+    var selectedUri by remember { mutableStateOf<Uri?>(null) }
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        selectedUri = uri
+    }
+    val bitmap = uriToBitmap(uri = selectedUri, context = context)
+
+    Button(onClick = {
+        if (bitmap != null) {
+            Log.d("Imthebat",bitmap.rowBytes.toString())
+        }
+        photoPickerLauncher.launch("image/*")
+    }, shape = RoundedCornerShape(12.dp),
+        colors = ButtonDefaults.buttonColors(Color(163,127,219))
+    ) {
+        (if(selectedUri == null)"Pick a Photo" else getFilesName(context = context, uri = selectedUri))?.let {
+            Text(
+                it,
+                fontFamily = urbanist,
+                fontSize = 14.sp
+            )
+        }
+    }
+
+
+
+    val file = selectedUri?.path?.let { File(it) }
+    val requestBody = file?.asRequestBody("image/*".toMediaTypeOrNull())
+    val body = requestBody?.let { MultipartBody.Part.createFormData("file", file.name, it) }
+    return body
+}
+
+fun getFilesName(context: Context, uri: Uri?): String? {
+    // Check if the URI is not null
+    uri?.let {
+        // Query the URI to get the display name (file name)
+        val cursor = context.contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            // Get the index of the display name column
+            val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            if (nameIndex != -1 && it.moveToFirst()) {
+                // Retrieve the file name
+                return it.getString(nameIndex)
+            }
+        }
+    }
+    return null
+}
+fun uriToBitmap(context: Context, uri: Uri?): Bitmap? {
+    return try {
+        val inputStream = uri?.let { context.contentResolver.openInputStream(it) }
+        BitmapFactory.decodeStream(inputStream)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 }
 
