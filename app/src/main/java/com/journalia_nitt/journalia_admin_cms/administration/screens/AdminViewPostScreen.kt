@@ -1,6 +1,11 @@
 package com.journalia_nitt.journalia_admin_cms.administration.screens
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,7 +42,44 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.journalia_nitt.journalia_admin_cms.R
 import com.journalia_nitt.journalia_admin_cms.administration.response.AdminPost
+import com.journalia_nitt.journalia_admin_cms.navigation.Screens
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
+import java.io.UnsupportedEncodingException
+import java.net.URLEncoder
+
+fun openPdf(
+    context: Context,
+    pdfUrl: String,
+    navController: NavController
+) {
+    try {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(Uri.parse(pdfUrl), "application/pdf")
+            addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        val packageManager = context.packageManager
+        val resolvedInfo = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+        if (resolvedInfo.isNotEmpty()) {
+            context.startActivity(intent)
+        }
+        else {
+            Toast.makeText(context, "No PDF reader found. Please install one.", Toast.LENGTH_LONG).show()
+            val encodedPdfUrl = try {
+                URLEncoder.encode(pdfUrl, "UTF-8")
+            } catch (e: UnsupportedEncodingException) {
+                e.printStackTrace()
+                pdfUrl
+            }
+            val pdfUrlLocal = "https://docs.google.com/gview?embedded=true&url=$encodedPdfUrl"
+            navController.navigate(Screens.WebViewScreen.route+ "/$pdfUrlLocal")
+        }
+    } catch (e: ActivityNotFoundException) {
+        Toast.makeText(context, "Error opening PDF. Please try again later.", Toast.LENGTH_LONG).show()
+    }
+}
+
 @Composable
 fun AdminViewPostScreen(
     adminPost:AdminPost,
