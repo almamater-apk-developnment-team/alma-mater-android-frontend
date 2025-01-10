@@ -231,6 +231,7 @@ fun StudentAdminPostViewScreen(
 
 
 
+
 @Composable
 fun ShowImageInDialog(
     showDialog : MutableState<Boolean>,
@@ -270,7 +271,7 @@ fun ShowImageInDialog(
                     )
                 },
                 confirmButton = {
-                    Button(
+                   Button(
                         onClick = { showDialog.value = false },
                         colors = ButtonDefaults.buttonColors(Color.Blue)
                     ) {
