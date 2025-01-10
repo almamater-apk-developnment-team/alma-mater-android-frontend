@@ -16,12 +16,12 @@ class bookMarkViewModel: ViewModel(){
     private val _posts = mutableStateOf(fetchBookMark())
     val posts: State<fetchBookMark> = _posts
 
-    fun postBookMark(bookMark: AdminPost ,username:String ,context: Context){
+    fun postBookMark(bookMark: AdminPost ,context: Context){
         viewModelScope.launch {
 
             val token= "Bearer "+ getTokenDetails(context).toString()
             try {
-                val response= bookMarkHandle.bookMark(bookMark,username,token)
+                val response= bookMarkHandle.bookMark(bookMark,token)
                 Log.d("Bookmark test",response.message)
             }catch (
                 e:Exception
@@ -31,11 +31,11 @@ class bookMarkViewModel: ViewModel(){
 
         }
     }
-    fun fetchBookMark(rollno: String,context: Context) {
+    fun fetchBookMark(context: Context) {
         viewModelScope.launch {
             try {
                 val token= "Bearer "+ getTokenDetails(context).toString()
-                val response = bookMarkHandle.getAllBook(rollno,token)
+                val response = bookMarkHandle.getAllBook(token)
                 _posts.value = _posts.value.copy(
                     data = response.data,
                     message = response.message
@@ -46,4 +46,5 @@ class bookMarkViewModel: ViewModel(){
             }
         }
     }
+
 }

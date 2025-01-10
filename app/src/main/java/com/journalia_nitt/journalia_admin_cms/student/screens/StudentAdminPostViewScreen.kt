@@ -132,7 +132,7 @@ fun StudentAdminPostViewScreen(
                     .clickable {
                         bookMarked = !bookMarked
                         if(bookMarked) {
-                            bookMarkViewModel().postBookMark(adminPost,rollno.toString(),context)
+                            bookMarkViewModel().postBookMark(adminPost,context)
                         }
                     },
                 tint =  if(!bookMarked) Color.Black else color_2
@@ -274,6 +274,7 @@ fun StudentAdminPostViewScreen(
 
 
 
+
 @Composable
 fun ShowImageInDialog(
     showDialog : MutableState<Boolean>,
@@ -313,7 +314,7 @@ fun ShowImageInDialog(
                     )
                 },
                 confirmButton = {
-                    Button(
+                   Button(
                         onClick = { showDialog.value = false },
                         colors = ButtonDefaults.buttonColors(Color.Blue)
                     ) {

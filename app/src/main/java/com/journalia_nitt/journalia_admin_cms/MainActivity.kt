@@ -10,6 +10,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.journalia_nitt.journalia_admin_cms.student.sharedPreferences.getUserDetails
 import com.journalia_nitt.journalia_admin_cms.firebase.fcmTokenToDataStore
 import com.journalia_nitt.journalia_admin_cms.student.viewModels.PostDeadLine
@@ -18,6 +19,7 @@ import com.journalia_nitt.journalia_admin_cms.student.sharedPreferences.saveToke
 import com.journalia_nitt.journalia_admin_cms.alumni.response.LoggedInAccount
 import com.journalia_nitt.journalia_admin_cms.navigation.MyApp
 import com.journalia_nitt.journalia_admin_cms.student.authentication.JWTToken
+import com.journalia_nitt.journalia_admin_cms.student.viewModels.bookMarkViewModel
 
 class MainActivity : ComponentActivity() {
     private val authRepository = JWTToken()
@@ -28,15 +30,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             val context = LocalContext.current
             val userDetails = getUserDetails(context = context)
+            val rollno = userDetails?.collegeId.toString()
             if (userDetails != null) {
-                authRepository.getToken(userDetails.collegeId) { result ->
-                    result.onSuccess { token ->
-                        Log.d("Token",token)
-                        saveTokenDetails(context = context, token = token)
-                    }.onFailure { error ->
-                        Log.d("Token",error.message.toString())
-                    }
-                }
+                authRepository.generateJWT(rollno,context).toString()
             }
 //            val deadlineRequest = DeadlineRequest(deadline = "2024-12-31")
 //            postDeadLine.postDeadLine(deadlineRequest = deadlineRequest, context =  context)
