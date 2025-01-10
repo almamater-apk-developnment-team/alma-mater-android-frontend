@@ -131,7 +131,7 @@ fun StudentAdminPostViewScreen(
                     .clickable {
                         bookMarked = !bookMarked
                         if(bookMarked) {
-                            bookMarkViewModel().postBookMark(adminPost,rollno.toString(),context)
+                            bookMarkViewModel().postBookMark(adminPost,context)
                         }
                     },
                 tint =  if(!bookMarked) Color.Black else color_2

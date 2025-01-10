@@ -42,10 +42,9 @@ fun StudentBookMarkScreen(
 
     val bookMarkViewModel: bookMarkViewModel = viewModel()
     val context= LocalContext.current
-    val username = getUserDetails(context = context)?.collegeId.toString()
 
     LaunchedEffect(Unit) {
-        bookMarkViewModel.fetchBookMark(username,context)
+        bookMarkViewModel.fetchBookMark(context)
     }
     val posts = bookMarkViewModel.posts.value.data.details
 

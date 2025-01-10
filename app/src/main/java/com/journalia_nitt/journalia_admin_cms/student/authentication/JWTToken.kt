@@ -1,33 +1,40 @@
 package com.journalia_nitt.journalia_admin_cms.student.authentication
 
+import android.content.Context
+import android.util.Log
+import androidx.lifecycle.viewModelScope
 import com.journalia_nitt.journalia_admin_cms.student.responses.LoginRequest
 import com.journalia_nitt.journalia_admin_cms.student.responses.TokenResponse
 import com.journalia_nitt.journalia_admin_cms.api.RetrofitClient
+import com.journalia_nitt.journalia_admin_cms.student.bookMarkHandle
 import com.journalia_nitt.journalia_admin_cms.student.services.StudentApiService
+import com.journalia_nitt.journalia_admin_cms.student.sharedPreferences.saveTokenDetails
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class JWTToken {
-    private val apiService = RetrofitClient.instance.create(StudentApiService::class.java)
-    fun getToken(name: String, callback: (Result<String>) -> Unit) {
-        val loginRequest = LoginRequest(name)
-        apiService.getToken(loginRequest).enqueue(object : Callback<TokenResponse> {
-            override fun onResponse(call: Call<TokenResponse>, response: Response<TokenResponse>) {
-                if (response.isSuccessful) {
-                    val token = response.body()?.token
-                    if (token != null) {
-                        callback(Result.success(token))
-                    } else {
-                        callback(Result.failure(Exception("Token is null")))
-                    }
-                } else {
-                    callback(Result.failure(Exception("Error-op: ${response.errorBody()?.string()}")))
+    fun generateJWT(rollno: String, context:Context){
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // Call the suspend function within the coroutine
+                val response = bookMarkHandle.getStudentToken(rollno).token
+
+                CoroutineScope(Dispatchers.Main).launch {
+                    Log.d("successFileFetchFromUser", response)
+                    saveTokenDetails(context,response)
+
+                }
+            } catch (e: Exception) {
+                // Handle errors
+                CoroutineScope(Dispatchers.Main).launch {
+                    Log.d("errorFileFetchFromUser", e.message.toString())
                 }
             }
-            override fun onFailure(call: Call<TokenResponse>, t: Throwable) {
-                callback(Result.failure(t))
-            }
-        })
+        }
     }
 }
