@@ -23,7 +23,7 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 
-private val retrofit = Retrofit.Builder().baseUrl("https://dauth-sand.vercel.app/").addConverterFactory(GsonConverterFactory.create()).build()
+private val retrofit = Retrofit.Builder().baseUrl("https://dauth-sand.vercel.app/students").addConverterFactory(GsonConverterFactory.create()).build()
 val uploadClient= retrofit.create(handleUpload::class.java)
 val fetchClient= retrofit.create(handleFetch::class.java)
 interface handleUpload{

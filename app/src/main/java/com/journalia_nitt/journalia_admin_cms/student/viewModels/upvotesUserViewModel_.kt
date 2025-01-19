@@ -11,7 +11,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.Query
 
-private val retrofit = Retrofit.Builder().baseUrl("https://dauth-sand.vercel.app/").addConverterFactory(GsonConverterFactory.create()).build()
+private val retrofit = Retrofit.Builder().baseUrl("https://dauth-sand.vercel.app/students").addConverterFactory(GsonConverterFactory.create()).build()
 
 val upvotesClient= retrofit.create(handleUpvotes::class.java)
 
