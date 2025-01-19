@@ -44,6 +44,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -55,6 +56,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
+import coil3.compose.AsyncImage
 import com.journalia_nitt.journalia_admin_cms.R
 import com.journalia_nitt.journalia_admin_cms.student.viewModels.FetchViewModel
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
@@ -91,101 +95,141 @@ fun StudentClubDirectoryScreen(navController: NavController)
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
+        val clubNames = mutableListOf("Force\nhyperloop", "E-cell\nNITT", "Graph-\nique", "Delta\nNITT", "180 DC\nNITT")
+        val clubImages = mutableListOf(
+            R.raw.hyperloop,
+            R.raw.ecell,
+            R.raw.graphique,
+            R.raw.delta,
+            R.raw.dc180
+        )
+        val clubGenre= mutableListOf(
+            "Hyperloop\nClub",
+            "Incubation\nClub",
+            "Design\nClub",
+            "Coding\nClub",
+            "Consulting\nClub"
+        )
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(32.dp),
         ) {
-            // Dividing the items into rows of 2
-            items((0..9).chunked(2)) { rowItems ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    rowItems.forEach { _ ->
-                        Card(
-                            modifier = Modifier
-                                .width(150.dp)// Ensures equal spacing
-                                .height(160.dp)
-                                .shadow(10.dp, shape = RoundedCornerShape(20.dp)),
-                            colors = CardDefaults.cardColors(containerColor = Color(163, 127, 219))
-                        ) {
-                            Column {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(80.dp)
-                                        .padding(10.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Image(
-                                        painter = painterResource(R.drawable.club1),
-                                        contentDescription = "Product Folk",
-                                        modifier = Modifier.size(
-                                            height = 70.dp,
-                                            width = 120.dp
-                                        )
+            (clubImages).chunked(2).forEachIndexed { index, rowItems ->
+                item(){
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Spacer(modifier = Modifier.width(25.dp))
+                        rowItems.forEachIndexed { i, clubName ->
+                            Card(
+                                modifier = Modifier
+                                    .padding(end=20.dp)
+                                    .width(170.dp)
+                                    .height(180.dp)
+                                    .shadow(10.dp, shape = RoundedCornerShape(20.dp)),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = Color(
+                                        163,
+                                        127,
+                                        219
                                     )
-                                }
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(100.dp),
-                                    horizontalArrangement = Arrangement.SpaceEvenly
-                                ) {
+                                )
+                            ) {
+                                Column {
                                     Box(
                                         modifier = Modifier
-                                            .align(Alignment.CenterVertically)
-                                            .width(50.dp)
+                                            .fillMaxWidth()
+                                            .height(80.dp)
+                                            .padding(10.dp),
+                                        contentAlignment = Alignment.Center
                                     ) {
-                                        Button(
-                                            onClick = {
-//                                                navController.navigate(Screens.ClubPage.route)
-                                                      },
-                                            colors = ButtonDefaults.buttonColors(
-                                                containerColor = Color(217, 217, 217)
-                                            ),
-                                            shape = CircleShape,
-                                            modifier = Modifier.size(50.dp)
-                                        ) {}
-                                        Icon(
+                                        coil.compose.AsyncImage(
+                                            model = ImageRequest.Builder(LocalContext.current)
+                                                .data(rowItems[i])
+                                                .decoderFactory(SvgDecoder.Factory())
+                                                .build(),
+                                            contentDescription = "SVG Logo",
+                                            modifier = Modifier.fillMaxSize().offset(x=-45.dp)
+                                        )
+                                        Box(
                                             modifier = Modifier
-                                                .align(Alignment.Center)
-                                                .size(30.dp),
-                                            imageVector = Icons.Default.KeyboardArrowRight,
-                                            contentDescription = "User",
-                                            tint = Color.Black
-                                        )
+                                                .height(80.dp)
+                                                .align(Alignment.TopEnd)
+                                        ){
+                                            Text(
+                                                text = clubNames[index * 2 + i],
+                                                fontSize = 20.sp,
+                                                fontWeight = FontWeight.ExtraBold,
+                                                fontFamily = FontFamily(Font(R.font.urbanist)),
+                                                lineHeight = 18.sp,
+                                                color =Color.White,
+                                                modifier = Modifier.align(Alignment.Center).padding(end=2.dp)
+                                            )
+                                        }
                                     }
-                                    Card(
-                                        modifier = Modifier.size(
-                                            height = 100.dp,
-                                            width = 95.dp
-                                        )
-                                            .offset(x = 10.dp),
-                                        colors = CardDefaults.cardColors(
-                                            containerColor = Color(205, 193, 255)
-                                        )
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(100.dp),
+                                        horizontalArrangement = Arrangement.SpaceEvenly
                                     ) {
                                         Box(
-                                            Modifier
-                                                .fillMaxSize()
-                                                .padding(start = 10.dp),
-                                            contentAlignment = Alignment.Center
+                                            modifier = Modifier
+                                                .align(Alignment.CenterVertically)
+                                                .width(50.dp)
                                         ) {
-                                            Text(
-                                                text = "Product Management",
-                                                fontSize = 12.sp,
-                                                fontWeight = FontWeight(600),
-                                                fontFamily = FontFamily(Font(R.font.urbanist)),
+                                            Button(
+                                                onClick = {
+//                                                navController.navigate(Screens.ClubPage.route)
+                                                },
+                                                colors = ButtonDefaults.buttonColors(
+                                                    containerColor = Color(217, 217, 217)
+                                                ),
+                                                shape = CircleShape,
+                                                modifier = Modifier.size(50.dp)
+                                            ) {}
+                                            Icon(
+                                                modifier = Modifier
+                                                    .align(Alignment.Center)
+                                                    .size(30.dp),
+                                                imageVector = Icons.Default.KeyboardArrowRight,
+                                                contentDescription = "User",
+                                                tint = Color.Black
                                             )
+                                        }
+                                        Card(
+                                            modifier = Modifier
+                                                .size(
+                                                    height = 100.dp,
+                                                    width = 95.dp
+                                                )
+                                                .offset(x = 10.dp),
+                                            colors = CardDefaults.cardColors(
+                                                containerColor = Color(205, 193, 255)
+                                            )
+                                        ) {
+                                            Box(
+                                                Modifier
+                                                    .fillMaxSize()
+                                                    .padding(start = 10.dp),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Text(
+                                                    text = clubGenre[index * 2 + i],
+                                                    fontSize = 16.sp,
+                                                    fontWeight = FontWeight(600),
+                                                    fontFamily = FontFamily(Font(R.font.urbanist)),
+                                                    lineHeight = 16.sp
+                                                )
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                    if (rowItems.size == 1) {
-                        Spacer(modifier = Modifier.weight(1f))
+                        if (rowItems.size == 1) {
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
                     }
                 }
             }
@@ -405,8 +449,9 @@ fun trendingCardClub(
         ){
 
             Column(
-                modifier = Modifier.fillMaxHeight()
-                    .padding(start = 10.dp, end=10.dp),
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(start = 10.dp, end = 10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -456,7 +501,10 @@ fun trendingCardClub(
             elevation = CardDefaults.cardElevation(5.dp),
             shape = RoundedCornerShape(16.dp)
         ) {
-            Box(modifier = Modifier.fillMaxSize().padding(end=4.dp).offset(x=(-13).dp)){
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .padding(end = 4.dp)
+                .offset(x = (-13).dp)){
                 Box(
                     modifier = Modifier
                         .fillMaxHeight()
@@ -480,7 +528,7 @@ fun trendingCardClub(
                     Text(
                         modifier = Modifier
                             .align(Alignment.TopEnd)
-                            .offset(y=5.dp),
+                            .offset(y = 5.dp),
                         text = content,
                         fontSize = 13.09.sp,
                         fontWeight = FontWeight.ExtraBold,
@@ -493,7 +541,7 @@ fun trendingCardClub(
                     Text(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
-                            .offset(y=(-10).dp),
+                            .offset(y = (-10).dp),
                         text = "- $author",
                         fontSize = 10.sp,
                         fontWeight = FontWeight.ExtraBold,
@@ -539,7 +587,7 @@ fun ClubPage(innerPadding :PaddingValues , navController: NavController){
                 Row(modifier= Modifier
                     .width(348.dp)
                     .background(gradient)
-                    .padding(start=30.dp,top=25.dp)){
+                    .padding(start = 30.dp, top = 25.dp)){
                     Image(
                         modifier = Modifier
                             .size(
@@ -551,7 +599,7 @@ fun ClubPage(innerPadding :PaddingValues , navController: NavController){
                     )
                     Spacer(modifier = Modifier.width(25.dp))
                     Row(modifier = Modifier
-                        .padding(top=20.dp)
+                        .padding(top = 20.dp)
                         .fillMaxSize()) {
                         Button(
                             modifier = Modifier
@@ -622,7 +670,7 @@ fun ClubPage(innerPadding :PaddingValues , navController: NavController){
             modifier= Modifier
                 .width(400.dp)
                 .height(160.dp)
-                .padding(top=0.dp)
+                .padding(top = 0.dp)
         ){
             Column(horizontalAlignment = Alignment.CenterHorizontally){
                 Text(
@@ -634,7 +682,7 @@ fun ClubPage(innerPadding :PaddingValues , navController: NavController){
                 )
                 Spacer(modifier = Modifier.padding(top=10.dp))
                 Row(
-                    modifier=Modifier
+                    modifier= Modifier
                         .fillMaxWidth()
                         .height(120.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
@@ -712,7 +760,7 @@ fun ClubPage(innerPadding :PaddingValues , navController: NavController){
         Box(modifier = Modifier
             .width(400.dp)
             .height(230.dp)
-            .padding(start=10.dp)){
+            .padding(start = 10.dp)){
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = "CLUB WORK & ACHIVEMENTS",
