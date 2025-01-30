@@ -32,13 +32,13 @@ interface StudentApiService {
 }
 
 interface handleBookMark{
-    @POST("/bookmark/")
+    @POST("/student/bookmark/")
     suspend fun bookMark(@Body bookMark: AdminPost,@Header("authorization") token: String): userUploadResponse
 
-    @GET("/fetchBookmark/")
+    @GET("/student/fetchBookmark/")
     suspend fun getAllBook(@Header("authorization") token: String): BookMarkFetch
 
-    @GET("/get-token/")
+    @GET("/student/get-token/")
     suspend fun getStudentToken(@Query("rollno") rollno: String): TokenResponse
 }
 interface DeadlineApiService {

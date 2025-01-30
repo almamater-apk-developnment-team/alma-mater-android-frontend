@@ -41,6 +41,7 @@ import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import com.journalia_nitt.journalia_admin_cms.R
 import com.journalia_nitt.journalia_admin_cms.navigation.Screens
+import com.journalia_nitt.journalia_admin_cms.student.authentication.JWTToken
 import com.journalia_nitt.journalia_admin_cms.student.sharedPreferences.getUserDetails
 import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
 
@@ -48,10 +49,16 @@ import com.journalia_nitt.journalia_admin_cms.ui.theme.urbanist
 fun StudentHomeScreen(
     navController: NavController,
 ) {
+
+    val authRepository = JWTToken()
     val context=LocalContext.current
     val adminImage= painterResource(R.drawable.admin)
     val scrollState = rememberScrollState()
     val userDetails = getUserDetails(context = context)
+    val rollno = userDetails?.collegeId.toString()
+    if (userDetails != null) {
+        authRepository.generateJWT(rollno,context).toString()
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()

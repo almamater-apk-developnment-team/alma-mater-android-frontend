@@ -11,7 +11,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.Query
 
-private val retrofit = Retrofit.Builder().baseUrl("https://dauth-sand.vercel.app/students").addConverterFactory(GsonConverterFactory.create()).build()
+private val retrofit = Retrofit.Builder().baseUrl("https://dauth-sand.vercel.app/").addConverterFactory(GsonConverterFactory.create()).build()
 
 val upvotesClient= retrofit.create(handleUpvotes::class.java)
 
@@ -28,7 +28,7 @@ class handleUserUpvotes:ViewModel(){
     fun upvotePost(token:String,file_id: String ){
         viewModelScope.launch {
             try {
-                val response= upvotesClient.upvotesPost(token,file_id)
+                val response= uploadClient.upvotesPost(token,file_id)
                 Log.d("upvoteSuccessful","fuckYou")
             }
             catch (e:Exception){
@@ -40,7 +40,7 @@ class handleUserUpvotes:ViewModel(){
     fun addComment(token:String,post_id:String,comment: userComments){
         viewModelScope.launch {
             try {
-                val response= upvotesClient.addComment(token,post_id,comment)
+                val response= uploadClient.addComment(token,post_id,comment)
                 Log.d("upvoteSuccessful","fuckYou")
             }
             catch (e:Exception){

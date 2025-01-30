@@ -11,7 +11,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-private val retrofit = Retrofit.Builder().baseUrl("https://dauth-sand.vercel.app/students/").addConverterFactory(
+private val retrofit = Retrofit.Builder().baseUrl("https://dauth-sand.vercel.app/").addConverterFactory(
     GsonConverterFactory.create()).build()
 val bookMarkHandle= retrofit.create(handleBookMark::class.java)
 val days = arrayOf(

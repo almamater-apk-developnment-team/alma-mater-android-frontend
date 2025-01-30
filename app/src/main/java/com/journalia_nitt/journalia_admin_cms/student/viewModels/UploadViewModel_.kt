@@ -7,8 +7,14 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.journalia_nitt.journalia_admin_cms.administration.response.AdminPost
+import com.journalia_nitt.journalia_admin_cms.student.responses.BookMarkFetch
+import com.journalia_nitt.journalia_admin_cms.student.responses.TokenResponse
 import com.journalia_nitt.journalia_admin_cms.student.responses.UploadResponse
+import com.journalia_nitt.journalia_admin_cms.student.responses.UserFetch
+import com.journalia_nitt.journalia_admin_cms.student.responses.UserFetch1
 import com.journalia_nitt.journalia_admin_cms.student.responses.UserUploadClass
+import com.journalia_nitt.journalia_admin_cms.student.responses.userComments
 import com.journalia_nitt.journalia_admin_cms.student.responses.userUploadResponse
 import com.journalia_nitt.journalia_admin_cms.student.screens.getFileName
 import kotlinx.coroutines.launch
@@ -19,19 +25,43 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Path
+import retrofit2.http.Query
 
-private val retrofit = Retrofit.Builder().baseUrl("https://dauth-sand.vercel.app/students").addConverterFactory(GsonConverterFactory.create()).build()
+private val retrofit = Retrofit.Builder().baseUrl("https://journaliaadmin.vercel.app/").addConverterFactory(GsonConverterFactory.create()).build()
 val uploadClient= retrofit.create(handleUpload::class.java)
-val fetchClient= retrofit.create(handleFetch::class.java)
 interface handleUpload{
-    @POST("/uploadDetails/")
+    @POST("/student/uploadDetails/")
     suspend fun uploadUser(@Body userUploadClass: UserUploadClass): userUploadResponse
     @Multipart
-    @POST("/upload/")
+    @POST("/student/upload/")
     suspend fun uploadFile(@Part file: MultipartBody.Part): Response<UploadResponse>
+
+    @GET("/student/fetch{token}")
+    suspend fun fetchUser(@Path("token") token: String): UserFetch
+
+    @GET("/student/fetchAll/")
+    suspend fun fetchAll(): UserFetch1
+
+    @POST("/student/bookmark/")
+    suspend fun bookMark(@Body bookMark: AdminPost,@Header("authorization") token: String): userUploadResponse
+
+    @GET("/student/fetchBookmark/")
+    suspend fun getAllBook(@Header("authorization") token: String): BookMarkFetch
+
+    @GET("/student/get-token/")
+    suspend fun getStudentToken(@Query("rollno") rollno: String): TokenResponse
+
+    @POST("/student/upvote/")
+    suspend fun upvotesPost(@Query("token") token: String, @Query("file_id") file_id: String)
+
+    @POST("/student/addComment/")
+    suspend fun addComment(@Query("token") token: String, @Query("post_id") post_id: String,@Body comment: userComments)
 }
 
 class UploadViewModel:ViewModel(){

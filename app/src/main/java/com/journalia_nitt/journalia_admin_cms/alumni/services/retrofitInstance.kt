@@ -73,7 +73,7 @@ interface AlumniUploadApi {
 // File upload API
 interface FileUploadApi {
     @Multipart
-    @POST("/upload/")
+    @POST("alumni/upload/")
     suspend fun uploadFile(@Part file: MultipartBody.Part): Response<FileUploadResponse>
 }
 

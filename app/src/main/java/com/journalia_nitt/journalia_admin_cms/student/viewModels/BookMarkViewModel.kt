@@ -7,9 +7,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.journalia_nitt.journalia_admin_cms.administration.response.AdminPost
-import com.journalia_nitt.journalia_admin_cms.student.bookMarkHandle
 import com.journalia_nitt.journalia_admin_cms.student.responses.fetchBookMark
 import com.journalia_nitt.journalia_admin_cms.student.sharedPreferences.getTokenDetails
+import com.journalia_nitt.journalia_admin_cms.student.sharedPreferences.getUserLoginToken
 import kotlinx.coroutines.launch
 
 class bookMarkViewModel: ViewModel(){
@@ -21,7 +21,7 @@ class bookMarkViewModel: ViewModel(){
 
             val token= "Bearer "+ getTokenDetails(context).toString()
             try {
-                val response= bookMarkHandle.bookMark(bookMark,token)
+                val response= uploadClient.bookMark(bookMark,token)
                 Log.d("Bookmark test",response.message)
             }catch (
                 e:Exception
@@ -34,8 +34,8 @@ class bookMarkViewModel: ViewModel(){
     fun fetchBookMark(context: Context) {
         viewModelScope.launch {
             try {
-                val token= "Bearer "+ getTokenDetails(context).toString()
-                val response = bookMarkHandle.getAllBook(token)
+                val token= "Bearer "+ getUserLoginToken(context).toString()
+                val response = uploadClient.getAllBook(token)
                 _posts.value = _posts.value.copy(
                     data = response.data,
                     message = response.message
