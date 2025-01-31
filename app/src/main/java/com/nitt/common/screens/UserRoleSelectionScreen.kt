@@ -118,7 +118,21 @@ fun UserRoleSelectionScreen(navController: NavController)
                     }
             )
             {
-                Text(text = "< LOGIN >",fontSize = 18.sp,modifier= Modifier.padding(0.dp,20.dp).align(Alignment.CenterHorizontally),
+                Text(text = " STUDENT LOGIN ",fontSize = 18.sp,modifier= Modifier.padding(0.dp,20.dp).align(Alignment.CenterHorizontally),
+                    fontFamily = urbanist,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+            Card(
+                colors = CardDefaults.cardColors(containerColor = buttonColor),
+                elevation = CardDefaults.cardElevation(15.dp),
+                modifier = Modifier.shadow(0.dp, shape = RoundedCornerShape(12.dp)).fillMaxWidth(0.85f).padding(top = 20.dp)
+                    .clickable {
+                        navController.navigate(Screens.AdminLoginScreen.route)
+                    }
+            )
+            {
+                Text(text = " ADMIN LOGIN ",fontSize = 18.sp,modifier= Modifier.padding(0.dp,20.dp).align(Alignment.CenterHorizontally),
                     fontFamily = urbanist,
                     fontWeight = FontWeight.Bold,
                 )
@@ -147,10 +161,11 @@ fun UserRoleSelectionScreen(navController: NavController)
                     }
                 )
                 Text(
-                    text = " and ",
+                    text = " , ",
                     fontSize = 14.sp,
                     fontFamily = urbanist,
-                    color = Color.Gray
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = "Privacy Policy",
@@ -160,6 +175,26 @@ fun UserRoleSelectionScreen(navController: NavController)
                     textDecoration = TextDecoration.Underline,
                     modifier = Modifier.clickable {
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://myalmamater.in/privacy_policy"))
+                        context.startActivity(intent)
+                    }
+                )
+            }
+            Row {
+
+                Text(
+                    text = " and ",
+                    fontSize = 14.sp,
+                    fontFamily = urbanist,
+                    color = Color.Gray
+                )
+                Text(
+                    text = "Child endangerment policy",
+                    fontSize = 14.sp,
+                    fontFamily = urbanist,
+                    color = Color.Black,
+                    textDecoration = TextDecoration.Underline,
+                    modifier = Modifier.clickable {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://amitesh007z.github.io/policy/"))
                         context.startActivity(intent)
                     }
                 )

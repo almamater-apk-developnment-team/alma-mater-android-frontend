@@ -231,7 +231,7 @@ fun AdminLoginScreen(
                         coroutineScope.launch(Dispatchers.Main) {
                             if(emailId.isNotBlank()&& passWord.isNotBlank())
                             {
-                                if(emailId == "almamateradmintestaccount@almamater.com" && passWord == "rxdcftvgybhujnexdrcftvRTRCFTVGYBHUXRDCFTVGH#%^&*%^45GDCVY^665VYV4^^c")
+                                if(emailId == "107122033@nitt.edu" && passWord == "mukesh123")
                                 {
                                     Toast.makeText(context,"Test Account Login Successful", Toast.LENGTH_LONG).show()
                                     navController.navigate(Screens.AdminLoginVerificationScreen.route + "/$emailId")
