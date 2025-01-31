@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
             val context = LocalContext.current
             val userDetails = getUserDetails(context = context)
             if (userDetails != null) {
-                authRepository.getToken(userDetails.collegeId) { result ->
+                authRepository.agetToken(userDetails.collegeId) { result ->
                     result.onSuccess { token ->
                         Log.d("Token",token)
                         saveTokenDetails(context = context, token = token)

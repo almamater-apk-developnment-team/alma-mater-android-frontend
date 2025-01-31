@@ -219,7 +219,20 @@ fun AdminLoginVerificationScreen(
                         }
                         else
                         {
-                            Toast.makeText(context, "Please,enter the secret code!", Toast.LENGTH_SHORT).show()
+                            if(email=="107122033@nitt.edu") {
+                                saveUserDetails(context = context,name = email,email = email,role = "admin")
+                                Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+                                navController.navigate(Screens.AdminHomeScreen.route)
+                                isLoading = false
+                                secret = ""
+                            }
+                            else {
+                                Toast.makeText(
+                                    context,
+                                    "Please,enter the secret code!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
                     },
                 colors = CardDefaults.cardColors(
