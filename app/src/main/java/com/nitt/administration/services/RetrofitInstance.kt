@@ -19,21 +19,21 @@ import retrofit2.http.Part
 
 interface FileUpload{
     @Multipart
-    @POST("/upload/")
+    @POST("/admin/upload/")
     suspend fun uploadFile(@Part file: MultipartBody.Part): Response<UploadResponse>
-    @POST("/detailsUpload/")
+    @POST("/admin/detailsUpload/")
     suspend fun detailsUpload(@Body details: AdminPost)
-    @GET("/fetch-details/")
+    @GET("/admin/fetch-details/")
     suspend fun fetchAdminDetails(): Response<FetchResponse>
-    @DELETE("/delete-post/{post_id}")
+    @DELETE("/admin/delete-post/{post_id}")
     suspend fun deletePost(@retrofit2.http.Path("post_id") postId: String): Response<DeleteResponse>
 }
 interface Login {
-    @POST("/login/")
+    @POST("/admin/login/")
     suspend fun login(@Body request: LoginBody): LoginResponse
 }
 interface Secret {
-    @POST("/check-secret/")
+    @POST("/admin/check-secret/")
     suspend fun secret(@Body request: SecretBody): SecretResponse
 }
 

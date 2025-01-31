@@ -19,19 +19,43 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Path
+import retrofit2.http.Query
 
-private val retrofit = Retrofit.Builder().baseUrl("https://dauth-sand.vercel.app/").addConverterFactory(GsonConverterFactory.create()).build()
+private val retrofit = Retrofit.Builder().baseUrl("https://journaliaadmin.vercel.app/").addConverterFactory(GsonConverterFactory.create()).build()
 val uploadClient= retrofit.create(handleUpload::class.java)
-val fetchClient= retrofit.create(handleFetch::class.java)
 interface handleUpload{
-    @POST("/uploadDetails/")
+    @POST("/student/uploadDetails/")
     suspend fun uploadUser(@Body userUploadClass: UserUploadClass): userUploadResponse
     @Multipart
-    @POST("/upload/")
+    @POST("/student/upload/")
     suspend fun uploadFile(@Part file: MultipartBody.Part): Response<UploadResponse>
+
+    @GET("/student/fetch{token}")
+    suspend fun fetchUser(@Path("token") token: String): UserFetch
+
+    @GET("/student/fetchAll/")
+    suspend fun fetchAll(): UserFetch1
+
+    @POST("/student/bookmark/")
+    suspend fun bookMark(@Body bookMark: AdminPost,@Header("authorization") token: String): userUploadResponse
+
+    @GET("/student/fetchBookmark/")
+    suspend fun getAllBook(@Header("authorization") token: String): BookMarkFetch
+
+    @GET("/student/get-token/")
+    suspend fun getStudentToken(@Query("rollno") rollno: String): TokenResponse
+
+    @POST("/student/upvote/")
+    suspend fun upvotesPost(@Query("token") token: String, @Query("file_id") file_id: String)
+
+    @POST("/student/addComment/")
+    suspend fun addComment(@Query("token") token: String, @Query("post_id") post_id: String,@Body comment: userComments)
 }
 
 class UploadViewModel:ViewModel(){

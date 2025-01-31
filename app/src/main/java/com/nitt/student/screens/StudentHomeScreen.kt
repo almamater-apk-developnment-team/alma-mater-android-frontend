@@ -45,10 +45,16 @@ import com.nitt.theme.urbanist
 fun StudentHomeScreen(
     navController: NavController,
 ) {
+
+    val authRepository = JWTToken()
     val context=LocalContext.current
     val adminImage= painterResource(R.drawable.admin)
     val scrollState = rememberScrollState()
     val userDetails = getUserDetails(context = context)
+    val rollno = userDetails?.collegeId.toString()
+    if (userDetails != null) {
+        authRepository.generateJWT(rollno,context).toString()
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()

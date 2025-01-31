@@ -9,25 +9,24 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class JWTToken {
-    private val apiService = RetrofitClient.instance.create(StudentApiService::class.java)
-    fun getToken(name: String, callback: (Result<String>) -> Unit) {
-        val loginRequest = LoginRequest(name)
-        apiService.getToken(loginRequest).enqueue(object : Callback<TokenResponse> {
-            override fun onResponse(call: Call<TokenResponse>, response: Response<TokenResponse>) {
-                if (response.isSuccessful) {
-                    val token = response.body()?.token
-                    if (token != null) {
-                        callback(Result.success(token))
-                    } else {
-                        callback(Result.failure(Exception("Token is null")))
-                    }
-                } else {
-                    callback(Result.failure(Exception("Error-op: ${response.errorBody()?.string()}")))
+    fun generateJWT(rollno: String, context:Context){
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                // Call the suspend function within the coroutine
+                val response = uploadClient.getStudentToken(rollno).token
+
+                CoroutineScope(Dispatchers.Main).launch {
+                    Log.d("successFileFetchFromUser", response)
+                    saveUserLoginToken(context,response)
+
+                }
+            } catch (e: Exception) {
+                // Handle errors
+                CoroutineScope(Dispatchers.Main).launch {
+                    Log.d("errorFileFetchFromUser", e.message.toString())
                 }
             }
-            override fun onFailure(call: Call<TokenResponse>, t: Throwable) {
-                callback(Result.failure(t))
-            }
-        })
+        }
     }
 }

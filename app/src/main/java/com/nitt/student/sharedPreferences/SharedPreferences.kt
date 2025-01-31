@@ -66,3 +66,15 @@ fun getArrayFromSharedPreferences(context : Context, key : String): MutableList<
         mutableListOf()
     }
 }
+
+fun saveUserLoginToken(context: Context, token: String) {
+    val sharedPreferences: SharedPreferences = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
+    editor.putString("token", token)
+    editor.apply()
+}
+
+fun getUserLoginToken(context: Context): String? {
+    val sharedPreferences: SharedPreferences = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+    return sharedPreferences.getString("token", null)
+}

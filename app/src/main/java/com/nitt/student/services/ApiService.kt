@@ -31,11 +31,14 @@ interface StudentApiService {
 }
 
 interface handleBookMark{
-    @POST("/bookmark/")
-    suspend fun bookMark(@Body bookMark: AdminPost, @Query("rollno")rollno:String, @Header("authorization") token: String): userUploadResponse
+    @POST("/student/bookmark/")
+    suspend fun bookMark(@Body bookMark: AdminPost,@Header("authorization") token: String): userUploadResponse
 
-    @GET("/fetchBookmark/")
-    suspend fun getAllBook(@Query("rollno")rollno:String,@Header("authorization") token: String): BookMarkFetch
+    @GET("/student/fetchBookmark/")
+    suspend fun getAllBook(@Header("authorization") token: String): BookMarkFetch
+
+    @GET("/student/get-token/")
+    suspend fun getStudentToken(@Query("rollno") rollno: String): TokenResponse
 }
 interface DeadlineApiService {
     @GET("get-deadlines")
